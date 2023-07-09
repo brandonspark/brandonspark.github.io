@@ -1,0 +1,169 @@
+{% import "macros/date.html" as date_macros -%}
+{% import "macros/head.html" as head_macros -%}
+{% import "macros/menu.html" as menu_macros -%}
+{% import "macros/post.html" as post_macros -%}
+{% import "macros/title.html" as title_macros -%}
+{% import "macros/events.html" as events_macros -%}
+
+<!DOCTYPE html>
+<html lang="{%- if config.default_language -%}{{ config.default_language }}{%- else -%}en{%- endif -%}">
+
+<head>
+    <title>{%- block title %}{{ config.title }}{% endblock title -%}</title>
+    {{ head_macros::head(config=config) }}
+
+    {%- if config.generate_feed %}
+        {%- if "rss" in config.feed_filename %}
+            {% set feed_type = 'rss+xml' %}
+        {%- else %}
+            {% set feed_type = 'atom+xml' %}
+        {% endif -%}
+        <link rel="alternate" type="application/{{ feed_type }}" title="RSS" href="{{ get_url(path=config.feed_filename) | safe }}">
+    {% endif -%}
+
+    <link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    {% if config.extra.mathjax | default(value=false) %}
+        {% if config.extra.mathjax_dollar_inline_enable | default(value=false) %}
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        {% endif %}
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    {% endif %}
+
+    {%- if config.extra.favicon %}
+        <link rel="shortcut icon" type="{{ config.extra.favicon_mimetype | default(value="image/x-icon") | safe }}" href="{{ config.extra.favicon | safe }}">
+    {% endif -%}
+
+    {%- block extra_head %}
+    {% endblock extra_head -%}
+</head>
+
+<body class="">
+<div class="container">
+    {% block header %}
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                {%- if config.extra.logo_home_link %}
+                    {% set logo_link = config.extra.logo_home_link %}
+                {% else %}
+                    {% set logo_link = config.base_url %}
+                {% endif -%}
+                <a href="{{ logo_link | safe }}" style="text-decoration: none;">
+                    <div class="logo">
+                      {% block logo_content %}
+                        {%- if config.extra.logo_text %}
+                            {{ config.extra.logo_text }}
+                        {% else %}
+                            brandonspark
+                        {% endif -%}
+                        {% endblock logo_content %}
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        {% block header_menu %}
+        {{ menu_macros::menu(config=config, current_path=current_path) }}
+        {% endblock header_menu %}
+    </header>
+    {% endblock header %}
+
+    <div class="content">
+        {% block content %}
+
+        <article>
+          <div class="profile">
+            <img src="/me.jpg"
+            style="
+              width: 35%;
+              float: right;
+              margin-left: 15px;
+              margin-top: 30px;
+              border-radius: 4%;
+            " position="right">
+
+            <h2> <span style="color:var(--accent)">Brandon Wu</span> </h2>
+
+            <p>
+            Hi there! My name is <b>Brandon Wu</b>, and I'm a program analysis engineer working
+            at a company called <a href="https://semgrep.dev/" style="text-decoration: none"><span style="color:rgb(85, 238, 151)">Semgrep</span></a>.
+            </p>
+
+            <p>
+            I graduated from Carnegie Mellon University in 2022 with a degree in
+            <span style="color:rgb(255, 179, 48)">computer science</span>
+            and a
+            <span style="color:rgb(255, 179, 48)">concentration in programming
+            languages</span>, and my interests include functional programming and things
+            related to functional programming.
+            </p>
+
+            <p>This is my personal website for blogging (mostly about computer science,
+            teaching, or pop culture), as well as sharing things about my personal life.
+            There just isn't enough of my data on the internet.
+            </p>
+          </div>
+
+          {% set section = get_section(path="events/_index.md") %}
+
+
+          <!-- uncomment to try the events table thing -->
+          <!-- {{events_macros::events(section=section) }} -->
+          <p>
+          If you are here, you may be interested in:
+          <ul class="fancy">
+            <li><a href="/blog">my blog</a></li>
+            <li><a href="/courses">thoughts on cmu courses</a></li>
+            <li><a href="/projects">what i'm working on</a></li>
+          </ul>
+          </p>
+
+        </article>
+        {% endblock content %}
+    </div>
+
+    {% block footer %}
+    <footer class="footer">
+        <div class="footer__inner">
+            {%- if config.extra.copyright_html %}
+                <div class="copyright copyright--user">{{ config.extra.copyright_html | safe }}</div>
+            {% else %}
+                <div class="copyright">
+                    {%- if config.extra.author %}
+                        <span>© {{ date_macros::now_year() }} {{ config.extra.author }}</span>
+                    {% else %}
+                        <span>© {{ date_macros::now_year() }} Powered by <a href="https://www.getzola.org/">Zola</a></span>
+                    {% endif -%}
+                </div>
+            {% endif -%}
+        </div>
+    </footer>
+    {% endblock footer %}
+
+</div>
+{%- block extra_body %}
+{% endblock extra_body -%}
+</body>
+
+</html>

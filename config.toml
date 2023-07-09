@@ -1,0 +1,71 @@
+# The URL the site will be built for
+base_url = "https://brandonspark.github.io"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = false
+
+# The site theme to use.
+theme = "terminimal"
+
+# Optional: enable tags
+taxonomies = [
+    {name = "tags"}
+]
+
+
+[markdown]
+# Whether to do syntax highlighting
+# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
+
+# Deactivated because no SML
+# Code highlighting
+# highlight_code = true
+# highlight_theme = "boron"
+
+[extra]
+# Put all your custom variables here
+
+##########################
+# Terminimal specific #
+##########################
+
+# The logo text - defaults to "Terminimal theme"
+logo_text = "λ brandonspark"
+
+# Author name: when specified, modifies the default
+# copyright text. Apart from author, it will
+# contain current year and a link to the theme.
+author = "Brandon Wu"
+
+# The text shown at the bottom of a post,
+# before earlier/later post links.
+# Defaults to "Thanks for reading! Read other posts?"
+post_view_navigation_prompt = "Thanks for reading! Read other posts?"
+
+# menu is enabled by adding menu_items (optional)
+menu_items = [
+    # each of these is optional, name and url are required
+    # $BASE_URL is going to be substituted by base_url from configuration
+    {name = "home", url = "$BASE_URL"},
+    {name = "blog", url = "$BASE_URL/blog"},
+
+    # tags should only be enabled if you have "tags" taxonomy
+    # see documentation below for more details
+    # TODO: restore this if i ever blog enough for it to be important
+    # {name = "tags", url = "$BASE_URL/tags"},
+    # {name = "archive", url = "$BASE_URL/archive"},
+    {name = "about me", url = "$BASE_URL/about"},
+    {name = "teaching", url = "$BASE_URL/teaching"},
+    {name = "creative", url = "$BASE_URL/creative"},
+    {name = "projects", url = "$BASE_URL/projects"},
+
+    # set newtab to true to make the link open in new tab
+    {name = "github", url = "https://github.com/brandonspark", newtab = true, right_align=true},
+    {name = "twitter", url = "https://twitter.com/onefiftyman", newtab = true, right_align=true},
+]
+
+mathjax = true
+mathjax_dollar_inline_enable = true

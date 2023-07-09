@@ -1,0 +1,10 @@
+{% macro events(section) %}
+    <h2> {{ section.title }} </h2>
+
+    <table class="events">
+    {%- for page in section.pages %}
+    <div class="post on-list">
+        {{ post_macros::event(page=page) }}
+    </div>
+    {% endfor -%}
+{% endmacro events %}
