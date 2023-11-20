@@ -8,7 +8,9 @@
 .post {
   width: 100%;
   text-align: left;
-  margin: 20px auto;
+  // CHANGED: from 20px, to remove weird space between post header
+  // and nav bar
+  margin: -20px auto;
   padding: 20px 0;
 
   @media (max-width: $tablet-max-width) {

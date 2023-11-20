@@ -1,0 +1,37 @@
+{% extends "index.html" %}
+
+{%- block title -%}
+{{ title_macros::title(page_title=page.title, main_title=config.title) }}
+{%- endblock -%}
+
+{% block content %}
+    <div class="post">
+        {{ post_macros::header(page=page) }}
+
+        <div class="coolthing">
+          <a href="/{{page.extra.name}}/lecture{{page.extra.number}}.png" target="_blank">
+          <img src="/{{page.extra.name}}/lecture{{page.extra.number}}.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/{{ page.extra.name}}/lecture{{page.extra.number}}.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            {{ page.content | safe }}
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="{{ page.extra.url }}" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        {{ post_macros::earlier_later(page=page) }}
+    </div>
+{% endblock content %}

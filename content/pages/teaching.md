@@ -1,13 +1,17 @@
 +++
 title = "Teaching"
 path = "teaching"
+
+[extra]
 +++
 
 {{ image(src="/teaching.jpg",
          style="
            width: 35%;
            float: right;
-           margin-left: 15px
+           margin-left: 15px;
+           border-radius: 4%;
+
          ",
          position="right") }}
 
@@ -46,19 +50,21 @@ and colorful and vivid imagery, and I am trying to change that if at all possibl
 ## {{ purple(s="Experience") }}
 
 Here's some of the courses that I taught while I was at CMU:
-- 15-150: Principles of Functional Programming (F19, S20, M20$^\dagger$, F20$^\dagger$,
-  S21$^\dagger$, S22)
+- 15-150: Principles of Functional Programming (F19, S20, M20$\color{yellow}^\dagger$, F20$\color{yellow}^\dagger$,
+  S21$\color{yellow}^\dagger$, S22)
 - 15-213: Introduction to Computer Systems (M20)
 - 15-312: Foundations of Programming Languages (F21)
 - 98-389: Gödel, Escher, Bach: an Eternal Golden StuCo (F21, S22)
 - 98-317: Hype for Types (F21, S22)
 
-(where $\dagger$ denotes a semester as Head TA)
+(where $\color{yellow}\dagger$ denotes a semester as Head TA)
 
 Honorable mentions that I was a tutor for:
 - 15-251: Great Theoretical Ideas in Computer Science
 - 15-122: Principles of Imperative Computation
 - 21-127: Concepts of Mathematics
+
+## {{ purple(s="15-150") }}
 
 15-150 is the class that I taught for the longest, and one which has
 single-handedly decided the course of my professional career. {{ emph(s="I
@@ -67,7 +73,10 @@ pursuit of as much experience and knowledge in that domain as possible. I have
 long-term aspirations of one day teaching functional programming in high
 schools.
 
-I also have the distinct privilege to be the instructor for 15-150
-currently, in the Summer 2023 semester. I am working with an excellent team of
-8 TAs to deliver a world-class education to a class of 50 undergraduates,
-in my debut as a visiting lecturer.
+I had the distinct privilege to be the instructor of record for 15-150 in
+the Summer 2023 semester. The sum of my career with 150, it gave me the chance
+to work with a team of 8 TAs to deliver a world-class education to a class of
+50 undergraduates, in my debut as a visiting lecturer.
+
+<a href="/150">You can find the lectures and recordings from that
+semester under this page.</a>

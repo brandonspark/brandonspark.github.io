@@ -1,0 +1,11 @@
+@import "variables";
+
+:root {
+  --accent: rgb(73, 220, 237);
+  --accent-alpha-70: #{$default-accent-alpha-70};
+  --accent-alpha-20: #{$default-accent-alpha-20};
+
+  --background: #{$default-background};
+  --color: #{$default-color};
+  --border-color: #{$default-border-color};
+}

@@ -1,6 +1,8 @@
 +++
 title = "About Me"
 path = "about"
+
+[extra]
 +++
 
 {{ image(src="/me2.jpg",

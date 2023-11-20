@@ -10,7 +10,12 @@
 
 <head>
     <title>{%- block title %}{{ config.title }}{% endblock title -%}</title>
-    {{ head_macros::head(config=config) }}
+    {%- if page.extra.colorscheme -%}
+      {{ head_macros::head(config=config, colorscheme=page.extra.colorscheme) }}
+    {%- else -%}
+      {{ head_macros::head(config=config, colorscheme="default") }}
+    {%- endif -%}
+
 
     {%- if config.generate_feed %}
         {%- if "rss" in config.feed_filename %}
@@ -70,7 +75,7 @@
                     {% set logo_link = config.base_url %}
                 {% endif -%}
                 <a href="{{ logo_link | safe }}" style="text-decoration: none;">
-                    <div class="logo">
+                    {# <div class="logo">
                       {% block logo_content %}
                         {%- if config.extra.logo_text %}
                             {{ config.extra.logo_text }}
@@ -78,7 +83,8 @@
                             brandonspark
                         {% endif -%}
                         {% endblock logo_content %}
-                    </div>
+                    </div> #}
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
                 </a>
             </div>
         </div>

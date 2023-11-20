@@ -1,0 +1,38 @@
+  {% set data = load_data(path="content/150/manifest.yaml") %}
+  {% for lecture in data -%}
+    <div class="lecture-entry">
+      <div class="image-column">
+        <img
+          src="{{lecture.name}}/lecture{{lecture.number}}.png",
+          style="
+            margin-bottom: 10px;
+            margin-top: 10px;
+        "/>
+      </div>
+      <div class="info-column">
+        <div class="flexy-thing">
+          <div>
+            <div class="lecture-entry-title">
+                <span class="lecture-entry-title-span">
+                  <a href="{{lecture.name}}/">
+                  {# <span style="color:rgb(136, 105, 223)">Lecture {{lecture.number}}: </span>
+                  <span style="color:{{lecture.color}}">{{lecture.fullname}}</span> #}
+                  <span style="color:rgb(136, 105, 223)">Lecture {{lecture.number}}: {{lecture.fullname}}</span>
+                  {# <span style="color:{{lecture.color}}">Lecture {{lecture.number}}: {{lecture.fullname}}</span> #}
+                  </a>
+                </span>
+              </div>
+            {# <div class="lecture-entry-description">
+              a tagline or something goes here
+            </div> #}
+          </div>
+          <div class="lecture-entry-quote">
+            <span style="color:{{lecture.color}}">"{{lecture.quote}}"</span>
+          </div>
+          <div class="lecture-entry-link">
+              {# <span style="color:rgb(255, 179, 48)">click here for more info</span> #}
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endfor %}

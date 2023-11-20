@@ -1,6 +1,8 @@
 +++
 title = "Creative"
 path = "creative"
+
+[extra]
 +++
 
 I believe that everyone should have three prevailing components in their life,
@@ -91,7 +93,7 @@ exception Foo
 val y = x >>= f
 
 (* foo *)
-fun foo (x : 'a, y : int, z : a') = 2
+fun foo (x : 'a, y : int, z : int list) = 2
 
 structure Foo : FOO =
   struct

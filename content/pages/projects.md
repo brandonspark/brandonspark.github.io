@@ -1,6 +1,8 @@
 +++
 title = "Projects"
 path = "projects"
+
+[extra]
 +++
 
 Here are some projects I'm working on, actively or passively, which I felt

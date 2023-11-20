@@ -35,6 +35,9 @@ taxonomies = [
 # The logo text - defaults to "Terminimal theme"
 logo_text = "λ brandonspark"
 
+favicon = "/favicon.png"
+favicon_mimetype = "image/png"
+
 # Author name: when specified, modifies the default
 # copyright text. Apart from author, it will
 # contain current year and a link to the theme.
@@ -59,6 +62,7 @@ menu_items = [
     # {name = "archive", url = "$BASE_URL/archive"},
     {name = "about me", url = "$BASE_URL/about"},
     {name = "teaching", url = "$BASE_URL/teaching"},
+    {name = "15150", url = "$BASE_URL/150"},
     {name = "creative", url = "$BASE_URL/creative"},
     {name = "projects", url = "$BASE_URL/projects"},
 

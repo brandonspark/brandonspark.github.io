@@ -1,6 +1,8 @@
 +++
 title = "Courses"
 path = "courses"
+
+[extra]
 +++
 
 In keeping with my fellow CMU alumni, I feel obligated to write down a

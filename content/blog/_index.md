@@ -7,4 +7,6 @@ page_template = "page.html"
 paginate_by = 3
 # sorting order for pagination
 sort_by = "date"
+
+[extra]
 +++

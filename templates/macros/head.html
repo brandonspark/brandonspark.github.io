@@ -1,4 +1,4 @@
-{% macro head(config) %}
+{% macro head(config, colorscheme) %}
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
     <meta name="robots" content="noodp"/>
@@ -6,7 +6,11 @@
     <link rel="stylesheet" href="{{ get_url(path="style.css", trailing_slash=false) | safe }}">
 
 {%- if config.extra.accent_color %}
+  {%- if colorscheme == "default" %}
     <link rel="stylesheet" href="{{ get_url(path="color/" ~ config.extra.accent_color ~ ".css", trailing_slash=false) | safe }}">
+  {%- else %}
+    <link rel="stylesheet" href="{{ get_url(path="color/" ~ colorscheme ~ ".css", trailing_slash=false) | safe }}">
+  {%- endif %}
 {% else %}
     <link rel="stylesheet" href="{{ get_url(path="color/blue.css", trailing_slash=false) | safe }}">
 {% endif -%}

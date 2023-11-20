@@ -76,6 +76,28 @@ img {
   }
 }
 
+// ADDED: I cribbed this from ChatGPT because I needed to be able to link a
+// video at the entire width of the page, with an adaptive height based on the
+// width of the browser. I have no idea how this works. But it does.
+.responsive-iframe-container {
+  position: relative;
+  padding-bottom: 56.25%; /* This is for a 16:9 aspect ratio, adjust as needed */
+  height: 0;
+  overflow: hidden;
+}
+.responsive-iframe-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.coolthing {
+  float: right;
+  width: 50%;
+}
+
 p {
   margin-bottom: 20px;
 }
@@ -124,9 +146,13 @@ code {
   font-feature-settings: normal;
   // EDITED to prevent background of inline code
   // background: var(--accent-alpha-20);
+  color: rgb(139, 119, 205);
   padding: 0px 0px;
   margin: 0 2px;
   font-size: .95rem;
+  border-style:solid;
+  border-color:#434343;
+  border-width:1.5px;
 }
 
 pre {
@@ -309,4 +335,64 @@ hr {
 .image-gallery a {
   flex: 0 0 calc(33% - 10px);
   margin: 5px;
+}
+
+// ADDED to make the image gallery wrap
+.lecture-entry {
+  flex-wrap: wrap;
+
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+
+.lecture-entry .image-column {
+  display: inline-block;
+  margin-right: 10px;
+  /* for some reason aligning this to the top makes info-column go to the top too */
+  vertical-align: top;
+  width: 40%;
+}
+
+.lecture-entry .info-column {
+  display: inline-block;
+  width: calc(58%);
+  height: 200px;
+}
+
+.lecture-entry .flexy-thing {
+  width: auto;
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
+  height: 100%;
+}
+
+.lecture-entry .lecture-entry-title {
+  height: calc(40%);
+  font-size: 19px;
+  margin-top: 10px;
+  margin-bottom: 3px;
+}
+
+.lecture-entry-title-span {
+  border-bottom: 1px solid rgb(77, 77, 77);
+
+  a {
+    text-decoration: none;
+
+  }
+}
+
+.lecture-entry .lecture-entry-description {
+  color: #c3c3c3;
+}
+
+.lecture-entry .lecture-entry-quote {
+  height: calc(30%);
+  font-style: italic;
+  font-size: 20px;
+}
+
+.lecture-entry .lecture-entry-link {
+  height: calc(10%);
 }
