@@ -2,8 +2,9 @@
   {% for lecture in data -%}
     <div class="lecture-entry">
       <div class="image-column">
+        {% set image = resize_image(path="content/150/" ~ lecture.number ~ "/lecture" ~ lecture.number ~ ".png", width=800, height=440, quality=100) %}
         <img
-          src="/{{lecture.name}}/lecture{{lecture.number}}.png",
+          src="{{image.url}}"
           style="
             margin-bottom: 10px;
             margin-top: 10px;
