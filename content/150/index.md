@@ -26,10 +26,10 @@ fit, and I hope that it aids you in your future endeavors.
 
 # {{ purple(s="Lectures") }}
 
-<!-- {{ gallery_150() }}
-
-<br> -->
-
-{{ lecture_entry() }}
-
+<div class="with-bottom-spacing">
+  {{ lecture_entry() }}
 </div>
+
+# {{ purple(s="Supplemental Lectures") }}
+
+{{ supplemental_lectures() }}

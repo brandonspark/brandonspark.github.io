@@ -1,0 +1,30 @@
+  {% set data = load_data(path="content/150/manifest_supplemental.yaml") %}
+  {% for lecture in data -%}
+    <div class="lecture-entry">
+      <div class="image-column">
+        {% set image = resize_image(path="content/150/" ~ lecture.name ~ "/" ~ lecture.path ~ ".png", width=800, height=440, quality=100) %}
+        <img
+          src="{{image.url}}"
+          style="
+            margin-bottom: 10px;
+            margin-top: 10px;
+        "/>
+      </div>
+      <div class="info-column">
+        <div class="flexy-thing">
+          <div class="lecture-entry-title">
+            <span class="lecture-entry-title-span">
+              <a href="/{{lecture.name}}/">
+              <span style="color:rgb(136, 105, 223)">Supplemental Lecture {{lecture.number}}: {{lecture.fullname}}</span>
+              </a>
+            </span>
+          </div>
+          <div class="lecture-entry-quote">
+            <span style="color:{{lecture.color}}">"{{lecture.quote}}"</span>
+          </div>
+          <div class="lecture-entry-link">
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endfor %}
