@@ -5,9 +5,9 @@ path = "about"
 [extra]
 +++
 
-{{ image(src="/me2.jpg",
+{{ image(src="/me2.png",
          style="
-           width: 33%;
+           width: 28%;
            float: left;
            margin-right: 15px;
            border-radius: 4%;
