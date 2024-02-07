@@ -11,7 +11,7 @@ colorscheme="lecture_grey"
 +++
 
 The whole semester, we have been dealing in the pure fragment of SML, which acts
-much like a purely functional programming languge. SML is not, however, a purely
+much like a purely functional programming langauge. SML is not, however, a purely
 functional language, as it actually has imperative features that we have been
 avoiding, up until this lecture.
 
