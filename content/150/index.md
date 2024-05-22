@@ -6,8 +6,8 @@ path = "150"
 +++
 
 # {{ emph(s="If you are a current student in 15-150 during the Summer 2024 semester, please note that some of the content has been changed!") }}
-# {{ emph(s="In particular, any references to 'totality' are not relevant for your semester. All other information should be accurate.") }}
-# {{ emph(s="Please also refer to your instructor's excellent notes at http://www.cs.cmu.edu/~15150/lect.html") }}
+### In particular, any references to 'totality' are not relevant for your semester. All other information should be accurate.
+### Please also refer to your instructor's excellent notes at http://www.cs.cmu.edu/~15150/lect.html, he worked very hard on them :)
 
 # {{ purple(s="Introduction") }}
 
