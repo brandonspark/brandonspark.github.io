@@ -10,10 +10,172 @@
                 <span class="button__icon">&#8617;&#xFE0E;</span>
             </a>
         </div>
+        <!-- An unfortunate hack, but because of the inline HTML stuff we put in the actual blog posts,
+             we have to make sure that they don't occur when we display the blog post summaries.
+        -->
+        <script>
+          document.querySelectorAll('.footnote-ref').forEach(footnote => {
+            footnote.remove();
+          });
+        </script>
+    <!-- See https://www.getzola.org/documentation/templates/pages-sections/#section-variables -->
+    <!-- For non-blog pages, we don't want to do the footnote stuff below. -->
+    {% elif page.components[0] != "blog" %}
+        <div id="content-raw">
+          <div class="post-content">
+            {{ page.content | safe }}
+          </div>
+        </div>
     {% else %}
         <div class="post-content">
-            {{ page.content | safe }}
+          <!-- Put a TL;DR (if existent) for the post as a whole. -->
+          {% if page.extra.tldr %}
+            <div class="tldr">
+              TL;DR: {{ page.extra.tldr }}
+            </div>
+          {% endif %}
+          <!-- Put a table of contents above the meat of the post. -->
+          {% if page.toc %}
+            <div class="table-of-contents">
+              <h1>Table of Contents</h1>
+              <ul>
+              {% for h1 in page.toc %}
+                  <li>
+                      <a href="{{ h1.permalink | safe }}">{{ h1.title }}</a>
+                  </li>
+                  {% if h1.children %}
+                    <ul>
+                        {% for h2 in h1.children %}
+                            <li>
+                                <a href="{{ h2.permalink | safe }}">{{ h2.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                  {% endif %}
+              {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+          <!-- coupling: if we have rendered anything above this, then this condition should be true -->
+          {% if page.extra.tldr or page.toc %}
+            <hr/>
+          {% endif %}
+          <!-- Establish a grid shape, with columns dedicated to either the content, or the footnotes. -->
+          <div style="display: grid; grid-template-columns: 6fr 1fr; grid-column-gap: 30px;">
+            <div id="content-raw">
+              {{ page.content | safe }}
+            </div>
+            <div class="block" id="footnotes-inline">
+              <!-- This is literally a template. We just put it here so we can copy
+                  the HTML, apparently.
+              -->
+              <template id="footnote-template">
+                <div class="footnote-inline">
+                  <a>
+                    {CONTENT}
+                  </a>
+                  <a id="arrow" style="color: rgb(41, 124, 248);" href="todo">↢</a>
+                </div>
+            </template>
+            </div>
+          </div>
         </div>
+
+        <!-- Almost all of this code, I ripped from https://freeman.vc/notes/inline-footnotes-with-html-templates#fnref:1 -->
+        <script>
+          const contentRaw = document.getElementById("content-raw");
+          const footnotes = document.getElementById("footnotes-inline");
+          const footnoteTemplate = document.getElementById("footnote-template");
+
+          // Compute how wide a footnote is allowed to be.
+          // NOTE: This will not vary if someone resizes their browser, for instance!
+          // I don't really care, though.
+          const footnotesRect = footnotes.getBoundingClientRect();
+          const footnotesWidth = footnotesRect.width
+          // I find it suffocating to confine the footnotes + content to just the column
+          // of the page, so let's let footnotes bleed over the edge a bit.
+          const inlineFootnoteWidth = footnotesWidth * 2.5;
+
+          const footnoteSpacePadding = 20;
+
+          // Initializes all of the footnotes their number-dependent information.
+          //
+          // Maybe fragile, and dependent on the order that the query selectors run.
+          // Hopefully there's not some silly DOM stuff I don't know about which
+          // could make this visitor behave unexpectedly.
+          // But, convenient so that I don't have to manually number all of my footnotes.
+          count = 1;
+          document.querySelectorAll('.footnote-ref').forEach(callout => {
+            const newId = "footnote-" + count;
+            callout.id = newId;
+            callout.number = count;
+            callout.href = "#footnote-" + count;
+            callout.textContent = count;
+            count += 1;
+          });
+
+          function updateFootnotes() {
+              let maxY = 0;
+
+              // Clear existing footnotes to avoid duplicates
+              footnotes.innerHTML = '';
+
+              document.querySelectorAll('.footnote-ref').forEach(callout => {
+                  const footnoteId = callout.getAttribute("href").replace("#", "");
+                  const footnoteOriginal = document.getElementById(footnoteId);
+
+                  // Do some math here to compute the proper place to put the footnote, height-wise.
+                  const calloutRect = callout.getBoundingClientRect();
+                  const parentRect = contentRaw.getBoundingClientRect();
+                  // The max is so that we take into account `maxY`, but pad it slightly so we don't occupy exactly the same Y.
+                  const calloutTopPosition = Math.max(maxY + footnoteSpacePadding, calloutRect.top + window.scrollY);
+
+                  // This is how the blog post originally proposed to do the top, but I found that this
+                  // seemed to be incorrectly using relative positioning or something, and would be off.
+                  // const top = Math.max(maxY + footnoteSpacePadding, calloutRect.top - parentRect.top);
+
+                  // Make the new footnote element that we will insert.
+                  let footnote = document.createElement("div");
+                  footnote.style.position = "absolute";
+                  footnote.style.top = `${calloutTopPosition}px`;
+                  footnote.style.width = `${inlineFootnoteWidth}px`;
+
+                  // We need to make sure the arrow links back to the right place.
+                  // We can't do this when we set the template, so we will do it here, where we know
+                  // the name of the footnote to link back to.
+                  footnote.innerHTML = footnoteTemplate.innerHTML.replace("{CONTENT}", footnoteOriginal.getAttribute("content"));
+                  footnote.querySelector("a#arrow").href = "#" + footnoteId;
+
+                  footnotes.appendChild(footnote);
+
+                  // Store the maximum Y that we have put a footnote at, so that we know
+                  // not to put other footnotes too close to it.
+                  const footnoteRect = footnote.getBoundingClientRect();
+                  const footnoteTop = footnote.top;
+                  const footnoteBottom = footnoteTop + footnoteRect.height;
+                  maxY = calloutRect.top + window.scrollY + footnoteRect.height;
+              });
+          }
+
+          // Create a new ResizeObserver
+          const resizeObserver = new ResizeObserver(entries => {
+              for (let entry of entries) {
+                  // Check if the contentRaw is being observed and resized
+                  if (entry.target === contentRaw) {
+                      updateFootnotes();
+                  }
+              }
+          });
+
+          // Start observing the contentRaw element
+          resizeObserver.observe(contentRaw);
+
+          // Call the function on initial load
+          updateFootnotes();
+        </script>
+        {# <div class="post-content">
+            {{ page.content | safe }}
+        </div> #}
     {%- endif %}
 {% endmacro content %}
 

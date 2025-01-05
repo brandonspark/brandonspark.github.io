@@ -8,7 +8,7 @@
 .post {
   width: 100%;
   text-align: left;
-  // CHANGED: from 20px, to remove weird space between post header
+  // EDITED: from 20px, to remove weird space between post header
   // and nav bar
   margin: -20px auto;
   padding: 20px 0;
@@ -17,9 +17,11 @@
     max-width: 660px;
   }
 
-  &:not(:last-of-type) {
-    border-bottom: 1px solid var(--border-color);
-  }
+  // EDITED: Commented this out because there was inconsistent spacing
+  // between the border and the next post title
+  // &:not(:last-of-type) {
+  //   border-bottom: 1px solid var(--border-color);
+  // }
 
   %meta {
     font-size: 1rem;
@@ -45,7 +47,9 @@
     margin: 0 0 15px;
     padding-bottom: 15px;
     border-bottom: var(--border);
-    font-weight: normal;
+    // EDITED: From `normal`, because I wanted post titles to be bold
+    // for consistency with the bold h1s in post content
+    font-weight: bold;
 
     a {
       text-decoration: none;
@@ -135,4 +139,45 @@
   .post-tag {
     text-decoration: underline;
   }
+}
+
+/*****************************************************************************/
+/* ADDED */
+/*****************************************************************************/
+
+.post-content h1 {
+  color: #8869df;
+  font-size: 25px;
+  border-bottom: 3px solid #8869df;
+}
+
+.post-content h2 {
+  color: #8869df;
+}
+
+.post-content h4 {
+  color: #8869df;
+}
+
+.footnote-inline {
+  color: gray;
+  border-left: 3px solid gray;
+  padding-left: 8px;
+  // slightly smaller than the post text size
+  font-size: 15px;
+}
+
+// I didn't like that the "insert_anchor_links: heading" headings
+// were underlined. This removes that.
+.zola-anchor {
+  text-decoration: none;
+}
+
+.table-of-contents {
+  color: lightblue;
+}
+
+.tldr {
+  font-style: italic;
+  color: gray;
 }

@@ -284,6 +284,13 @@ hr {
   width: 100%;
   border: none;
   background: var(--border-color);
+  // ADDED: I wanted hrs to be slightly thicker by default
+  height: 3px;
+}
+
+// ADDED: I wanted the option of thinner HRs for intra-section dividers
+// I might not use this, and instead use the lambda section breaks, though.
+hr.thin {
   height: 1px;
 }
 
@@ -398,4 +405,16 @@ hr {
 
 .with-bottom-spacing {
   margin-bottom: 2cm;
+}
+
+// ADDED: for pull quotes
+.pull-quote {
+  border-left: 2px solid;
+  margin: 40px 40px;
+  padding-left: 30px;
+  font-style: italic;
+  font-size: 16pt;
+  // coupling: same as `emph` shortcode
+  color: #ffb330;
+  justify-content: center;
 }

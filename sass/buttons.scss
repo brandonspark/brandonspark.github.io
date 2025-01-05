@@ -66,7 +66,9 @@ a.read-more:active {
   background: none;
   box-shadow: none;
   padding: 0;
-  margin: 20px 0;
+  // EDITED: I wanted there to be less vertical space around
+  // the "Read more" button.
+  margin: 10px 0;
   max-width: 100%;
 }
 
