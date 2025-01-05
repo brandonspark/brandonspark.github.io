@@ -111,14 +111,16 @@
 
         <article>
           <div class="profile">
-            <img src="/me.jpg"
+
+            {% set image = resize_image(path="me.jpg", op="fit_width", width=600) %}
+            <img src="{{image.url}}"
             style="
               width: 35%;
               float: right;
               margin-left: 15px;
               margin-top: 30px;
               border-radius: 4%;
-            " position="right">
+            ">
 
             <h2> <span style="color:var(--accent)">Brandon Wu</span> </h2>
 

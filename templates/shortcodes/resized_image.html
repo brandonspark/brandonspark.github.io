@@ -1,0 +1,6 @@
+{% if width %}
+{% else %}
+  {%- set width=600 -%}
+{% endif %}
+{% set image = resize_image(path=src, op="fit_width", width=width) %}
+<img src="{{ image.url }}" {% if style %}style="{{style}}"{% endif %} />

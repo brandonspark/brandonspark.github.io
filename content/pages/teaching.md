@@ -5,15 +5,14 @@ path = "teaching"
 [extra]
 +++
 
-{{ image(src="/teaching.jpg",
+{{ resized_image(src="/teaching.jpg",
+         width=600,
          style="
            width: 35%;
            float: right;
            margin-left: 15px;
            border-radius: 4%;
-
-         ",
-         position="right") }}
+         ") }}
 
 Teaching is something which is very important to me. I was fortunate enough
 to have had the opportunity to be a teaching assistant for nearly my entire

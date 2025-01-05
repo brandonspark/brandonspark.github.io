@@ -5,14 +5,15 @@ path = "about"
 [extra]
 +++
 
-{{ image(src="/me2.png",
+
+{{ resized_image(src="me2.png",
+         width=500,
          style="
            width: 28%;
            float: left;
            margin-right: 15px;
            border-radius: 4%;
-         ",
-         position="left") }}
+         ") }}
 
 Hi there! As mentioned on the home page, my name is **Brandon Wu**, and I work as
 a program analysis engineer at a company called
