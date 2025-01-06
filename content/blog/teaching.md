@@ -13,9 +13,9 @@ I found myself in a cramped, unventilated call booth when my dreams came true.
 The sterile lighting of the WeWork call booth suffused the chamber, joined in
 counterpoint by the warm light of my laptop screen, which displayed a Zoom
 waiting room. The musty scent of my jacket from an errant San Francisco rain
-shower filled the small compartment equally as much as my tangible anxiety. My
-leg bounced incessantly, echoing the race of my heart. I dimly remembered that
-my mother had told me to stop doing that.
+shower filled the small compartment equally as much as my tangible anxiety. My leg
+bounced incessantly, echoing the race of my heart. I dimly remembered that my
+mother had told me to stop doing that.
 
 In just a few short moments, I was to meet with a professor from Carnegie
 Mellon's School of Computer Science to discuss my potential appointment as an
@@ -47,7 +47,7 @@ the fires of the forge that had shaped me, but to stoke it for others instead.
 When imagining achieving something so weighty as a dream, one might typically
 picture a scene more grandiose than that which I found myself in. There should
 have been confetti, a shower of lights, or someone waiting to shake my hand in
-congratulations. It was as anticlimactic as my graduation I never walked at, a
+congratulations. It was as anticlimactic as the graduation I never walked at, a
 year earlier.
 
 But there was no confetti, and no shower of lights, just the quiet fan of my
@@ -96,11 +96,11 @@ aspects of the post, you may skip to the next section
 
 I don't have much of a connection to my extended family.
 
-This owes in part to being the child of first-generation immigrants from China,
-and having an extended family that will never be able to read this article.
-Stories of my grandparents or cousins in China may as well have been written in
-a storybook, about characters of fiction. They are about equally as likely to
-have an impact on my life.
+This is owed to, in part, by being the child of first-generation immigrants from
+China, and having an extended family that will never be able to read this
+article. Stories of my grandparents or cousins in China may as well have been
+written in a storybook, about characters of fiction. They are about equally as
+likely to have an impact on my life.
 
 Despite this, I have one instance where I can remember putting stock in my
 connections to my more distant relatives. In high school, during a project to interview
@@ -165,7 +165,7 @@ with bated breath. I told no one. I was afraid that my dream was so fragile, it
 would shatter if I spoke about it. I was afraid that it would be taken from me
 if I dared to hope it was possible.
 
-On March 7, 2023, I became confirmed as the summer instructor for the
+Finally, on March 7, 2023, I became confirmed as the summer instructor for the
 upcoming semester, and the real work began. I had a little more than two months
 to come up with a plan for the semester. A little more than two months to make
 my mark on the course.
@@ -323,6 +323,9 @@ usually something that will be wiped from my mind within the next year,
 unfortunately.{{ footnote(s="
   I like to joke that anything that I haven't thought about in the past six months,
   I will forget. Unfortunately, this is only partially a joke.
+")}} {{ footnote(s="
+  There's an LRU cache joke to be made here, but unfortunately, I haven't thought
+  about LRU caches in the past six months.
 ")}}
 
 However, what do I remember from those courses? From courses whose content have
