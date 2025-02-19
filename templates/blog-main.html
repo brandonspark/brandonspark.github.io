@@ -14,14 +14,13 @@
       {%- set show_pages = section.pages -%}
   {% endif -%}
 
-  {#  TODO: Restore this once we are ready to have blog posts show up in the main blog landing page.
   {%- for page in show_pages %}
       <div class="post on-list">
           {{ post_macros::header(page=page) }}
           {{ post_macros::content(page=page, summary=true) }}
       </div>
   {% endfor -%}
-  <div class="pagination"> #}
+  <div class="pagination">
       <div class="pagination__buttons">
       {%- if paginator.previous %}
           <span class="button previous">

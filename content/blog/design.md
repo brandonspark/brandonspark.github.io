@@ -1,6 +1,6 @@
 +++
 title = "Designing a computer science course"
-date = 2024-12-02
+date = 2025-02-19
 [taxonomies]
 tags = ["150", "summer", "design", "teaching"]
 
@@ -33,7 +33,7 @@ But, even though the pure information content of the course was predetermined,
 an important lesson that we derive from the film *Megamind* is that there is one
 aspect which separates an <a href="https://youtu.be/dy2zB8bLSpk?si=HIk3h5GBnntdS_DF">instructor from a super-instructor</a>:
 
-{{ blog_image(src="/presentation.jpg", width="80e) }}
+{{ blog_image(src="/presentation.jpg", width="80") }}
 
 <!-- presentation -->
 
