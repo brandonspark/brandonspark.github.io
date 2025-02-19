@@ -7,6 +7,15 @@ path = "150"
 
 # {{ purple(s="Introduction") }}
 
+<div class="figure">
+{{ image(src="/150poster.png", style="
+  width: 80%;
+  margin-bottom: 10px;
+  margin-top: 10px;
+") }}
+  <!-- <a>Poster for the course overall</a> -->
+</div>
+
 I had the pleasure of serving as the summer instructor for 15-150, the introduction
 functional programming class for computer science students at Carnegie Mellon, in
 the Summer 2023 semester.
