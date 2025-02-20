@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lecture 10 - Combinators and Staging</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/lecture_hot_pink.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/staging/">Lecture 10 - Combinators and Staging</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="coolthing">
+          <a href="/staging/lecture10.png" target="_blank">
+          <img src="/staging/lecture10.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/staging/lecture10.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            <p>With higher-order, curried functions, we now have an idea of functions of
+"multiple arguments", where those arguments may be given to the function at
+different times. This leads us to the idea of <span style="color:rgb(255, 179, 48)">partial evaluation</span>, where we can specialize a function for later use by giving it a subset of
+its curried arguments.</p>
+<p>With this comes the idea of <span style="color:rgb(255, 179, 48)">staging</span>, which entails realizing
+that useful work can be moved around a function with respect to its arguments.
+This can allow us to do some optimization in terms of labor saved, by ensuring
+that we reuse computations wherever possible, and avoid doing extraneous work,
+as well as ensuring finer-grained control over our computations in general.</p>
+<p>Another idea introduced in this lecture is that of the pipe operator, <code>|&gt;</code>,
+which is a higher-order function that helps us write code, by sequencing
+operations in a way that can be read more intuitively. We also saw its cousin,
+the option-oriented <code>&gt;&gt;=</code>, which lets us pipe together operations that may fail,
+in a similar way. These are just examples of how higher-order functions give us
+more fundamental power in the expressivity and customizability of our code.</p>
+
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="https:&#x2F;&#x2F;youtube.com&#x2F;embed&#x2F;w-WpXPUMtM4" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

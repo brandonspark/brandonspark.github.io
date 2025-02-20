@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lecture 3 - Induction and Recursion</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/lecture_teal.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/induction/">Lecture 3 - Induction and Recursion</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="coolthing">
+          <a href="/induction/lecture03.png" target="_blank">
+          <img src="/induction/lecture03.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/induction/lecture03.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            <p>Early on, it was claimed that almost every function in 150 would be recursive.
+This lecture introduces a very deep idea that induction and recursion are two
+sides of the same coin, and follow similar principles of <strong>solving problems
+via using answers to smaller subproblems</strong>.</p>
+<p>We reviewed the idea of induction, which lets us prove theorems on the natural
+numbers by a rigid structure of a <span style="color:rgb(255, 179, 48)">base case</span> and <span style="color:rgb(255, 179, 48)">inductive step</span>. This lets us essentially show that a theorem can be
+proven for any given number, via finite repetitions of the inductive step to the
+base case.</p>
+<p>This process ends up being very similar to the act of writing a recursive
+function, by connecting the idea of assuming an induction hypothesis with
+assuming that a recursive function already works, a technique dubbed the <span style="color:rgb(255, 179, 48)">recursive leap of faith</span>.</p>
+<p>We then went over more aspects of the SML language, including <span style="color:rgb(255, 179, 48)">patterns</span>, which are the fundamental constructs by which we break
+down data into simpler parts, in SML.</p>
+
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="https:&#x2F;&#x2F;youtube.com&#x2F;embed&#x2F;6HsZypI7Osg" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lecture 12 - Exceptions</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/lecture_light_purple.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/exceptions/">Lecture 12 - Exceptions</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="coolthing">
+          <a href="/exceptions/lecture12.png" target="_blank">
+          <img src="/exceptions/lecture12.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/exceptions/lecture12.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            <p>We have so far described three behaviors that are allowed of a legal SML program --
+it may either evaluate to a value, loop forever, or raise an exception. While we have
+been brief on the last of these three, it is a useful language mechanism for
+dealing with cases where we do not necessarily desire to give back a value.</p>
+<p>In this lecture, we learned that <span style="color:rgb(255, 179, 48)">exceptions</span> are values of a type
+called <code>exn</code>, which enjoys the property of <span style="color:rgb(255, 179, 48)">extensibility</span>, in that
+constructors may be added to it dynamically, via using the <code>exception</code> keyword.</p>
+<p>These include common exceptions such as <code>Bind</code>, <code>Div</code>, and <code>Match</code>, but also
+custom exceptions, which may be defined to take in information in the form of
+other values, much like other constructors. This is useful, because exceptions
+may also be <span style="color:rgb(255, 179, 48)">handled</span> via the <code>handle</code> keyword, which allows us to
+recover from potentially-fatal errors at a different location.</p>
+<p>This is both useful for error recovery, and for nuanced control flow. We saw
+that using this, we were able to write functions in an <span style="color:rgb(255, 179, 48)">exception-handling style</span>, which resembled the form of
+continuation-passing style code.</p>
+
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="https:&#x2F;&#x2F;youtube.com&#x2F;embed&#x2F;SREtX_MwCTM" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

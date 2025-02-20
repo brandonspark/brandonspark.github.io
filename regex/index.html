@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lecture 13 - Regular Expressions</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/lecture_pinkish_red.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/regex/">Lecture 13 - Regular Expressions</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="coolthing">
+          <a href="/regex/lecture13.png" target="_blank">
+          <img src="/regex/lecture13.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/regex/lecture13.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            <p>String validation is an important problem in computer science. We are often
+interested in processing some kind of text and extracting information from it,
+or verifying that it matches some expected input schema. <span style="color:rgb(255, 179, 48)">Regular
+expressions</span> are an extremely well-established tool in the field of computer
+science, which aim to solve exactly that problem.</p>
+<p>In this lecture, we explored the theory of regular expressions, and saw how they
+could be defined by a simple SML datatype. Regular expressions are defined to
+correspond to a particular set of strings, known as a <span style="color:rgb(255, 179, 48)">language</span>,
+according to a simple recursive mathematical description.</p>
+<p>We then used this SML datatype of <code>regexp</code> to define a function that attempts to
+match a string to a regular expression, by recursive decomposition on the structure
+of the regular expression. We found that this admitted a reasonably terse and
+simple implementation, via a <code>match</code> function with a particular specification
+having to do with splitting the string into a prefix and suffix satisfying
+certain conditions.</p>
+<p>While this description seems scary, it is easier to think of in terms of a
+picture, which gives credence to thinking about code behind a layer of intuitive
+abstraction, whenever possible. By reasoning via specification or picture, we
+can prove our implementation correct, and learn how to implement such a function
+well.</p>
+
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="https:&#x2F;&#x2F;youtube.com&#x2F;embed&#x2F;cVkPmxI2MO0" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>
