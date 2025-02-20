@@ -8,11 +8,13 @@ path = "150"
 # {{ purple(s="Introduction") }}
 
 <div class="figure">
-{{ image(src="/150poster.png", style="
-  width: 80%;
-  margin-bottom: 10px;
-  margin-top: 10px;
-") }}
+{{ resized_image(src="150poster.png",
+        width=1500,
+         style="
+           width: 80%;
+           margin-top: 10px;
+           margin-bottom: 10px;
+         ") }}
   <!-- <a>Poster for the course overall</a> -->
 </div>
 
