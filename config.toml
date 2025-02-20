@@ -15,6 +15,7 @@ taxonomies = [
     {name = "tags"}
 ]
 
+title = "default_title"
 
 [markdown]
 # Whether to do syntax highlighting
@@ -37,6 +38,11 @@ logo_text = "λ brandonspark"
 
 favicon = "/favicon.png"
 favicon_mimetype = "image/png"
+
+# This makes it so that the `title.html` macro populates the <title> tag on
+# each of the pages.
+# We need this so Google Analytics will actually know which page was visited.
+page_titles = "page_only"
 
 # Author name: when specified, modifies the default
 # copyright text. Apart from author, it will
