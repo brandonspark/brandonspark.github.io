@@ -672,7 +672,7 @@ I have occurred in those office hour sessions.
 
 I recall regulars who would drop by my lectures just to chat, students who would
 come for one-on-one assistance that they felt self-conscious about receiving
-otherwise, and a a student who told me that they called their mother about the
+otherwise, and a student who told me that they called their mother about the
 class, telling her how excited they were about what they were learning.
 
 I recall a student who had taken the course before, who didn't feel like they
