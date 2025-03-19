@@ -15,7 +15,7 @@ taxonomies = [
     {name = "tags"}
 ]
 
-title = "default_title"
+title = "Home"
 
 [markdown]
 # Whether to do syntax highlighting
