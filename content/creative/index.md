@@ -40,15 +40,18 @@ The show is <a href="https://youtu.be/Viqv-Ynd_vY">available to watch online her
 
 {{ gallery() }}
 
+I am also a member of <a href="https://www.backyardtheatersf.org/">Backyard Theater</a>, a (small, unprofessional) theater group in San Francisco that puts on bi-annual parody musicals of popular works.
+
+So far I have been in our productions of <a href="https://youtu.be/E7oFm_yh70U?feature=shared">The Princess Bride</a>, <a href="https://www.youtube.com/watch?v=Wx_O57rM8y8">Harry Potter (Chosen)</a>, and <a href="https://www.youtube.com/watch?v=L_5PtvwtDac">Tinderella</a>.
 
 # {{ purple(s="Music") }}
 
-I picked up the guitar during my senior year of college, and it is one of my
-main hobbies. I don't really have anything to share here, as I'm
-not yet at the level of skill where I'm happy with what I can produce, but I'm
-inching closer every day.
+I picked up the guitar during my senior year of college, and the electric bass
+more recently. Playing music is one of my main hobbies, although I am not a very
+advanced player. I maintain an Instagram account that I use to document my
+progress as a musician, <a href="https://www.instagram.com/150stringguitar/">which you can find here</a>.
 
-I was in an a cappella group called Hillelujah in college, though.
+I was also in an a cappella group called Hillelujah in college.
 <a href="https://youtu.be/sMGtjnhTIE4">Here's a video of us performing at
 Kol Haolam</a>, the annual national Jewish a cappella
 competition, in 2019.
@@ -66,7 +69,8 @@ life to, or set a scene in a story to. This has only happened a couple times,
 and in very, very amateur settings, but I am proud of what I create anyways.
 
 Here is one such example, of a video I created to preserve the
-<a href="https://youtu.be/TyIas41munY">memories of my freshman year at CMU.</a>
+<a href="https://youtu.be/TyIas41munY">memories of my freshman year at CMU</a>,
+or another video I created for <a href="https://youtu.be/pJhf2xqqybY?si=0_Mmt805XfkYdwYL">my first year of life out of college</a>.
 
 I also consider film analysis video essays on YouTube a guilty pleasure of mine,
 including channels such as <a href="https://www.youtube.com/@everyframeapainting">Every Frame a Painting</a>, <a href="https://www.youtube.com/@schnee1/featured">shnee</a>, and <a href="https://www.youtube.com/@NowYouSeeIt/featured">Now You See It</a>.
