@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lecture 20 - Special Topics: Compilers</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/lecture_light_turquoise.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/compilers/">Lecture 20 - Special Topics: Compilers</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="coolthing">
+          <a href="/compilers/lecture20.png" target="_blank">
+          <img src="/compilers/lecture20.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/compilers/lecture20.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            <p>Compilers are one of the most interesting and essential advances in the field of
+computer science, which form the backbone of every piece of software that has ever
+been produced in the world today.</p>
+<p>Functional programming is good for many things, but in particular, writing
+compilers is an extremely powerful use case for it. In this lecture, we went
+over the historical context behind compilers, the theory behind how they
+operate, and the bird's-eye view for the various steps behind implementing a
+compiler.</p>
+<p>We went specifically into the phases of a compiler, <span style="color:rgb(255, 179, 48)">lexing</span>,
+<span style="color:rgb(255, 179, 48)">parsing</span>, <span style="color:rgb(255, 179, 48)">IR generation</span>, <span style="color:rgb(255, 179, 48)">optimization</span>,
+and <span style="color:rgb(255, 179, 48)">code generation</span>. Each of these presents their own theory and challenges, but many benefit from the kind of rich data that can be described by
+algebraic datatypes.</p>
+<p>Ultimately, programs are themselves representable by data structures,
+and a program really is just a fancy kind of tree. Compilers must be able to read
+and interpret programs, so compilers can be seen as really nothing more than a
+series of pure transformations on trees, which functional programming excels at.</p>
+
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="https:&#x2F;&#x2F;youtube.com&#x2F;embed&#x2F;4tVxgxeS1Pc" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>
