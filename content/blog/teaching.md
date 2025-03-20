@@ -339,7 +339,7 @@ fit for another post. I'll omit it here for brevity.")}}:
 - #### {{ emph(s="Programmatic Thinking is Mathematical Thinking") }}
 - #### {{ emph(s="Types Guide Structure") }}
 
-Th important idea here is that these ideas are {{ emph(s="permanent")}}. Many
+The important idea here is that these ideas are {{ emph(s="permanent")}}. Many
 courses in my life I have taken and immediately discarded, used for a grade and
 then immediately forgotten about. Sometimes, that's just how it is. But my role as
 an instructor was to show students that 15-150 was not one of those courses --
