@@ -1,0 +1,110 @@
+- number: 01
+  name: prologue
+  fullname: Prologue
+  color: "rgb(105, 105, 105)"
+  quote: "Welcome to the rest of your life!"
+- number: 02
+  name: equivalence
+  fullname: Equivalence, Binding, and Scope
+  color: "rgb(137, 86, 219)"
+  quote: "Equivalences save lives."
+- number: 03
+  name: induction
+  fullname: Induction and Recursion
+  color: "rgb(13, 158, 131)"
+  quote: "Recursion is the bread and butter of doing anything in a functional language."
+- number: 04
+  name: structural
+  fullname: Structural Induction and Tail Recursion
+  color: "rgb(69, 209, 143)"
+  quote: "Proving things about pretty much any kind of data you can imagine."
+- number: 05
+  name: trees
+  fullname: Trees
+  color: "rgb(228, 132, 214)"
+  quote: "Trees are the most fundamental data structure."
+- number: 06
+  name: asymptotic
+  fullname: Asymptotic Analysis
+  color: "rgb(239, 171, 93)"
+  quote: "A step is not always a step. We care about analyzing performance mathematically."
+- number: 07
+  name: parallel
+  fullname: Sorting and Parallelism
+  color: "rgb(243, 194, 82)"
+  quote: "What do we do when we have infinitely many processors?"
+- number: 08
+  name: poly
+  fullname: Polymorphism
+  color: "rgb(229, 71, 53)"
+  quote: "Code reuse at different types, without breaking any of our safety properties."
+- number: 09
+  name: hofs
+  fullname: Higher-Order Functions
+  color: "rgb(26, 183, 167)"
+  quote: "We can take in functions and also return functions, like any other value."
+- number: 10
+  name: staging
+  fullname: Combinators and Staging
+  color: "rgb(239, 100, 218)"
+  quote: "You shouldn't have to wait on something unrelated when you can do work right now."
+- number: 11
+  name: cps
+  fullname: Continuation-Passing Style
+  color: "rgb(35, 113, 240)"
+  quote: "CPS is the difference between writing instructions now, or remembering them later."
+- number: 12
+  name: exceptions
+  fullname: Exceptions
+  color: "rgb(166, 74, 241)"
+  quote: "Exceptions make mathematical thinking harder."
+- number: 13
+  name: regex
+  fullname: Regular Expressions
+  color: "rgb(234, 56, 115)"
+  quote: "Regular expressions are one of the most practical things you can learn."
+- number: 14
+  name: modules
+  fullname: Structures and Signatures
+  color: "rgb(212, 95, 49)"
+  quote: "SML has one of the most sophisticated module systems of any programming language."
+- number: 15
+  name: functors
+  fullname: Functors
+  color: "rgb(241, 111, 55)"
+  quote: "Functors will show us how we can write code that depends upon modules."
+- number: 16
+  name: redblack
+  fullname: Red-Black Trees
+  color: "rgb(139, 21, 21)"
+  quote: "Red-black trees are a very good application of modules for protecting invariants."
+- number: 17
+  name: seq
+  fullname: Sequences
+  color: "rgb(246, 212, 43)"
+  quote: "With sequences, we can keep immutability and also have the benefits of arrays."
+- number: 18
+  name: lazy
+  fullname: Lazy Programming
+  color: "rgb(73, 220, 237)"
+  quote: "With laziness, only pay for for the computations you want to use."
+- number: 19
+  name: imperative
+  fullname: Imperative Programming
+  color: "rgb(170, 170, 170)"
+  quote: "We invented immutability and purity, but we do not serve them. It's OK to be a little mutable."
+- number: 20
+  name: compilers
+  fullname: Compilers
+  color: "rgb(35, 215, 173)"
+  quote: "A long time ago, programming languages did not exist."
+- number: 21
+  name: pa
+  fullname: Program Analysis
+  color: "rgb(95, 67, 219)"
+  quote: "We are solving an unsolvable problem."
+- number: 22
+  name: finale
+  fullname: Finale
+  color: "rgb(18, 44, 189)"
+  quote: "You can never go back, because you are forever a functional programmer."

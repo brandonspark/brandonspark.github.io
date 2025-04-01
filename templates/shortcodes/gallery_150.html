@@ -1,7 +1,7 @@
 <div class="image-gallery">
-  {% set data = load_data(path="content/150/manifest.yaml") %}
+  {% set data = load_data(path="content/122/manifest.yaml") %}
   {% for lecture in data -%}
-    {% set image = resize_image(path="content/150/" ~ lecture.number ~ "/lecture" ~ lecture.number ~ ".png", width=800, height=440, quality=100) %}
+    {% set image = resize_image(path="content/122/" ~ lecture.number ~ "/lecture" ~ lecture.number ~ ".png", width=800, height=440, quality=100) %}
     <a href="{{ get_url(path=lecture.name) }}" target="_blank">
       <img src="{{ image.url }}" />
     </a>
