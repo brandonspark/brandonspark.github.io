@@ -68,7 +68,7 @@ menu_items = [
     # {name = "archive", url = "$BASE_URL/archive"},
     {name = "about me", url = "$BASE_URL/about"},
     {name = "teaching", url = "$BASE_URL/teaching"},
-    {name = "15122", url = "$BASE_URL/122"},
+    {name = "15150", url = "$BASE_URL/150"},
     {name = "creative", url = "$BASE_URL/creative"},
     {name = "projects", url = "$BASE_URL/projects"},
 

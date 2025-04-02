@@ -77,5 +77,5 @@ the Summer 2023 semester. The sum of my career with 150, it gave me the chance
 to work with a team of 8 TAs to deliver a world-class education to a class of
 50 undergraduates, in my debut as a visiting lecturer.
 
-<a href="/122">You can find the lectures and recordings from that
+<a href="/150">You can find the lectures and recordings from that
 semester under this page.</a>

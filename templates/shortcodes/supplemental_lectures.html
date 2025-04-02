@@ -1,8 +1,8 @@
-  {% set data = load_data(path="content/122/manifest_supplemental.yaml") %}
+  {% set data = load_data(path="content/150/manifest_supplemental.yaml") %}
   {% for lecture in data -%}
     <div class="lecture-entry">
       <div class="image-column">
-        {% set image = resize_image(path="content/122/" ~ lecture.name ~ "/" ~ lecture.path ~ ".png", width=800, height=440, quality=100) %}
+        {% set image = resize_image(path="content/150/" ~ lecture.name ~ "/" ~ lecture.path ~ ".png", width=800, height=440, quality=100) %}
         <img
           src="{{image.url}}"
           style="
