@@ -5,6 +5,14 @@ path = "150"
 [extra]
 +++
 
+{{ emph(s="DISCLAIMER") }}: If you are a student currently taking 15-150 at Carnegie Mellon University, know
+that these notes and videos are **not a substitute for going to lecture**. You will learn more
+by being in an environment live, rather than 2x speeding through the material late at night.
+Use these lectures only as a reference.
+
+I give you these resources in the pursuit of your learning. I trust you to make the right
+choice to make the optimal use of it.
+
 # {{ purple(s="Introduction") }}
 
 <div class="figure">
