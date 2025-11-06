@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Designing a computer science course</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/blue.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        <nav class="menu">
+            <ul class="menu__inner">
+                <li><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li class="active"><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/blog/design/">Designing a computer science course</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date">
+            2025-02-19
+        </span>
+
+    </div>
+
+    
+        <span class="post-tags-inline">
+                :: tags:&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/150/">#150</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/design/">#design</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/summer/">#summer</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/teaching/">#teaching</a></span>
+    
+
+        
+        <div class="post-content">
+          <!-- Put a TL;DR (if existent) for the post as a whole. -->
+          
+            <div class="tldr">
+              TL;DR: This blog post covers the graphic design process that went into my iteration of the introductory functional programming class at Carnegie Mellon.
+            </div>
+          
+          <!-- Put a table of contents above the meat of the post. -->
+          
+            <div class="table-of-contents">
+              <h1>Table of Contents</h1>
+              <ul>
+              
+                  <li>
+                      <a href="https://brandonspark.github.io/blog/design/#why-does-design-matter">Why does design matter?</a>
+                  </li>
+                  
+              
+                  <li>
+                      <a href="https://brandonspark.github.io/blog/design/#design-themes">Design Themes</a>
+                  </li>
+                  
+                    <ul>
+                        
+                            <li>
+                                <a href="https://brandonspark.github.io/blog/design/#color-palette">Color Palette</a>
+                            </li>
+                        
+                            <li>
+                                <a href="https://brandonspark.github.io/blog/design/#title-slides">Title Slides</a>
+                            </li>
+                        
+                            <li>
+                                <a href="https://brandonspark.github.io/blog/design/#theses">Theses</a>
+                            </li>
+                        
+                            <li>
+                                <a href="https://brandonspark.github.io/blog/design/#diagrams">Diagrams</a>
+                            </li>
+                        
+                    </ul>
+                  
+              
+                  <li>
+                      <a href="https://brandonspark.github.io/blog/design/#final-thoughts">Final Thoughts</a>
+                  </li>
+                  
+              
+              </ul>
+            </div>
+          
+          <!-- coupling: if we have rendered anything above this, then this condition should be true -->
+          
+            <hr/>
+          
+          <!-- Establish a grid shape, with columns dedicated to either the content, or the footnotes. -->
+          <div style="display: grid; grid-template-columns: 6fr 1fr; grid-column-gap: 30px;">
+            <div id="content-raw">
+              <p style="color: #a6a6a6">
+<b>NOTE:</b> This post is a component of a larger reflection blog post on my
+time as an instructor for CMU's 15-150 Principles of Functional Programming
+course. That blog post can be found <a href="https://brandonspark.github.io/blog/teaching">here</a>.
+</p>
+<hr style="clear: both;"/>
+<p>Designing a course from scratch is a lot of effort. It involves creating a
+itinerary of topics, a comprehensive narrative that drives the material,
+homework assignments that will be challenging enough to nurture students' growth
+while remaining feasible, and a great deal of investment into each individual
+student.</p>
+<p>Thankfully, <span style="color:rgb(255, 179, 48)">this blog post is not about that</span>. Having finished my
+stint as a summer instructor for 15-150, the introductory functional programming
+class at CMU, I was able to work off of course material that had already been
+taught for years. There was no need for me to design a whole curriculum from
+scratch.</p>
+<p>But, even though the pure information content of the course was predetermined,
+an important lesson that we derive from the film <em>Megamind</em> is that there is one
+aspect which separates an <a href="https://youtu.be/dy2zB8bLSpk?si=HIk3h5GBnntdS_DF">instructor from a super-instructor</a>:</p>
+<img src="&#x2F;presentation.jpg" class="center blog-image" style="width: 80%; margin-bottom: 15px; margin-top: 15px;"/><!-- presentation -->
+<p>With information comes the <em>presentation</em> of that information, and with
+presentation comes stylistic choices. With those comes a whole other world of
+issues and challenges, because information may be immutable, but how it is
+conveyed to someone can make a world of difference in how it is retained,
+remembered, and understood.</p>
+<p>This blog post is about <strong><span style="color:rgb(255, 179, 48)">designing</span></strong> a course, in the sense of
+artistic design. It's an exploration of how, over twelve weeks and months of
+preparation, I attempted to create a comprehensive style that could not just
+present material to students, but engage their attention fully, primarily
+through the creation of visual content for students to refer back to in the form
+of slides.</p>
+<span id="continue-reading"></span><h1 id="why-does-design-matter"><a class="zola-anchor" href="#why-does-design-matter" aria-label="Anchor link for: why-does-design-matter">Why does design matter?</a></h1>
+<p>Once thing which I took away from my undergraduate education is just <span style="color:rgb(255, 179, 48)">how hard it is to capture people&#x27;s attention</span>. This was witnessed
+firsthand by myself, as I spent probably over 70% of my time in
+college lectures asleep.<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="This was not primarily the fault of the
+instructors, but instead of a poor sleep schedule on my part."></a></sup></p>
+<div class="pull-quote">
+  I spent probably over 70% of my time in college lectures asleep.
+</div>
+<p>Having taught students before as a TA, I know that <span style="color:rgb(255, 179, 48)">teaching students
+who don&#x27;t want to be taught is impossible</span>. I also know from experience with
+myself, that the only way that I can be engaged with content is when the content
+is itself engaging<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="The astute reader notices that this is a
+tautology."></a></sup>. <strong>Design matters</strong>.</p>
+<p>I'm something of a visual learner, in that when I see a very well-done diagram,
+I remember that diagram. I am more incentivized to look at graphics when they
+are pretty -- I am more incentivized to look at <em>slides</em> when they are
+pretty<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="One might liken this to the phenomena of &lt;a href=&quot;https:&#x2F;&#x2F;www.babylab.ucla.edu&#x2F;wp-content&#x2F;uploads&#x2F;sites&#x2F;8&#x2F;2016&#x2F;09&#x2F;Slater-et-al-2000.pdf&quot;&gt;babies&amp;#39; preference for attractive faces&lt;&#x2F;a&gt;. Unfortunately, I transferred out of my psychology degree, so I lack
+the credentials to justify this claim."></a></sup>. My goal was to create a set of
+slide decks that would truly cause people to pay attention.</p>
+<p>One interesting corollary of this is that, because I chose to present my slides
+live during lectures, I needed slides that I could teach a lesson to. At the
+same time, however, I knew that 150 did not have a textbook, and that students
+needed referenceable material so that they could study adequately. There existed
+lecture notes, but they were typeset and drab, and I wanted to do better.</p>
+<p>So my goals for my lecture slides were threefold:</p>
+<ul>
+<li>They needed to be structured in a way such that <span style="color:rgb(255, 179, 48)">I could teach a
+lesson to them</span>, without students losing focus or tabbing out. This means
+that I could not simply dump text on them--they needed to feel dynamic.</li>
+<li>They needed to be <span style="color:rgb(255, 179, 48)">helpful to people who are studying the lecture
+after the fact</span>, and be as referenceable and helpful as a textbook on the
+subject. In essence, my slides need to serve <em>as</em> the textbook for the course.</li>
+<li>They needed to be <span style="color:rgb(255, 179, 48)">thematically consistent</span>, in terms of having
+predictable structure that would cause students to be able to build the right
+conceptual understanding.</li>
+</ul>
+<p>Similarly to how <em>leitmotifs</em> in music are recurring musical elements which highlight
+a particular idea or character, I had a few consistent visual themes that I would
+use in my slides. My belief is that <span style="color:rgb(255, 179, 48)">similar information should be
+presented similarly, visually</span>, becuase it ultimately creates material that is
+easier to follow along.</p>
+<h1 id="design-themes"><a class="zola-anchor" href="#design-themes" aria-label="Anchor link for: design-themes">Design Themes</a></h1>
+<h4 id="color-palette"><a class="zola-anchor" href="#color-palette" aria-label="Anchor link for: color-palette">Color Palette</a></h4>
+<p>One such way this manifested was in the color schemes for each slide deck. Each
+slide was characterized by a primary color palette and a secondary color palette.
+The primary color is usually a fairly bold color that characterizes the borders
+and backgrounds of the slides, and the secondary color is a sometimes contrasting,
+also bright color which is used for highlighting purposes. I did not come up with
+this idea, but I acquired it when I inherited Jacob Neumann's slides, a previous
+150 instructor.</p>
+<p>One such way I used this idea was in <span style="color:rgb(255, 179, 48)">terms</span>. This was my term (haha)
+for vocabulary words, or instances of terms which I do not think that students would
+have encountered before. Essentially, important words. These would be highlighted
+in the secondary color, always, which would tell students that they should be paying
+attention.</p>
+<div class="image-gallery">
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/colored1.png" class="left" style="
+           width: 49%;
+           float: left;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/colored2.png" class="right" style="
+           width: 49%;
+           float: right;
+         " />
+
+</div>
+<p>These colors would also be used in each slide's syntax highlighting, as well as to
+color certain blocks, which denote things like key facts, definitions, examples,
+and mantras. Ultimately, these colors served as lightweight visual cues, meaning
+"hey, pay attention".</p>
+<h4 id="title-slides"><a class="zola-anchor" href="#title-slides" aria-label="Anchor link for: title-slides">Title Slides</a></h4>
+<p>Presentation matters a lot, and it matters most at the beginning of a lecture.
+How can you draw someone's attention in in the first minute, and make them excited
+for the lecture that is to come? You need to have a great first title slide. First
+impressions matter.</p>
+<p>Traditional title slides done in Beamer (the LaTeX set-up I constructed my slides in)
+typically all look quite similar, with a presentation name in some colored box, and
+with authorship information scattered elsewhere.</p>
+<img src="&#x2F;beamer_title.png" class="center blog-image" style="width: 60%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>This is tried and true, but puts me to sleep. I wanted something which might stick
+in their brains, which would announce the subject material in a dynamic way. I needed
+something more personalized to the course.</p>
+<p>With the help of my friend Boro, a designer at Semgrep, we came up with a rough prototype
+of a template that could be filled in for each lecture:</p>
+<img src="&#x2F;prototemplate.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>With a little polish and fine tuning, we arrived at our final template:</p>
+<img src="&#x2F;template.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>There were a few constraints I had to contend with to get here:</p>
+<ul>
+<li>I wanted to have a lambda on it somewhere, hopefully obvious and prominent<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="This probably goes without saying."></a></sup>.</li>
+<li>I wanted to have a background image, which would hopefully add some contrasting
+detail to the simplicity of the lambda. The obvious solution was to place the lambda at
+the right, and have it frame the background image, which would take up the rest
+of the space.</li>
+<li>An artistic choice was to have it be multiple lambdas, all folding in to each
+other, in order to evoke a sense of recursion, or neverendingness. These lambdas
+would be colored differently, to give a more nuanced color palette to the slide
+deck.</li>
+<li>We resolved the awkward "tail" at the top of the lambda by stretching it
+across the top of the border with a horizontal line. This also gave a
+convenient place to announce the title of the course.</li>
+<li>This left only on top of the background image, for the lecture title and other
+metadata to go. This can be problematic, though, as white text is not easily
+visible on all kinds of backgrounds. This was resolved with Boro's suggestion to
+place a gradient background above the background image, which fades to black as
+you get farther down. It's hard to notice if you aren't looking for it, but
+makes the text much easier to see.</li>
+</ul>
+<p>For the background image, I usually chose something I found visually interesting
+which would moderately relate back to the content of the lecture. For instance, for
+the asymptotic analysis lecture, I chose a mountain, which I thought was an
+appropriate representation of something which grows seemingly neverendingly.
+For the lecture on parallelism and sorting, I chose a stylized representation of
+a sorting algorithm that I found on Google, which worked out quite well.</p>
+<div class="image-gallery">
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lect6.png" class="left" style="
+           width: 49%;
+           float: left;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lect7.png" class="right" style="
+           width: 49%;
+           float: right;
+         " />
+
+</div>
+<p>For later lectures, this stopped working out as much. For things like
+<a href="https://brandonspark.github.io/functors/">functors</a>,
+<a href="https://brandonspark.github.io/hofs/">higher-order functions</a>, and
+<a href="https://brandonspark.github.io/seq/">sequences</a>, it's actually
+incredibly hard to find a good-looking picture which somehow relates back to
+that topic. At this point, I was having trouble finding good premade pictures
+online, so like any other engineer in 2023, I decided to fall back to AI tools.</p>
+<p>The premier online prompt-to-image generation tool at the time was Midjourney,
+which I made copious use of during the course. It turns out that usually it's
+fairly easy to come up with some abstract idea of what I want the slide image to
+represent, but hard to find someone who has already specially created such an
+image. Midjourney bridges that gap nicely, as for most such things I can think
+of, I can just do a bit of prompt engineering to get it to display what I want.</p>
+<img src="&#x2F;midjourney.png" class="center blog-image" style="width: 70%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>For instance, the CPS background image above is actually generated by Midjourney,
+and represents a classic way of teaching CPS that I have been using for years,
+by imagining the growing lambda expression of the continuation as a "donut", or
+layered circle. I was very happy with this result.</p>
+<h4 id="theses"><a class="zola-anchor" href="#theses" aria-label="Anchor link for: theses">Theses</a></h4>
+<p>To highlight the lessons being taught in the course, before the course ever
+began I came up with three theses that I wanted students to be able to
+concretely take away from the course. They were <span style="color:rgb(255, 179, 48)">Recursive Problems,
+ Recursive Solutions</span>, <span style="color:rgb(255, 179, 48)">Programmatic Thinking is Mathematical
+ Thinking</span>, and <span style="color:rgb(255, 179, 48)">Types Guide Structure</span><sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="Described
+ in more detail in the main blog post &lt;a href=&quot;&#x2F;blog&#x2F;teaching&quot;&gt;here&lt;&#x2F;a&gt;."></a></sup>.</p>
+<p>I knew that I would often forget to bring up the Three Theses at later points
+in the course, but I didn't want it to feel like a vapid, first-day detail
+that would never show up again. I truly do believe that the three theses are
+fundamental to the course, and in consolidating meaningful takeaways from it,
+so there <span style="color:rgb(255, 179, 48)">needed to be a way to integrate it into each lesson</span>.</p>
+<p>I knew I wanted a visual cue to indicate when a thesis applied, but how would
+this be achieved? I could denote it in an inline colored block, as I did with
+other significant details, but this felt like a different kind of importance. It
+wasn't a definition, key fact, or vocabulary term, it was more of a motif or
+reoccurring idea. Writing it in the main canvas of the page felt like it would
+take away too much from the content of the lesson. I needed somewhere with
+unused space.</p>
+<p>I ended up being able to find a solution, in placing the badge of the thesis
+in the title bar, to the left of the lambda that accompanied every slide:</p>
+<img src="&#x2F;tgs.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>This worked out fairly well, with the exception of slides which had exceptionally
+long names, which tended to conflict with the long name of the thesis
+<span style="color:rgb(255, 179, 48)">Programmatic Thinking is Mathematical Thinking</span>.</p>
+<h4 id="diagrams"><a class="zola-anchor" href="#diagrams" aria-label="Anchor link for: diagrams">Diagrams</a></h4>
+<p>Stylized text is one thing, but the aspect of visual presentations I think is most
+important is in the diagrams.</p>
+<p>You can make words as pretty as you'd like, but that doesn't change the fact that
+they are words. This can help with incentivizing someone to read them, which is
+better than them not being read at all, but you are limited to the inherent ability
+of words to transmit information, which is sometimes lacking.</p>
+<p><span style="color:rgb(255, 179, 48)">A picture is worth a thousand words</span>, so when it came to my lessons, I made sure that
+if I could present something visually to a student, I would have an interesting, stylized
+diagram for them. I find that I am something of a visual learner, and even if I don't
+recall the precise details, the "imprint" of a well-done diagram can stay with me for
+years.</p>
+<p>One diagram I got a lot of use out of involved a hierarchical lattice:</p>
+<div class="image-gallery">
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lattice1.png" class="center" style="
+           width: 90%;
+           margin-bottom: 10pt;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lattice2.png" class="center" style="
+           width: 90%;
+           margin-bottom: 10pt;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lattice3.png" class="center" style="
+           width: 90%;
+         " />
+
+
+</div>
+<p>I believe that, if you have this pictorial idea of knowing that you can think
+about things like induction, subtyping, and evaluation in this way, it only
+takes a little bit more thinking to rederive the whole thing from scratch. I
+personally benefit a lot from having this intuition.</p>
+<p><strong>Case Study: Lecture 17 - Sequences</strong></p>
+<p>For this lecture, I knew that having a nice-looking representation of cost
+graphs would go a long way to making them palatable. The typical 150 notes
+on cost graphs have them as ASCII graphs with typeset characters, which is
+fine for comprehension, but not something that particularly engaged me when
+I was a student.</p>
+<p>Two ways that this manifests are in <span style="color:rgb(255, 179, 48)">shapes</span> and <span style="color:rgb(255, 179, 48)">colors</span>. These are the dimensions that I have an advantage in,
+versus the typeset example. I knew I wanted to take advantage of these.</p>
+<p>For the fundamentals of cost graphs, I reused the core idea of having sequential
+and parallel composition of graphs be denoted by singular or branching edges.
+The joins and nodes were mostly where I had some freedom.</p>
+<img src="&#x2F;lect17_fundamentals.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>When joined together into a real cost graph, I wanted a distinction between the
+fundamental units of the graphs themselves, and a kind of "syntactic sugar" for
+a terse representation of a larger sub-graph. This gave way to the distinction
+between "computation nodes" and "cost nodes", in purple and green respectively.</p>
+<div class="image-gallery">
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lect17_graph.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lect17_graph_green.png" class="center" style="
+           width: 49%;
+         " />
+
+</div>
+<p><strong>Case Study: Lecture 16 - Red-Black Trees</strong></p>
+<p>Red-black trees are the final boss in terms of graphics. The importance of
+colors is literally in the name of the data structure, so I needed to step up
+my tree game, which historically took the form of just uncolored circles on the
+normal slide background.</p>
+<p>One thing which stood out to me about this problem was how to represent a sense of
+<em>dynamicness</em>, in the sense that red-black trees are often characterized by the
+way that their shape changes over time. How do I reflect that dynamic behavior over
+time in a static, 2D image, without the reader getting confused and forgetting where
+we came from?</p>
+<p>To facilitate this, I made use of highlighted nodes, which consisted of a yellow
+border around particular nodes that I wanted to point out, for instance when
+inserting a node<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="While you may note that, during a live lecture, I
+can point out there details myself, in order to ensure that post-lecture
+students reading the slides can get the same experience, the same kind of
+information has to be conveyed statically."></a></sup>. When the color of a node was
+unclear, I also used a kind of TBD node, which had a not-quite-red patterned
+background, to signal that its color had yet to be determined.</p>
+<img src="&#x2F;lect16_highlight.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>When it came to red-black tree invariants, I also wanted to be able to quickly
+visually indicate whether a given tree satisfied the invariants or not, without
+needing to take up paragraph space by just writing it out with words. This led me
+to a common design I used, which was to place the tree into a red or green slightly
+beveled box, which indicated the invariants which were satisfied (or not).</p>
+<div class="image-gallery">
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lect16_bad.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lect16_good.png" class="center" style="
+           width: 49%;
+         " />
+
+</div>
+<p>This led me to traces where I was satisfied with how you could tell the "diff" from
+the previous image, by seeing the added highlighted parts. The highlighted nodes also
+came in useful to identify the "triads" of nodes which were to be rebalanced.</p>
+<div class="image-gallery">
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lect16_trace1.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/lect16_trace2.png" class="center" style="
+           width: 49%;
+         " />
+
+</div>
+<p>Here's a gallery of a menagerie of diagrams that I am particularly proud of:</p>
+<div class="image-gallery">
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/diagram1.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/diagram2.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/diagram3.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/diagram4.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/diagram5.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/diagram6.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/diagram7.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/diagram8.png" class="center" style="
+           width: 49%;
+         " />
+
+
+</div>
+<hr style="clear: both;"/><h1 id="final-thoughts"><a class="zola-anchor" href="#final-thoughts" aria-label="Anchor link for: final-thoughts">Final Thoughts</a></h1>
+<p>Overall, the graphics and attention to small details in my course took up the
+majority of my time when creating content. While not a stipulation imposed upon
+anyone other than myself, I found that creating visually appealing content, like
+tail recursion, was its own kind of reward<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="&lt;a href=&quot;https:&#x2F;&#x2F;xkcd.com&#x2F;1270&#x2F;&quot;&gt;xkcd reference haha&lt;&#x2F;a&gt;"></a></sup>.</p>
+<p>At the conclusion of the course, I wanted to make one last synthesis of the
+designs that I had constructed over the course of the semester, as a keepsake to
+put in my room. With some help from my friend Gabriel, we came up a poster for
+my iteration of the class:</p>
+<img src="&#x2F;150poster.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>I was very happy with this, and consider it the capstone of the effort I put into
+this semester, in terms of aesthetics.</p>
+<p>It's not the case that my sense of aesthetics was the only beneficiary of this work,
+though. During the course, I received much feedback that the attention to detail in the
+slides and its visually appealing nature was greatly appreciated by students, and that
+it helped them to pay attention and be interested in the material.</p>
+<img src="&#x2F;pretty_slides_data.png" class="center blog-image" style="width: 80%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>That's all you can really ask for, at the end of the day.</p>
+
+            </div>
+            <div class="block" id="footnotes-inline">
+              <!-- This is literally a template. We just put it here so we can copy
+                  the HTML, apparently.
+              -->
+              <template id="footnote-template">
+                <div class="footnote-inline">
+                  <a>
+                    {CONTENT}
+                  </a>
+                  <a id="arrow" style="color: rgb(41, 124, 248);" href="todo">↢</a>
+                </div>
+            </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Almost all of this code, I ripped from https://freeman.vc/notes/inline-footnotes-with-html-templates#fnref:1 -->
+        <script>
+          const contentRaw = document.getElementById("content-raw");
+          const footnotes = document.getElementById("footnotes-inline");
+          const footnoteTemplate = document.getElementById("footnote-template");
+
+          // Compute how wide a footnote is allowed to be.
+          // NOTE: This will not vary if someone resizes their browser, for instance!
+          // I don't really care, though.
+          const footnotesRect = footnotes.getBoundingClientRect();
+          const footnotesWidth = footnotesRect.width
+          // I find it suffocating to confine the footnotes + content to just the column
+          // of the page, so let's let footnotes bleed over the edge a bit.
+          const inlineFootnoteWidth = footnotesWidth * 2.5;
+
+          const footnoteSpacePadding = 20;
+
+          // Initializes all of the footnotes their number-dependent information.
+          //
+          // Maybe fragile, and dependent on the order that the query selectors run.
+          // Hopefully there's not some silly DOM stuff I don't know about which
+          // could make this visitor behave unexpectedly.
+          // But, convenient so that I don't have to manually number all of my footnotes.
+          count = 1;
+          document.querySelectorAll('.footnote-ref').forEach(callout => {
+            const newId = "footnote-" + count;
+            callout.id = newId;
+            callout.number = count;
+            callout.href = "#footnote-" + count;
+            callout.textContent = count;
+            count += 1;
+          });
+
+          function updateFootnotes() {
+              let maxY = 0;
+
+              // Clear existing footnotes to avoid duplicates
+              footnotes.innerHTML = '';
+
+              document.querySelectorAll('.footnote-ref').forEach(callout => {
+                  const footnoteId = callout.getAttribute("href").replace("#", "");
+                  const footnoteOriginal = document.getElementById(footnoteId);
+
+                  // Do some math here to compute the proper place to put the footnote, height-wise.
+                  const calloutRect = callout.getBoundingClientRect();
+                  const parentRect = contentRaw.getBoundingClientRect();
+                  // The max is so that we take into account `maxY`, but pad it slightly so we don't occupy exactly the same Y.
+                  const calloutTopPosition = Math.max(maxY + footnoteSpacePadding, calloutRect.top + window.scrollY);
+
+                  // This is how the blog post originally proposed to do the top, but I found that this
+                  // seemed to be incorrectly using relative positioning or something, and would be off.
+                  // const top = Math.max(maxY + footnoteSpacePadding, calloutRect.top - parentRect.top);
+
+                  // Make the new footnote element that we will insert.
+                  let footnote = document.createElement("div");
+                  footnote.style.position = "absolute";
+                  footnote.style.top = `${calloutTopPosition}px`;
+                  footnote.style.width = `${inlineFootnoteWidth}px`;
+
+                  // We need to make sure the arrow links back to the right place.
+                  // We can't do this when we set the template, so we will do it here, where we know
+                  // the name of the footnote to link back to.
+                  footnote.innerHTML = footnoteTemplate.innerHTML.replace("{CONTENT}", footnoteOriginal.getAttribute("content"));
+                  footnote.querySelector("a#arrow").href = "#" + footnoteId;
+
+                  footnotes.appendChild(footnote);
+
+                  // Store the maximum Y that we have put a footnote at, so that we know
+                  // not to put other footnotes too close to it.
+                  const footnoteRect = footnote.getBoundingClientRect();
+                  const footnoteTop = footnote.top;
+                  const footnoteBottom = footnoteTop + footnoteRect.height;
+                  maxY = calloutRect.top + window.scrollY + footnoteRect.height;
+              });
+          }
+
+          // Create a new ResizeObserver
+          const resizeObserver = new ResizeObserver(entries => {
+              for (let entry of entries) {
+                  // Check if the contentRaw is being observed and resized
+                  if (entry.target === contentRaw) {
+                      updateFootnotes();
+                  }
+              }
+          });
+
+          // Start observing the contentRaw element
+          resizeObserver.observe(contentRaw);
+
+          // Call the function on initial load
+          updateFootnotes();
+        </script>
+        
+
+        
+        <div class="pagination">
+            <div class="pagination__title">
+                <span class="pagination__title-h">Thanks for reading! Read other posts?</span>
+                <hr />
+            </div>
+            <div class="pagination__buttons">
+                    <span class="button previous">
+                        <a href="https://brandonspark.github.io/blog/teaching/">
+                            <span class="button__icon">←</span>&nbsp;
+                            <span class="button__text">My journey to teaching computer science, functionally</span>
+                        </a>
+                    </span>
+                
+                </div>
+        </div>
+    
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

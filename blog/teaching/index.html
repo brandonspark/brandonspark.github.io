@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My journey to teaching computer science, functionally</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/blue.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        <nav class="menu">
+            <ul class="menu__inner">
+                <li><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li class="active"><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/blog/teaching/">My journey to teaching computer science, functionally</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date">
+            2025-02-19
+        </span>
+
+    </div>
+
+    
+        <span class="post-tags-inline">
+                :: tags:&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/150/">#150</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/summer/">#summer</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/teaching/">#teaching</a></span>
+    
+
+        
+        <div class="post-content">
+          <!-- Put a TL;DR (if existent) for the post as a whole. -->
+          
+            <div class="tldr">
+              TL;DR: This post is about the story of my journey to teaching Carnegie Mellon&#x27;s introductory functional programming course, the lessons I learned, and reflections I had on the experience.
+            </div>
+          
+          <!-- Put a table of contents above the meat of the post. -->
+          
+            <div class="table-of-contents">
+              <h1>Table of Contents</h1>
+              <ul>
+              
+                  <li>
+                      <a href="https://brandonspark.github.io/blog/teaching/#part-1-becoming-an-instructor">Part 1: Becoming an instructor</a>
+                  </li>
+                  
+              
+                  <li>
+                      <a href="https://brandonspark.github.io/blog/teaching/#part-2-why-functional-programming">Part 2: Why functional programming?</a>
+                  </li>
+                  
+              
+                  <li>
+                      <a href="https://brandonspark.github.io/blog/teaching/#part-3-on-running-a-course">Part 3: On running a course</a>
+                  </li>
+                  
+                    <ul>
+                        
+                            <li>
+                                <a href="https://brandonspark.github.io/blog/teaching/#themes">Themes</a>
+                            </li>
+                        
+                            <li>
+                                <a href="https://brandonspark.github.io/blog/teaching/#design">Design</a>
+                            </li>
+                        
+                            <li>
+                                <a href="https://brandonspark.github.io/blog/teaching/#lessons">Lessons</a>
+                            </li>
+                        
+                    </ul>
+                  
+              
+              </ul>
+            </div>
+          
+          <!-- coupling: if we have rendered anything above this, then this condition should be true -->
+          
+            <hr/>
+          
+          <!-- Establish a grid shape, with columns dedicated to either the content, or the footnotes. -->
+          <div style="display: grid; grid-template-columns: 6fr 1fr; grid-column-gap: 30px;">
+            <div id="content-raw">
+              <!-- I have a ridiculous notion that elevators and phone booths are fundamentally the same.
+
+In the obvious ways, they are reminiscent. Both are metal rectangular cages that people
+enter and exit. The fundamental difference between them seems to be one of function--one
+is for movement, and one is for communication. This is where most people would find the
+analogy to be suspect.
+
+But in certain ways, they emulate each other. A person walking into an elevator expects
+to walk out with everything around them having changed. Some phone booths, people can
+walk into and walk out of with nothing really being significantly different.
+
+But on some days, you walk into a phone booth and emerge a completely different person.
+Some days, you exit with the entire universe having changed, even if physically in the
+same location.
+
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div> -->
+<p>I found myself in a cramped, unventilated phone booth when my dreams came true.</p>
+<p>The bare WeWork call booth was dimly lit by my laptop, which displayed a
+Zoom waiting room. My leg bounced incessantly, mimicking the race of my heart.
+My mother had told me to stop doing that.</p>
+<p>I was moments away from a meeting with a professor from Carnegie Mellon's School
+of Computer Science, to discuss my potential appointment as the summer instructor
+for 15-150, Principles of Functional Programming. At only 23 years old, I had
+only had a few job interviews in my life, and I felt woefully unprepared.</p>
+<span id="continue-reading"></span>
+<p>Should I have dressed formally, even in the laid-back tech hub of San Francisco,
+where the lack of a Patagonia jacket and converse would have made me stick out
+like a sore thumb? Should I have better prepared my shpiel on how much I wanted
+this opportunity?</p>
+<p>I didn't have the right words. In that instant, I didn't know how I could
+possibly convey that I didn't just want it, I <em>needed</em> this job opportunity.</p>
+<p>I couldn't tell anyone that this moment could either fulfill my dream or kill it outright.</p>
+<h1 id="part-1-becoming-an-instructor"><a class="zola-anchor" href="#part-1-becoming-an-instructor" aria-label="Anchor link for: part-1-becoming-an-instructor">Part 1: Becoming an instructor</a></h1>
+<p style="color: #a6a6a6">
+</p>
+<p>At the time of writing of this blog post<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="The majority of this blog post was written immediately following
+  my term instructing during the summer of 2023. Unfortunately, I have an
+  incredible lack of ability to finish my projects, so this sat on my computer
+  for more than a year. I have since returned to it, freshened it up,
+  and prepared it for release now, in the beginning of 2025. Most of it is the
+  original content that I produced on 8&#x2F;21&#x2F;2023, however."></a></sup>, I have just finished my summer
+teaching 15-150 as the instructor of record in the summer 2023 semester.</p>
+<p>This was a long trial of months of preparation, late nights, emails, and
+back-breaking work that threatened to overwhelm me at times. In the wake of such
+a semester, I thought it would make a fitting first blog post, to record and
+review what happened and what I learned from this summer.</p>
+<p>This is a story in multiple parts, but it starts with <em>why</em> it was so important
+that I obtain the job to teach functional programming. Why did it matter so much
+to me?</p>
+<!-- <p style="color: gray; font-style: italic;">
+This blog post is about three things--my personal journey and story in becoming a teacher,
+my road to wanting to teach functional programming, and my reflections on the aftermath
+of teaching functional programming at CMU. If you are more interested in the technical
+aspects of the post, you may skip to the next section
+<a href="http://127.0.0.1:1111/blog/teaching/#part-2-why-functional-programming">here</a>.
+</p>
+ -->
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div>
+<p>I don't have much of a connection to my extended family.</p>
+<p>This is owed to, in part, by being the child of first-generation immigrants from
+China, and having an extended family that will never be able to read this
+article. Stories of my grandparents or cousins in China may as well have been
+written in a storybook, about characters of fiction. They are about equally as
+likely to have an impact on my life.</p>
+<p>I have only one instance where I can remember putting stock in my connections to
+my more distant relatives. In high school, during a project to interview an
+elder relative, I discovered that my grandfather, similar to my father, had been
+a university professor.</p>
+<p>I don't know that I put much stock in fate, but this felt like something
+similar. In my early years where I didn't know who I was, it seemed like a sign,
+like the universe had a role for me to fill after all. I could continue the legacy.</p>
+<div class="pull-quote">
+  It seemed like a sign, like the universe had a role for me to fill after all.
+</div>
+<p>I was convinced, throughout much of college, that I wanted to be a professor. I
+wore clothes that I deemed to be "academic"<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="If you have pictures
+of me from 2019, no you don&#x27;t."></a></sup>, buried my head in my studies, and fretted
+over silly things like my GPA or applications that I would end up never writing.
+I applied to be a teaching assistant and found teaching to be one of my greatest
+joys, returning to teach the course 15-150 six times over my undergraduate
+career.</p>
+<p>Life seemed simple and clear-cut. Birds chirped, rain fell, and I was going to be
+a professor.</p>
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div>
+<p>But, life, as it so often does, had other plans for me.</p>
+<p>In my senior year, burned out by remote learning during COVID, and years of
+intense studying, I realized that I didn't want to pursue an academic career. I
+became disillusioned with research and the projects that seemed interesting on
+paper, but failed to motivate me to actually do the work. I disliked the
+research papers that seemed written by an elite club of people specifically to
+keep me out.</p>
+<p>I called it quits, simply put, and took a job in the industry as a software
+engineer. By turning my back on a Ph.D, I said goodbye to my hopes of one day
+attaining an instructing position at the university level. I thought that was
+the end of it. A pivot in the startup of my life.</p>
+<div class="pull-quote">
+  A pivot in the startup of my life.
+</div>
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div>
+<p>The universe kindly decided to prove me wrong.</p>
+<p>It was in early 2023 that I discovered that there was a shortage for a summer
+instructor for 15-150, my course which I loved so much, and I reached out to Tom
+Cortina, the SCS undergraduate coordinator, to see if there was any opportunity.
+It would be my last hope at achieving the dream I had fostered for so many
+years.</p>
+<p>I obtained an interview with a professor, and watched the days tick down to it
+with bated breath. I told no one. I was afraid that my dream was so fragile, it
+would shatter if I spoke about it. I was afraid that it would be taken from me
+if I dared to hope it was possible.</p>
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div>
+<p>In the call booth of the WeWork, I rubbed my cold hands together at the
+conclusion of the meeting. It's funny how so much thought can go into a moment
+that is over in a flash. I can scarcely remember the words that were said. I
+can't even remember the professor's face.</p>
+<p>All that matters is that, a short twenty minutes after it started, I had verbal
+confirmation that I would be offered the opportunity to return to Carnegie
+Mellon, my alma mater, but as staff instead of student. I would be offered the
+opportunity to return to the fires of the forge that had shaped me, but to stoke
+it for others instead.</p>
+<p>Looking back, the lack of glamour of the scene is funny. There should have been
+confetti, a shower of lights, or someone waiting to shake my hand in
+congratulations. It was as anticlimactic as the graduation I never walked at, a
+year earlier.</p>
+<p>But there was no confetti, and no shower of lights, just the quiet fan of my
+computer as I processed what had just happened to me. The start of my story, it
+seems, was not beholden to the laws of the innumerate stories that I had read
+before.</p>
+<p>It is there, in the phone booth set to the side of our small WeWork, in the
+stolen moments between meetings at my 9-5 job, that I was offered everything
+that I had ever wanted.</p>
+<h1 id="part-2-why-functional-programming"><a class="zola-anchor" href="#part-2-why-functional-programming" aria-label="Anchor link for: part-2-why-functional-programming">Part 2: Why functional programming?</a></h1>
+<p>Carnegie Mellon's undergraduate computer science curriculum is known for its
+rigor, comprehensiveness, and in certain ways, its unorthodox approach.</p>
+<p>This manifests in several key ways, such as:</p>
+<ul>
+<li>Emphasis on theory over engineering and hardware<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="I didn&#x27;t know what a transistor was until last year."></a></sup></li>
+<li>Focus on <a href="https://www.cs.cmu.edu/~15210/">parallel time complexity and parallel algorithms</a></li>
+<li>Focus on <a href="https://brandonspark.github.io/blog/teaching/">functional programming</a><sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="If you click this, you might notice that it links back to the same article you are reading. This is what we at CMU call &amp;quot;recursion&amp;quot;."></a></sup> <sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="This is also what we at CMU call &amp;quot;a joke&amp;quot;."></a></sup></li>
+</ul>
+<p>The first two points are fit for exploration by a different blog post, but the
+third will be our focus.</p>
+<p>Functional programming is typically taken as the second or third course
+(depending on the student's previous computer science background) of all
+computer science majors at Carnegie Mellon. This contrasts to other universities, where the topic
+would either be an elective, or possibly not even offered.</p>
+<!-- TODO: need a pithy way to end scene break -->
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div>
+<p>I first encountered the subject as a freshman cognitive science major in 2019. I
+knew I was in for something special when I didn't need my computer for the entire
+first lecture.</p>
+<p>The professor started talking about how we were going to learn about "ML", and I
+remember looking around, wondering if I had joined the wrong classroom. What was
+this language, "Standard ML", that were learning, and why had I never heard of
+it?</p>
+<p>I took out my computer. Surely we were going to use them. Surely, in a programming
+class, we were going to be doing some computer programming.</p>
+<p>The professor, instead of pulling up a terminal or text editor, pulled out a
+sheet of paper and a desk camera. He told me he was going to teach us types, and
+that they were going to be the most essential part of my computer science
+education.</p>
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div>
+<p>Critics of functional programming sometimes speak of its perceived esoteric
+nature, the detriments of learning a language that one would never actually
+apply in the "real world". They speak of the unnaturality of seeing the keyword
+<code>let</code>, and how function names should never be separated by a space from their
+arguments<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="These are, of course, all surface-level concerns. The
+tendency of programmers to place undue emphasis on the syntax of programming
+languages is one that I find disturbing."></a></sup>.</p>
+<p>The perspective taken by CMU is that courses do not teach languages. <span style="color:rgb(255, 179, 48)">Courses
+teach concepts, and the languages come after.</span></p>
+<p>Some programming courses are about the <em>syntax</em>. They are about how to write the
+<em>words</em> of a program, and hopefully with a little bit of luck and elbow grease
+along the way, a correct program will be produced. The meaning of what is being
+written, and the concepts that those words map to, are of secondary concern. In
+the post-LLM world, this is an approach that all of us are familiar with the
+drawbacks of.</p>
+<p>15-150 was one of the first courses I took where it was apparent to me that <span style="color:rgb(255, 179, 48)">programming
+is about the semantics</span>. It is far more important what goes in your head, what high-level
+constructs you create when decomposing a system and devising a solution, than any characters
+or concrete details that you render into text.</p>
+<p>I embraced functional programming because, for the first time, I felt like
+I was given a system which encouraged me to articulate my thoughts and <span style="color:rgb(255, 179, 48)">solve
+first, program second</span>. Silly mistakes that would normally be fatal were
+prevented by strict type-checking, nudging me to revisit my assumptions. A rich
+type system offered me the tools to architect my solutions at the high level,
+then work downwards.</p>
+<p>In the previous semester, I had participated in a hackathon, where my sole
+contribution was struggling to write a basic recursive graph search in Python.
+In it, I spent at least an hour debugging my function, which kept returning
+<code>None</code> at me no matter what I tried, even though I didn't even think that it
+should be possible. I thought that recursion was to blame for my inability.</p>
+<p>After 150, I realized that what I had mistaken for an inability to do recursion
+was simply a lack of elementary <span style="color:rgb(255, 179, 48)">reasoning about my program&#x27;s inputs
+and outputs</span>. This may seem seem unrelated to functional programming, but
+ultimately it's the perfect skill that can be trained by the paradigm, because
+it's precisely what functional programming is about--<span style="color:rgb(255, 179, 48)">safety</span> and
+<span style="color:rgb(255, 179, 48)">correctness</span>.</p>
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div>
+<p>I have four main reasons why I think that people are often opposed to learning
+functional programming.</p>
+<ul>
+<li>They didn't learn it in school, and feel some perceived esotericity or
+exclusivity--functional programming is a club, and they weren't invited.</li>
+<li>They believe that it is too complex, or they that they lack some innate aptitude to do functional programming,
+like it is a talent gifted to few that are fortunate.</li>
+<li>They believe it has marginal benefit.</li>
+<li><a href="https://world.hey.com/dhh/turbo-8-is-dropping-typescript-70165c01">They are David Heinemeier Hansson.</a><sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="For the record, this is not an endorsement."></a></sup></li>
+</ul>
+<p>Some have approached me with the second and third points.</p>
+<p>Over my years of TAing the course, I found these statements hard to justify. I
+couldn't believe people's claims that functional programming was simply too
+difficult, too advanced, when I had seen 18 and 19 year olds master it with flying
+colors for years.</p>
+<div class="pull-quote">
+  I couldn&#x27;t believe people&#x27;s claims that functional programming
+was simply too difficult, too advanced, when I had seen 18 and 19 year olds
+master it with flying colors for years.
+</div>
+<p>I couldn't believe that it was some unimportant, optional side detail in a
+computer science education, when I had seen how transformative of an effect it
+had on students' perspectives and abilities.</p>
+<p>Although I was suspicious of these claims, as a TA I was operating in
+a role that was an accessory to the learning process. I was a helper, and
+although I had my opinions, I did not feel like I had the authority to challenge
+them on a broader level.</p>
+<p>I needed to be an instructor for 15-150 because I had to challenge these statements
+myself. I had to see for myself that they were false.</p>
+<h1 id="part-3-on-running-a-course"><a class="zola-anchor" href="#part-3-on-running-a-course" aria-label="Anchor link for: part-3-on-running-a-course">Part 3: On running a course</a></h1>
+<h2 id="themes"><a class="zola-anchor" href="#themes" aria-label="Anchor link for: themes">Themes</a></h2>
+<p>One of the first things on my mind was how to make my iteration of the course
+memorable.</p>
+<p>I find that I often forget the details of a course, once it has ended. If it's
+not something that I will exercise regularly once the course concludes, it's
+usually something that will be wiped from my mind within the next year,
+unfortunately.<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="
+  I like to joke that anything that I haven&#x27;t thought about in the past six months,
+  I will forget. Unfortunately, this is only partially a joke.
+"></a></sup> <sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="
+  There&#x27;s an LRU cache joke to be made here, but unfortunately, I haven&#x27;t thought
+  about LRU caches in the past six months.
+"></a></sup></p>
+<p>However, what do I remember from those courses? From courses whose content have
+all but escaped me, I still remember some of the big ideas. I remember some of
+the flavors of problems that I had to solve for my probability course, even if I
+can't do any of the math anymore. I remember the vague impression of an
+undecidability reduction proof. And most of all, I remember the <span style="color:rgb(255, 179, 48)">themes</span>.</p>
+<p>It's like when you try to recall a story, and you can't remember the precise
+plot details, but you can remember the morals that you were supposed to take
+away. I'm a storyteller by nature, and I couldn't help but think of my course in
+the same way. I was going to tell a story over twelve weeks, and I needed that
+story to be cohesive. I needed that story to be <em>engrossing</em>.</p>
+<div class="pull-quote">
+  I was going to tell a story over twelve weeks, and I needed that story to be cohesive.
+</div>
+<p>So, it was with this understanding that I spent the first two weeks of planning
+coming up with learning objectives, concrete statements of fact that I wanted
+students to take away from the course. Then, I put them all together and started
+drawing lines between them, in a way that is not dissimilar to completing a
+picture by connect-the-dots. I wanted to find the overarching ideas that
+permeated all of them.</p>
+<p>I came up with the following three themes<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="An in-depth explanation of these themes is
+fit for another post. I&#x27;ll omit it here for brevity."></a></sup>:</p>
+<ul>
+<li><h4 id=""><a class="zola-anchor" href="#" aria-label="Anchor link for: "><span style="color:rgb(255, 179, 48)">Recursive Problems, Recursive Solutions</span></a></h4>
+</li>
+<li><h4 id="-1"><a class="zola-anchor" href="#-1" aria-label="Anchor link for: -1"><span style="color:rgb(255, 179, 48)">Programmatic Thinking is Mathematical Thinking</span></a></h4>
+</li>
+<li><h4 id="-2"><a class="zola-anchor" href="#-2" aria-label="Anchor link for: -2"><span style="color:rgb(255, 179, 48)">Types Guide Structure</span></a></h4>
+</li>
+</ul>
+<p>The important idea here is that these ideas are <span style="color:rgb(255, 179, 48)">permanent</span>. Many
+courses in my life I have taken and immediately discarded, used for a grade and
+then immediately forgotten about. Sometimes, that's just how it is. But my role as
+an instructor was to show students that 15-150 was not one of those courses --
+that these ideas are fundamental, that they will stay with you for the rest of
+your life.</p>
+<!--
+#### Recursive Problems, Recursive Solutions
+
+<span style="color:rgb(255, 179, 48)">Recursive Problems, Recursive Solutions</span> is about overcoming the
+demon of recursion that seems to sit on people's shoulders. I've witnessed
+countless people who consider recursion a bogeyman, a tool which they do not
+understand and are afraid to consort with. This couldn't be farther from the
+truth! I wanted to get across the usefulness and *practicality* of recursion,
+without leaving the impression that we were shoehorning it into every problem we
+could find.
+
+Moreover, I have found that people rarely have an issue with *recursion*. Most
+of the time, students have trouble with recursion because they have trouble with
+**clearly specifying their functions' behavior**, in terms of its inputs and
+outputs. While admitting a weakness with "recursion" seems to be socially
+acceptable statement, I believe that it is dangerous, because it belies a weakness
+with a far more fundamental skill.
+
+As such, I came up with a more tempered slogan, in <span style="color:rgb(255, 179, 48)">Recursive
+Problems, Recursive Solutions</span>. This slogan is about the fact that, not only
+do we employ recursive solutions, but they emerge **naturally** out of recursive
+problems. Recursion is not something ad-hoc or unprecedented, it is the most
+natural solution to some of the most natural problems that there are. The same
+structure that makes up a list or a tree is the structure by which we solve
+computational problems on them.
+
+#### Programmatic Thinking is Mathematical Thinking
+
+Math shows up a fair amount in 150. We go from the subjects of work and span
+(sequential and parallel time complexity), solved via mathematical recurrences,
+to inductively proving the correctness of our code by structural induction. More
+fundamentally than that, the notion of equivalence between different parts of
+code is a very deep idea that immutability grants, and it shows up all the
+time when writing real functional code.
+
+I wanted a theme which could serve as the natural evolution of the idea that
+induction and recursion are the same. It's not *just* an induction thing, it's a
+*math* thing -- programming and math can be related quite a bit at the end of
+the day<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="If you want to sound really pretentious to ordinary software
+engineers, link them to a Wikipedia page on category theory, like &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Initial_algebra&quot;&gt;this one&lt;&#x2F;a&gt;, and
+tell them to &quot;read the literature&quot;."></a></sup>. <span style="color:rgb(255, 179, 48)">Programmatic Thinking is Mathematical Thinking</span> is not
+so much about the fact that programming is literally the same as math. It's
+about the fact that mathematical tools can be used by programmers to achieve
+better results.
+
+It shows up when reasoning about the cost of code. It shows up when reasoning
+about when code is correct. It shows up when architecting code to be simpler and
+easy-to-understand--that is the point. Before computer scientists were
+computer scientists, they were mathematicians.
+
+#### Types Guide Structure
+
+At this point, I had two themes that were more or less about the kind of problem
+solving employed in 150. We use recursive ideas and mathematical tools to help
+us reason about our code, but what about the specific content of the course?
+What kind of theme, in a more direct and content-related sense, could summarize
+the class?
+
+I find that this comes all down to <span style="color:rgb(255, 179, 48)">types</span>. In 150, it is often
+said that the typechecker is the students' worst enemy, for the first two weeks.
+By the end of the course, the typechecker is the students' best friend. Learning to
+play around a programming language with a disciplined type system, and indeed,
+structure their very thinking around this idea of types and the rich data
+that they describe, allows us a wide array of possibilities when it comes to
+problem-solving.
+
+<div class="pull-quote">
+  In 150, it is often said that the typechecker is the students&#x27;
+worst enemy ... By the end of the course, the typechecker
+is the students&#x27; best friend.
+</div>
+
+
+A sub-idea of this theme is that small things give way to big changes. Via just a
+simple idea of function types, we get higher-order functions, currying, and this
+idea of parameterizing code over other code. With variables that range over
+types, we get parametric polymorphism and all the convenience that it offers.
+With algebraic data types, we get the freedom to describe data extremely
+precisely, and fit our types to describe our problems. None of these are themselves
+big, flashy ideas necessarily, but they mean the world when it comes to writing
+real, maintainable code.
+ -->
+<hr style="clear: both;"/><h2 id="design"><a class="zola-anchor" href="#design" aria-label="Anchor link for: design">Design</a></h2>
+<p>It turns out that, in terms of the stylistic design that went into 150 for this
+semester, I had so much to say that I decided to fold it into a completely
+separate blog post. You can read it <a href="/blog/design">here</a>.</p>
+<!-- TODO: write more here -->
+<hr style="clear: both;"/><h2 id="lessons"><a class="zola-anchor" href="#lessons" aria-label="Anchor link for: lessons">Lessons</a></h2>
+<p>The most important part of this entire blog post is the lessons to be taken
+away from it. What did I learn over the course of those twelve weeks?</p>
+<h4 id="care-does-not-scale-but-it-sure-makes-the-difference"><a class="zola-anchor" href="#care-does-not-scale-but-it-sure-makes-the-difference" aria-label="Anchor link for: care-does-not-scale-but-it-sure-makes-the-difference">Care does not scale, but it sure makes the difference.</a></h4>
+<p>I have never been one for bureaucracy. One reason why I enjoy working at a
+startup is being able to know everyone's name and not feeling confined to a box.
+Whenever I feel like process or red tape is taking precedence over treating
+people as humans, it frustrates me.</p>
+<p>With this perspective, I decided that I would offer my students as lenient of an
+experience as I could. The end goal of a college course, above all else, is that
+students learn -- I tried to focus on this beyond anything
+else, and do whatever it took to get my students there, even if it didn't
+exactly align with traditional course policy.</p>
+<div class="pull-quote">
+  The end goal of a college course, above all else, is that students learn.
+</div>
+<p>So this semester, <span style="color:rgb(255, 179, 48)">I granted every single extension that anyone ever asked me
+for</span>. My reasoning was that, since most of the learning in 150 happens from doing
+the homework assignments, if a student doesn't receive an extension and doesn't
+finish the rest of it, they aren't learning.</p>
+<p>The practical effect is that I had a lot of people ask me for extensions. At
+times it would frustrate me that students were continuously asking for what felt
+like a deluge of extensions. Was I doing wrong, by granting so many of them?
+Were students exploiting my leniency for some nefarious ends?</p>
+<p>The thing is, I think that this kind of thinking can benefit from a derivative
+of <a href="https://en.wikipedia.org/wiki/Hanlon%27s_razor">Hanlon's
+Razor</a>.<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="It seems to me that there are so many damn razors on
+the internet that they should go and start a barbershop quartet."></a></sup> Never
+attribute to malice that which can be attributed to... well, anything else. My
+frustration was in the thought that students were somehow deliberately asking
+for too many extensions, or were taking advantage of my leniency, but the point
+is that <span style="color:rgb(255, 179, 48)">students aren&#x27;t the enemy</span>. It's not a black-and-white,
+adversarial kind of thing. This kind of reasoning just came out of exhaustion
+and self-doubt. It solves precisely zero problems.</p>
+<p>So I don't regret giving out all of those extensions, because at the end of the
+day, I don't believe you can ever really doubt a student's reason for asking for
+an extension. If a student needs help, they will ask, and it's not on you to
+validate whether it is legitimate. The point is just to set up students for
+success, not to constrain the conditions under which they can.</p>
+<div class="pull-quote">
+  If a student needs help, they will ask, and it&#x27;s not on you to
+validate whether it is legitimate.
+</div>
+<p>There's a "but" to this section, however. Due to all the extensions I gave,
+keeping on top of all of them was a real struggle for me.
+Sometimes, I would grant an extension, and have to track down their submission
+for the assignment, placing more of the onus on myself than the student whose
+work it was. Although I don't regret being lenient, it was extremely draining on
+me. Fifty students was already the maximal amount I could deal with, while
+attending to each personally. Scaling up this kind of treatment would be untenable.</p>
+<p>So for professors who teach hundreds of students at a time, as a student I might
+have not understood why they adhered to strictly to policy, or were seemingly
+hard on me for no reason, but it takes a more nuanced perspective to realize
+that, <span style="color:rgb(255, 179, 48)">really truly, instructors have a hard job</span>. It's still
+possible to care for every student. But it's not possible to grant hundreds of
+students the same level of attention that I was able to.</p>
+<!-- TODO: teaching is nonlinear? -->
+<h4 id="failure-is-expected"><a class="zola-anchor" href="#failure-is-expected" aria-label="Anchor link for: failure-is-expected">Failure is expected.</a></h4>
+<p>Or, more accurate, <em>some</em> failure is expected. This isn't a claim that it's OK
+or desirable that there should always be some students who fail a class--I do
+believe that the objective of a class should be that every student passes.</p>
+<p>This is more of a commentary on my experience as a first-time test-writer. While
+150 TAs are offered an unparalleled level of power to control the assignments of
+the course, it is the custom that professors are fully in charge of writing the
+examinations. This being my first time as an instructor, this was also my first
+experience with writing an examination.</p>
+<p>Several times during the semester, I would write a problem which I thought to be
+eminently reasonable, only for students to not perform as well as I would have
+hoped. I confess that this caused me quite a deal of depression. Was I failing
+as an instructor, for failing to prepare students for what I judged to be a
+relatively simple problem?</p>
+<div class="pull-quote">
+  Was I failing as an instructor, for failing to prepare students for what I judged to be a relatively simple problem?
+</div>
+<p>I believe that there are a few things which are responsible for this. For one,
+although I was closer than most instructors, it is very difficult to remember
+what it is like to learn a topic for the very first time. Even problems which I
+judged to be "no big deal" were often still written by myself to be
+<em>interesting</em>, meaning some non-trivial, non-synthetic problem.</p>
+<p>In normal test-taking constraints of only an hour or two, the effort required to
+problem-solve is highly variable. It is ultimately a stressful
+environment<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="Doubly stressful, for me included, after one
+particular hilarious incident where a fire drill occurred during an examination.
+I had to write another one."></a></sup> which I hadn't helped with my focus on writing
+somewhat more difficult problems.</p>
+<p>At the same time, it is not realistic to expect that every student <em>excels</em>. There
+will always be a gradient, and while it is the instructor's job to ensure that
+every student gets the base level of understanding from a course, not every
+student can go above and beyond. Part of my frustration, I realized, was in
+the fact that I desperately wanted every student to excel.</p>
+<div class="pull-quote">
+  Part of my frustration... was in the fact that I desparately wanted every student to excel.
+</div>
+<p>This is a lesson that I had to learn as the semester went on, where I began to
+realize that it wasn't realistic to place my standards so high, for my students
+or for myself. It's no use crying over spilled points.</p>
+<p>Students will succeed and students will fail. All that you can do is try your best to
+help the student do better the next time.</p>
+<h4 id="the-proof-is-in-the-passion"><a class="zola-anchor" href="#the-proof-is-in-the-passion" aria-label="Anchor link for: the-proof-is-in-the-passion">The proof is in the passion.</a></h4>
+<p>I'm a very intense person by nature. The only way that I know how to live my
+life is to throw myself wholeheartedly into all that which I do, and to believe
+in it so strongly that I cannot imagine anything else.</p>
+<p>From the first day of planning, I always intended to make this apparent to my
+students. The majority of my time as an undergraduate in college lectures, I
+spent asleep, due to a combination of irresponsible habits and a troublesome
+lack of belief in the material. There were professors who certainly did a good
+job at conveying this belief, but some classes I just couldn't bring myself to
+care enough.</p>
+<p>As I wrote in a meme I made for the course years ago as a TA,
+<a href="https://youtu.be/tonfECxK3BU">150 is not a spectator sport</a>. I could not afford
+to have my students have that same lack of faith, at least not without trying my
+best to convince them that not only was what they were learning important, it
+was <span style="color:rgb(255, 179, 48)">essential</span>. I truly do believe that with every bone in my body.</p>
+<p>What I mean to say is that I believe that there is an equal and opposite
+reaction. Something pushed, pushes back. When you speak, somebody listens. When
+you put effort and energy into the material, I believe students are more likely
+to do the same in return.</p>
+<div class="pull-quote">
+  When you put effort and energy into the material, I believe students are more likely to do the same in return.
+</div>
+<p>So, every lecture I would arrive with a lesson plan and the energy and
+enthusiasm to see it through. I focused (sometimes at length) on the motivation
+and story behind every piece of content, so that not only would students learn
+the material, but hopefully be able to rederive why it was important.</p>
+<p>I think that teaching is multifacted, by intrinsic loss of information. A lecture
+is the result of hours of compressed time, hours poring over examples and learning
+materials, and distilled into words meant to fill an hour-and-a-half interval. The
+compression is lossy in two respects--<span style="color:rgb(255, 179, 48)">you cannot expect a student to recover the
+context of the original material</span>, and <span style="color:rgb(255, 179, 48)">you cannot expect a student to remember every
+rapid-fire word that is delivered</span><sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="I have this issue, in particular, because I am a yapper."></a></sup>.</p>
+<p>As a result, I believe that an instructor's job is not to 100% convey all of the
+information to the student in the limited time of the lecture. It is also to
+give the student the drive and motivation to seek out the answers to the parts
+that they did not understand. It is to give the students the power to teach
+themselves.</p>
+<div class="pull-quote">
+  An instructor&#x27;s job... is to give the students the power to teach themselves.
+</div>
+<p>Throughout the course, I have collected feedback in the form of post-lecture
+surveys and the official course evaluations that students leave at the
+conclusion of the class. Some of the post-lecture data is pictured below:<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="
+This data only available for a subset of the lectures, as sample sizes of
+students filling out the polls started becoming rather low."></a></sup></p>
+<div class="image-gallery">
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/engaging_data.png" class="center" style="
+           width: 49%;
+         " />
+
+
+
+  
+  
+    
+    
+  
+  <img src="https://brandonspark.github.io/enjoyment_data.png" class="center" style="
+           width: 49%;
+         " />
+
+</div>
+<p>Consistently, students have left me messages and emails
+expressing appreciation for the effort and passion they can see in the course,
+as well as for the desire for learning the material that it has inspired in them.</p>
+<p>These messages are among my most treasured possessions. I have saved each one.</p>
+<h4 id="the-worn-path-is-not-always-the-right-one"><a class="zola-anchor" href="#the-worn-path-is-not-always-the-right-one" aria-label="Anchor link for: the-worn-path-is-not-always-the-right-one">The worn path is not always the right one</a></h4>
+<p>The focus of Part 2 of this post was on why it was so important to me to not
+only teach, but to teach functional programming in particular. How did it
+match up to what I believed?</p>
+<p>Over the course's tenure, I faced the stress of working my job as an instructor
+concurrently with my job as a software engineer, the looming deadlines of
+upcoming lectures that I had not yet written, and probably the least sleep that
+I have ever gotten in my life, including my years as an undergraduate<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="This is an unfortunately high bar."></a></sup>. Despite
+that, once the course got started, never once did I feel stress over the
+<em>material</em> that I was teaching to my students. Never once did I feel doubt for
+whether what I was teaching was <em>right</em>.</p>
+<div class="pull-quote">
+  Never once did I feel doubt for whether what I was teaching was right.
+</div>
+<p>The quest of teaching is one which is highly variable, for many reasons. There is
+intrinsic variance among instructors and subject matters, but most importantly,
+it is <span style="color:rgb(255, 179, 48)">heavily dependent on the students that are being taught</span>. I had the fortunate
+experience to be teaching students who were not only open-minded and receptive, but
+willing to grace me with their stories of how the course had affected them.</p>
+<p>A classroom can feel like a rather impersonal affair, with a group of people judging
+your words at a distance. Throughout the progression of a course, you eventually start
+recognizing the faces, remembering the names of those you see, but it is still a one-sided
+conversation. There is no built-in feedback mechanism from your students.</p>
+<p>I frequently hosted post-lecture office hours precisely for the purpose of not only
+helping students, but so I could hear their perspectives on their education, their lives,
+and so I could offer them help in whatever ways I could. Some of the most valuable memories
+I have occurred in those office hour sessions.</p>
+<p>I recall regulars who would drop by my lectures just to chat, students who would
+come for one-on-one assistance that they felt self-conscious about receiving
+otherwise, and a student who told me that they called their mother about the
+class, telling her how excited they were about what they were learning.</p>
+<p>I recall a student who had taken the course before, who didn't feel like they
+had <em>gotten it</em> until now, a student who told me that what they learned in 150
+changed their perspective on computer science totally, and a student who told me
+that 150 made them want to start doing computer science.</p>
+<p>I recall a thoughtful email from a student at the conclusion of the course,
+confessing they had never done so before, but wanted to tell me how much they
+felt 150 had made an impact on their academic career.</p>
+<div class="pull-quote">
+  I remember a student who told me that they called their
+mother about the class, telling her how excited they were about what they were
+learning.
+</div>
+<p>All these stories are not to boast, but to simply say that from day 1, I <span style="color:rgb(255, 179, 48)">have
+never had the impression that the course material was something which had little
+impact on a student&#x27;s success or way of thinking</span>. Based on my students'
+performance on exams and assignments, I have never had the impression that it
+was simply an inherently complex topic that could only be taught to few. I have
+never had the impression that there was only an inconsequential benefit.</p>
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div>
+<p>I find that, when giving opinions on functional programming, people love to cite
+the path that is well-traveled as justification for its superiority.</p>
+<p>I teach and feel passion for a niche topic. I may not succeed at convincing
+others of that through an online presence (indeed, that is not the purpose of
+this article), but I am only here to report that, in all my experiences as an
+instructor, it has only reaffirmed its importance, to me.</p>
+<img src="&#x2F;perspective.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/><img src="&#x2F;learned.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/>
+<p>My conviction in the power and importance of that which I teach is not made out
+of my own beliefs or desires, but shaped from the stories of the students who
+have expressed so much gratitude at having learned the material. At the end of
+the day, <span style="color:rgb(255, 179, 48)">users are the judge</span><sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="A phrase from work which is infuriatingly applicable to many aspects of my personal life."></a></sup>, and I am proud to contribute towards carving out a
+new path, one which may enlighten students for many years to come.</p>
+<p>Here are some of the statistics collected from the end-of-course university surveys.
+The columns indicate, respectively, the number of responses, the proportion of the class
+those responses represent, and the overall rating the course received, out of 5<sup><a id="footnote-ID-TODO" href="#footnote-ID-TODO" class="footnote-ref" content="The second-highest such score in the history of the course, if I may add."></a></sup> .</p>
+<img src="&#x2F;overall.png" class="center blog-image" style="width: 95%; margin-bottom: 15px; margin-top: 15px;"/><h4 id="glorious-purpose"><a class="zola-anchor" href="#glorious-purpose" aria-label="Anchor link for: glorious-purpose">Glorious Purpose.</a></h4>
+<p>I confess an emptiness in my life now.</p>
+<p>San Francisco is in many ways a more dynamic city than Pittsburgh, but somehow
+it feels empty and static. Walking through the streets, my footsteps somehow are
+louder, the thuds conveying a weight that is not based in mass. Although the Bay
+breeze blows incessantly, it feels as though the wind has stilled somehow too.</p>
+<p>It feels strange to return to a routine, to sleep a recommended amount of hours,
+and to walk in to my 9-5 job and not feel the existential dread of an upcoming
+lecture that I haven't yet written. It feels wrong to use my mental energy on
+tasks that I can make predictable progress on every day, as opposed to sitting
+in front of my laptop for hours and hours without writing a word, like trying to
+squeeze blood from the stone that is my brain.</p>
+<p>I find that the biggest difference is in the first ten minutes of the day. When
+I wake up in my bed now, getting out is always optional. There's always another
+five minutes asleep, another ten, up until the point where perhaps I have missed
+the train or need to take my first meeting of the day.</p>
+<p>Waking up in Pittsburgh was not a decision, it was a fact. Every day when I woke
+up, I had what can only be described as <em>relentless purpose</em>. No matter how
+little sleep, no matter what day of the week, I would wake up and be out of bed
+within thirty seconds, immediately heading out in beautiful sunny weather to my
+cool air-conditioned office where I would spend the majority of my day.</p>
+<div class="pull-quote">
+  Waking up in Pittsburgh was not a decision, it was a fact.
+</div>
+<p>Some might describe such an experience as hellish, but that summer, I found it
+exhilarating. There was no "why" to life, it simply was. I continued on not just
+because I wanted to, but because I <em>had</em> to. No matter how much I was behind, I
+would find a way to catch up. I would continue to produce content that I loved,
+lectures that I exulted in, lessons that had real value to my students, because
+it was just the way that things were. I couldn't have asked for a more
+meaningful existence. I had found a <span style="color:rgb(255, 179, 48)">glorious purpose</span>.</p>
+<p>My default state in the summer was to pour my hours into my tasks, and allocate
+whatever remained to whatever other comforts I desired. Now, I stare into an
+excess of time, served to me on a platter in pursuit of the ideal known as
+"work-life balance". An ideal that should be achieved, for sure, but it is a sad
+thing that someone most in need of something is sometimes the least equipped to
+know how to deal with it.</p>
+<p><b><span style="color:rgb(255, 179, 48)">The hardest thing about graduating from Carnegie Mellon, in my experience, is
+finding out what to do with yourself with the time that you get back.</span></b></p>
+<p>I did promise that this section would be about lessons, and I think that this one
+is one that I am still figuring out as I go. Regardless, I don't think it is an
+interpretation like "don't work yourself too hard" or "try not to burn out", as
+good and true as those sentiments are.</p>
+<p>I think it's that, for all of us, <span style="color:rgb(255, 179, 48)">glorious purpose exists in some
+form or another</span>, waiting out there to be captured. "Glorious", not in an
+objective, flashy sense, but in a personal, subjective one. It's not exactly the
+purpose that I imagined when I was a child (although close), but for all that I'd
+given up on it, life took me to one anyways.</p>
+<p>But unlike a functional program, purpose is not immutable. The fact that I found
+a new purpose and left it behind does not mean that I must chase it in my mind
+and memories. Although I look fondly on the memories that I now have, and the
+content that I have produced, it is with the knowledge that there is still so much
+for me to learn and do.</p>
+<p>Writing this blog post is, in a way, my way of trying to let that time go.</p>
+<hr style="clear: both;"/>
+<p>I'll leave you with my favorite post-course message that a student left me:</p>
+<img src="&#x2F;impact.png" class="center blog-image" style="width: 90%; margin-bottom: 15px; margin-top: 15px;"/><p style="color: gray;">
+All of the materials for my iteration of the 15-150 Principles of Functional Programming course
+can be found online for free, <a href="/150">on this website</a>.
+</p>
+            </div>
+            <div class="block" id="footnotes-inline">
+              <!-- This is literally a template. We just put it here so we can copy
+                  the HTML, apparently.
+              -->
+              <template id="footnote-template">
+                <div class="footnote-inline">
+                  <a>
+                    {CONTENT}
+                  </a>
+                  <a id="arrow" style="color: rgb(41, 124, 248);" href="todo">↢</a>
+                </div>
+            </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Almost all of this code, I ripped from https://freeman.vc/notes/inline-footnotes-with-html-templates#fnref:1 -->
+        <script>
+          const contentRaw = document.getElementById("content-raw");
+          const footnotes = document.getElementById("footnotes-inline");
+          const footnoteTemplate = document.getElementById("footnote-template");
+
+          // Compute how wide a footnote is allowed to be.
+          // NOTE: This will not vary if someone resizes their browser, for instance!
+          // I don't really care, though.
+          const footnotesRect = footnotes.getBoundingClientRect();
+          const footnotesWidth = footnotesRect.width
+          // I find it suffocating to confine the footnotes + content to just the column
+          // of the page, so let's let footnotes bleed over the edge a bit.
+          const inlineFootnoteWidth = footnotesWidth * 2.5;
+
+          const footnoteSpacePadding = 20;
+
+          // Initializes all of the footnotes their number-dependent information.
+          //
+          // Maybe fragile, and dependent on the order that the query selectors run.
+          // Hopefully there's not some silly DOM stuff I don't know about which
+          // could make this visitor behave unexpectedly.
+          // But, convenient so that I don't have to manually number all of my footnotes.
+          count = 1;
+          document.querySelectorAll('.footnote-ref').forEach(callout => {
+            const newId = "footnote-" + count;
+            callout.id = newId;
+            callout.number = count;
+            callout.href = "#footnote-" + count;
+            callout.textContent = count;
+            count += 1;
+          });
+
+          function updateFootnotes() {
+              let maxY = 0;
+
+              // Clear existing footnotes to avoid duplicates
+              footnotes.innerHTML = '';
+
+              document.querySelectorAll('.footnote-ref').forEach(callout => {
+                  const footnoteId = callout.getAttribute("href").replace("#", "");
+                  const footnoteOriginal = document.getElementById(footnoteId);
+
+                  // Do some math here to compute the proper place to put the footnote, height-wise.
+                  const calloutRect = callout.getBoundingClientRect();
+                  const parentRect = contentRaw.getBoundingClientRect();
+                  // The max is so that we take into account `maxY`, but pad it slightly so we don't occupy exactly the same Y.
+                  const calloutTopPosition = Math.max(maxY + footnoteSpacePadding, calloutRect.top + window.scrollY);
+
+                  // This is how the blog post originally proposed to do the top, but I found that this
+                  // seemed to be incorrectly using relative positioning or something, and would be off.
+                  // const top = Math.max(maxY + footnoteSpacePadding, calloutRect.top - parentRect.top);
+
+                  // Make the new footnote element that we will insert.
+                  let footnote = document.createElement("div");
+                  footnote.style.position = "absolute";
+                  footnote.style.top = `${calloutTopPosition}px`;
+                  footnote.style.width = `${inlineFootnoteWidth}px`;
+
+                  // We need to make sure the arrow links back to the right place.
+                  // We can't do this when we set the template, so we will do it here, where we know
+                  // the name of the footnote to link back to.
+                  footnote.innerHTML = footnoteTemplate.innerHTML.replace("{CONTENT}", footnoteOriginal.getAttribute("content"));
+                  footnote.querySelector("a#arrow").href = "#" + footnoteId;
+
+                  footnotes.appendChild(footnote);
+
+                  // Store the maximum Y that we have put a footnote at, so that we know
+                  // not to put other footnotes too close to it.
+                  const footnoteRect = footnote.getBoundingClientRect();
+                  const footnoteTop = footnote.top;
+                  const footnoteBottom = footnoteTop + footnoteRect.height;
+                  maxY = calloutRect.top + window.scrollY + footnoteRect.height;
+              });
+          }
+
+          // Create a new ResizeObserver
+          const resizeObserver = new ResizeObserver(entries => {
+              for (let entry of entries) {
+                  // Check if the contentRaw is being observed and resized
+                  if (entry.target === contentRaw) {
+                      updateFootnotes();
+                  }
+              }
+          });
+
+          // Start observing the contentRaw element
+          resizeObserver.observe(contentRaw);
+
+          // Call the function on initial load
+          updateFootnotes();
+        </script>
+        
+
+        
+        <div class="pagination">
+            <div class="pagination__title">
+                <span class="pagination__title-h">Thanks for reading! Read other posts?</span>
+                <hr />
+            </div>
+            <div class="pagination__buttons">
+                
+                    <span class="button next">
+                        <a href="https://brandonspark.github.io/blog/design/">
+                            <span class="button__text">Designing a computer science course</span>&nbsp;
+                            <span class="button__icon">→</span>
+                        </a>
+                    </span>
+                </div>
+        </div>
+    
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

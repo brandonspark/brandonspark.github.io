@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Blog</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/blue.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        <nav class="menu">
+            <ul class="menu__inner">
+                <li><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li class="active"><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+
+<div class="posts">
+      <div class="post on-list">
+          
+    <h1 class="post-title"><a href="https://brandonspark.github.io/blog/design/">Designing a computer science course</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date">
+            2025-02-19
+        </span>
+
+    </div>
+
+    
+        <span class="post-tags-inline">
+                :: tags:&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/150/">#150</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/design/">#design</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/summer/">#summer</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/teaching/">#teaching</a></span>
+    
+
+          
+        <div class="post-content">
+            <p style="color: #a6a6a6">
+<b>NOTE:</b> This post is a component of a larger reflection blog post on my
+time as an instructor for CMU's 15-150 Principles of Functional Programming
+course. That blog post can be found <a href="https://brandonspark.github.io/blog/teaching">here</a>.
+</p>
+<hr style="clear: both;"/>
+<p>Designing a course from scratch is a lot of effort. It involves creating a
+itinerary of topics, a comprehensive narrative that drives the material,
+homework assignments that will be challenging enough to nurture students' growth
+while remaining feasible, and a great deal of investment into each individual
+student.</p>
+<p>Thankfully, <span style="color:rgb(255, 179, 48)">this blog post is not about that</span>. Having finished my
+stint as a summer instructor for 15-150, the introductory functional programming
+class at CMU, I was able to work off of course material that had already been
+taught for years. There was no need for me to design a whole curriculum from
+scratch.</p>
+<p>But, even though the pure information content of the course was predetermined,
+an important lesson that we derive from the film <em>Megamind</em> is that there is one
+aspect which separates an <a href="https://youtu.be/dy2zB8bLSpk?si=HIk3h5GBnntdS_DF">instructor from a super-instructor</a>:</p>
+<img src="&#x2F;presentation.jpg" class="center blog-image" style="width: 80%; margin-bottom: 15px; margin-top: 15px;"/><!-- presentation -->
+<p>With information comes the <em>presentation</em> of that information, and with
+presentation comes stylistic choices. With those comes a whole other world of
+issues and challenges, because information may be immutable, but how it is
+conveyed to someone can make a world of difference in how it is retained,
+remembered, and understood.</p>
+<p>This blog post is about <strong><span style="color:rgb(255, 179, 48)">designing</span></strong> a course, in the sense of
+artistic design. It's an exploration of how, over twelve weeks and months of
+preparation, I attempted to create a comprehensive style that could not just
+present material to students, but engage their attention fully, primarily
+through the creation of visual content for students to refer back to in the form
+of slides.</p>
+        </div>
+        <div>
+            <!-- &#xFE0E; -- force text style - some devices render this as emoji -->
+            <a class="read-more button" href="https://brandonspark.github.io/blog/design/">
+                <span class="button__text">Read more</span>&nbsp;
+                <span class="button__icon">&#8617;&#xFE0E;</span>
+            </a>
+        </div>
+        <!-- An unfortunate hack, but because of the inline HTML stuff we put in the actual blog posts,
+             we have to make sure that they don't occur when we display the blog post summaries.
+        -->
+        <script>
+          document.querySelectorAll('.footnote-ref').forEach(footnote => {
+            footnote.remove();
+          });
+        </script>
+    <!-- See https://www.getzola.org/documentation/templates/pages-sections/#section-variables -->
+    <!-- For non-blog pages, we don't want to do the footnote stuff below. -->
+    
+
+      </div>
+  
+      <div class="post on-list">
+          
+    <h1 class="post-title"><a href="https://brandonspark.github.io/blog/teaching/">My journey to teaching computer science, functionally</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date">
+            2025-02-19
+        </span>
+
+    </div>
+
+    
+        <span class="post-tags-inline">
+                :: tags:&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/150/">#150</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/summer/">#summer</a>&nbsp;
+                <a class="post-tag" href="https://brandonspark.github.io/tags/teaching/">#teaching</a></span>
+    
+
+          
+        <div class="post-content">
+            <!-- I have a ridiculous notion that elevators and phone booths are fundamentally the same.
+
+In the obvious ways, they are reminiscent. Both are metal rectangular cages that people
+enter and exit. The fundamental difference between them seems to be one of function--one
+is for movement, and one is for communication. This is where most people would find the
+analogy to be suspect.
+
+But in certain ways, they emulate each other. A person walking into an elevator expects
+to walk out with everything around them having changed. Some phone booths, people can
+walk into and walk out of with nothing really being significantly different.
+
+But on some days, you walk into a phone booth and emerge a completely different person.
+Some days, you exit with the entire universe having changed, even if physically in the
+same location.
+
+<div style="justify-content: center; align-items: center; display: flex; font-size: 16pt;">
+ λ
+</div> -->
+<p>I found myself in a cramped, unventilated phone booth when my dreams came true.</p>
+<p>The bare WeWork call booth was dimly lit by my laptop, which displayed a
+Zoom waiting room. My leg bounced incessantly, mimicking the race of my heart.
+My mother had told me to stop doing that.</p>
+<p>I was moments away from a meeting with a professor from Carnegie Mellon's School
+of Computer Science, to discuss my potential appointment as the summer instructor
+for 15-150, Principles of Functional Programming. At only 23 years old, I had
+only had a few job interviews in my life, and I felt woefully unprepared.</p>
+        </div>
+        <div>
+            <!-- &#xFE0E; -- force text style - some devices render this as emoji -->
+            <a class="read-more button" href="https://brandonspark.github.io/blog/teaching/">
+                <span class="button__text">Read more</span>&nbsp;
+                <span class="button__icon">&#8617;&#xFE0E;</span>
+            </a>
+        </div>
+        <!-- An unfortunate hack, but because of the inline HTML stuff we put in the actual blog posts,
+             we have to make sure that they don't occur when we display the blog post summaries.
+        -->
+        <script>
+          document.querySelectorAll('.footnote-ref').forEach(footnote => {
+            footnote.remove();
+          });
+        </script>
+    <!-- See https://www.getzola.org/documentation/templates/pages-sections/#section-variables -->
+    <!-- For non-blog pages, we don't want to do the footnote stuff below. -->
+    
+
+      </div>
+  <div class="pagination">
+      <div class="pagination__buttons"></div>
+  </div>
+</div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Projects</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/blue.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        <nav class="menu">
+            <ul class="menu__inner">
+                <li><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li class="active"><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/projects/">Projects</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+        
+        <div id="content-raw">
+          <div class="post-content">
+            <p>Here are some projects I'm working on, actively or passively, which I felt
+didn't fit into the other sections on teaching, or creative works, or details
+about myself.</p>
+<!-- TODO: hardcoded color here, gross. -->
+<h2 id=""><a href="https://github.com/brandonspark/mulligan" style="color:rgb(136, 105, 223)"><span style="color:#8869df">mulligan</span></a></h2>
+<p><tt><span style="color:rgb(255, 179, 48)">mulligan</span></tt> is a stepping debugger for the Standard ML
+language, aimed at making it easy to trace through the execution of simple
+Standard ML expressions, at a finer level of granularity than is possible
+through the SML/NJ REPL, which will not display the intermediary steps it takes
+to compute a value.</p>
+<div style="overflow: hidden;">
+  <div style="float: right; width: 50%; margin-left: 15px;">
+      <img src="https://user-images.githubusercontent.com/49291449/214633031-1f33f23d-af7f-4116-ba9d-fb8cb8f2a9e4.svg" style="width: 100%;" alt="Floating Image">
+  </div>
+  While <tt><span style="color:rgb(255, 179, 48)">mulligan</span></tt> works fine on simple examples, it is
+  currently in a beta state which is likely to have bugs. In addition, the
+  standard library is not currently implemented in it, meaning that definitions
+  must be supplied for most all functions for <tt><span style="color:rgb(255, 179, 48)">mulligan</span></tt> to
+  know about it. Regardless, for teaching purposes, <tt><span style="color:rgb(255, 179, 48)">mulligan</span></tt> is useful for programmatically generating traces, as well as for
+  clarifying to beginners how SML's execution model really works.
+  <div style="clear: right;">
+      <h2 style="margin-top: 0;">
+        <a href="https://github.com/brandonspark/deriving-sml" style="color:rgb(136, 105, 223)"><span style="color:#8869df">deriving-sml</span></a>
+      </h2>
+      <p>
+        <tt><span style="color:rgb(255, 179, 48)">deriving-sml</span></tt> is a code generation tool that aims to
+        limitedly mimic the functionality of its more popular OCaml cousin,
+        <a href="https://github.com/ocaml-ppx/ppx_deriving">ppx-deriving</a>, but
+        for the Standard ML language.
+      </p>
+  </div>
+</div>
+<tt><span style="color:rgb(255, 179, 48)">deriving-sml</span></tt> supports four "plugins", those being <span style="color:rgb(255, 179, 48)">eq</span>, <span style="color:rgb(255, 179, 48)">compare</span>, <span style="color:rgb(255, 179, 48)">show</span>, and <span style="color:rgb(255, 179, 48)">map</span>. <tt><span style="color:rgb(255, 179, 48)">deriving-sml</span></tt> parses a "meta-SML"
+dialect which includes "deriving metadata" attached to type declarations, which
+signals to <tt><span style="color:rgb(255, 179, 48)">deriving-sml</span></tt> to produce code for each of the
+four functionalities, in a type-directed way.
+<p>For instance, the following code:</p>
+<pre data-lang="sml" class="language-sml "><code class="language-sml" data-lang="sml">structure Foo =
+  struct
+    type t = int * string [.deriving show, eq]
+
+    datatype t2 =
+        One
+      | Two [.deriving show, compare]
+  end
+</code></pre>
+<p>produces the following code, when fed into <tt><span style="color:rgb(255, 179, 48)">deriving-sml</span></tt>:</p>
+<pre><code>structure Foo =
+  struct
+    type t = (int * string) (* [.deriving show,eq] *)
+    fun show_t (t1, t2) =
+        (op^ ( ((op^ ( (&quot;(&quot;,
+                        (op^ ( ((Int.toString ( t1 )),
+                                (op^ ( (&quot;, &quot;,
+                                        (op^ ( ((op^ ( (&quot;\&quot;&quot;, t2) )),
+                                                &quot;\&quot;&quot;) ))) ))) ))) )),
+                &quot;)&quot;) ))
+    and t_show x = (show_t ( x ))
+    fun eq_t ((t5, t7), (t6, t8)) =
+        ((op= ( (t5, t6) )) andalso (op= ( (t7, t8) )))
+    and t_eq x = (eq_t ( x ))
+    datatype t2 = One | Two (* [.deriving show,compare] *)
+    fun show_t2 t9 = (case t9 of One =&gt; &quot;One&quot; | Two =&gt; &quot;Two&quot;)
+    and t2_show x = (show_t2 ( x ))
+    fun cmp_t2 (t10, t11) =
+        (case (t10, t11) of
+           (One, One) =&gt; EQUAL
+         | (Two, Two) =&gt; EQUAL
+         | (x, y) =&gt;
+             (Int.compare ( (((fn x =&gt;
+                                    (case x of
+                                       One =&gt; 0
+                                     | Two =&gt; 1)) ( x )),
+                             ((fn x =&gt;
+                                    (case x of
+                                       One =&gt; 0
+                                     | Two =&gt; 1)) ( y ))) )))
+    and t2_cmp x = (cmp_t2 ( x ))
+    and t2_compare x = (cmp_t2 ( x ))
+    and compare_t2 x = (cmp_t2 ( x ))
+  end
+</code></pre>
+
+          </div>
+        </div>
+    
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2025
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>
