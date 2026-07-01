@@ -22,8 +22,9 @@ const EDITOR_CSS = `
   font: inherit; line-height: inherit; white-space: pre;
   overflow: hidden; pointer-events: none;
 }
-.sml-editor pre.sml-highlight code {
-  font: inherit; background: none; padding: 0; border: none;
+.sml-editor pre.sml-highlight code,
+.sml-solution-view code {
+  font: inherit; background: none; padding: 0; margin: 0; border: none;
 }
 .sml-editor textarea {
   position: relative; display: block; width: 100%; min-height: 9rem;
