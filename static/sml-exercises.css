@@ -8,20 +8,25 @@
   margin: 1.2rem 0;
 }
 .sml-exercise h3 { margin: 0 0 0.4rem; color: var(--accent); }
-.sml-exercise textarea {
-  width: 100%;
-  min-height: 9rem;
-  box-sizing: border-box;
-  resize: vertical;
+.sml-exercise .sml-editor {
   font-family: Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace;
   font-size: 0.9rem;
   line-height: 1.4;
   background: rgba(0, 0, 0, 0.3);
   color: var(--color);
   border: 1px solid var(--accent-alpha-20);
-  padding: 0.5rem;
 }
-.sml-exercise textarea:focus { outline: 1px solid var(--accent); }
+.sml-exercise .sml-editor:focus-within { outline: 1px solid var(--accent); }
+/* the site styles code elements (purple, background); not inside the editor */
+.sml-exercise .sml-highlight code { color: inherit; background: none; }
+
+/* SML token colors (see web-sml examples/exercises/highlight-sml.mjs) */
+.sml-kw { color: var(--accent); }
+.sml-con { color: #e5c07b; }
+.sml-str { color: #6bd968; }
+.sml-com { color: var(--accent-alpha-70); font-style: italic; }
+.sml-num { color: #d19a66; }
+.sml-tyvar { color: #56b6c2; font-style: italic; }
 
 .sml-controls { display: flex; gap: 0.8rem; align-items: center; margin: 0.5rem 0; flex-wrap: wrap; }
 .sml-controls button {

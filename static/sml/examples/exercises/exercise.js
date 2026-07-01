@@ -10,16 +10,82 @@
 //   explicitly if your site arranges the files differently (see
 //   docs/EMBEDDING.md).
 import { buildTestSource, gradeRun, isTestLine } from './exercise-core.mjs';
+import { highlightSML } from './highlight-sml.mjs';
+
+// Structural CSS for the highlighting editor (a transparent-text textarea
+// over a highlighted <pre> with identical metrics). Colors and fonts are the
+// page's business; this is only geometry and layering.
+const EDITOR_CSS = `
+.sml-editor { position: relative; overflow: hidden; }
+.sml-editor pre.sml-highlight {
+  position: absolute; inset: 0; margin: 0; padding: 0.5rem;
+  font: inherit; line-height: inherit; white-space: pre;
+  overflow: hidden; pointer-events: none;
+}
+.sml-editor pre.sml-highlight code {
+  font: inherit; background: none; padding: 0; border: none;
+}
+.sml-editor textarea {
+  position: relative; display: block; width: 100%; min-height: 9rem;
+  box-sizing: border-box; margin: 0; padding: 0.5rem; border: none;
+  font: inherit; line-height: inherit; outline: none;
+  background: transparent; -webkit-text-fill-color: transparent;
+  caret-color: currentColor;
+  white-space: pre; overflow-wrap: normal; overflow: auto; resize: vertical;
+}`;
+
+function ensureEditorCss() {
+  if (document.querySelector('style[data-sml-editor]')) return;
+  const style = document.createElement('style');
+  style.dataset.smlEditor = '';
+  style.textContent = EDITOR_CSS;
+  document.head.appendChild(style);
+}
+
+// Wire live highlighting: input re-renders, scrolling stays in sync, Tab
+// indents instead of moving focus. Returns a setter for programmatic value
+// changes (Reset).
+function attachHighlighting(editor) {
+  const textarea = editor.querySelector('textarea');
+  const code = editor.querySelector('code');
+  const render = () => {
+    const v = textarea.value;
+    code.innerHTML = highlightSML(v.endsWith('\n') ? v + ' ' : v);
+  };
+  const sync = () => {
+    const pre = editor.querySelector('pre');
+    pre.scrollTop = textarea.scrollTop;
+    pre.scrollLeft = textarea.scrollLeft;
+  };
+  textarea.addEventListener('input', render);
+  textarea.addEventListener('scroll', sync);
+  textarea.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const { selectionStart: s, selectionEnd } = textarea;
+      textarea.setRangeText('  ', s, selectionEnd, 'end');
+      render();
+    }
+  });
+  render();
+  return (value) => { textarea.value = value; render(); };
+}
 
 export function mountExercise(container, exercise, options = {}) {
   const { timeoutMs = 10000, quiet = true } = options;
   const workerUrl = options.workerUrl ?? new URL('../../web/worker.js', import.meta.url);
 
+  ensureEditorCss();
   container.classList.add('sml-exercise');
   container.innerHTML = `
     <h3></h3>
     <div class="sml-prompt"></div>
-    <textarea spellcheck="false"></textarea>
+    <div class="sml-editor">
+      <!-- nohighlight: pages that run highlight.js's highlightAll() must not
+           re-highlight this element; the widget renders its own tokens. -->
+      <pre class="sml-highlight" aria-hidden="true"><code class="nohighlight"></code></pre>
+      <textarea spellcheck="false" wrap="off"></textarea>
+    </div>
     <div class="sml-controls">
       <button class="sml-run">Run tests</button>
       <button class="sml-stop" disabled>Stop</button>
@@ -32,6 +98,7 @@ export function mountExercise(container, exercise, options = {}) {
   el('h3').textContent = exercise.title;
   el('.sml-prompt').innerHTML = exercise.prompt;
   el('textarea').value = exercise.starter;
+  const setSource = attachHighlighting(el('.sml-editor'));
 
   let worker = null, timer = null, outputLines = [];
 
@@ -99,7 +166,7 @@ export function mountExercise(container, exercise, options = {}) {
 
   el('.sml-run').onclick = run;
   el('.sml-stop').onclick = () => finish('stopped');
-  el('.sml-reset').onclick = () => { el('textarea').value = exercise.starter; };
+  el('.sml-reset').onclick = () => setSource(exercise.starter);
   el('textarea').onkeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !el('.sml-run').disabled) run();
   };
