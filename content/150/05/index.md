@@ -17,6 +17,10 @@ datatype tree = Empty | Node of tree * int * tree
 
 fun treeSum (t : tree) : int = raise Fail "unimplemented"
 '''
+solution = '''
+fun treeSum (Empty : tree) : int = 0
+  | treeSum (Node (l, x, r)) = treeSum l + x + treeSum r
+'''
 tests = [
   { name = "empty tree sums to 0", expr = "treeSum Empty = 0" },
   { name = "single node", expr = "treeSum (Node (Empty, 7, Empty)) = 7" },

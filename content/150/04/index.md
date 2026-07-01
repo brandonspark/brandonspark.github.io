@@ -26,6 +26,14 @@ prompt = "Define <code>tsum : int list -> int</code> which sums a list <em>tail-
 starter = '''
 fun tsum (xs : int list) : int = raise Fail "unimplemented"
 '''
+solution = '''
+local
+  fun loop (acc : int, [] : int list) : int = acc
+    | loop (acc, x::xs) = loop (acc + x, xs)
+in
+  fun tsum (xs : int list) : int = loop (0, xs)
+end
+'''
 tests = [
   { name = "tsum [] = 0", expr = "tsum [] = 0" },
   { name = "tsum [1, 2, 3] = 6", expr = "tsum [1, 2, 3] = 6" },

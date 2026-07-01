@@ -15,6 +15,10 @@ prompt = "Define <code>fact : int -> int</code> so that <code>fact n</code> eval
 starter = '''
 fun fact (n : int) : int = raise Fail "unimplemented"
 '''
+solution = '''
+fun fact (0 : int) : int = 1
+  | fact n = n * fact (n - 1)
+'''
 tests = [
   { name = "fact 0 = 1", expr = "fact 0 = 1" },
   { name = "fact 5 = 120", expr = "fact 5 = 120" },

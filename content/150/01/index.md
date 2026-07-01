@@ -27,6 +27,9 @@ prompt = "Define <code>square : int -> int</code>, which squares its argument. (
 starter = '''
 fun square (n : int) : int = raise Fail "unimplemented"
 '''
+solution = '''
+fun square (n : int) : int = n * n
+'''
 tests = [
   { name = "square 0 = 0", expr = "square 0 = 0" },
   { name = "square 5 = 25", expr = "square 5 = 25" },

@@ -23,6 +23,10 @@ starter = '''
 fun dist (p1 : int * int, p2 : int * int) : int =
   raise Fail "unimplemented"
 '''
+solution = '''
+fun dist ((x1, y1) : int * int, (x2, y2) : int * int) : int =
+  abs (x1 - x2) + abs (y1 - y2)
+'''
 tests = [
   { name = "same point", expr = "dist ((0, 0), (0, 0)) = 0" },
   { name = "axis-aligned", expr = "dist ((0, 0), (3, 0)) = 3" },

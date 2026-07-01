@@ -15,6 +15,13 @@ starter = '''
 fun merge (xs : int list, ys : int list) : int list =
   raise Fail "unimplemented"
 '''
+solution = '''
+fun merge ([] : int list, ys : int list) : int list = ys
+  | merge (xs, []) = xs
+  | merge (x::xs, y::ys) =
+      if x <= y then x :: merge (xs, y::ys)
+      else y :: merge (x::xs, ys)
+'''
 tests = [
   { name = "both empty", expr = "merge ([], []) = []" },
   { name = "one empty", expr = "merge ([1, 2], []) = [1, 2]" },

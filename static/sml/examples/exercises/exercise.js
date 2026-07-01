@@ -29,8 +29,11 @@ const EDITOR_CSS = `
   position: relative; display: block; width: 100%; min-height: 9rem;
   box-sizing: border-box; margin: 0; padding: 0.5rem; border: none;
   font: inherit; line-height: inherit; outline: none;
-  background: transparent; -webkit-text-fill-color: transparent;
-  caret-color: currentColor;
+  /* glyphs invisible (the <pre> renders them), but color must be inherited:
+     form controls don't inherit it, and the caret follows currentColor —
+     a UA-default black caret vanishes on dark backgrounds. */
+  color: inherit; background: transparent;
+  -webkit-text-fill-color: transparent; caret-color: currentColor;
   white-space: pre; overflow-wrap: normal; overflow: auto; resize: vertical;
 }`;
 
@@ -104,8 +107,10 @@ export function mountExercise(container, exercise, options = {}) {
       <button class="sml-run">Run tests</button>
       <button class="sml-stop" disabled>Stop</button>
       <button class="sml-reset">Reset</button>
+      <button class="sml-solution" hidden>Show solution</button>
       <span class="sml-status"></span>
     </div>
+    <pre class="sml-solution-view" hidden><code class="nohighlight"></code></pre>
     <ul class="sml-results"></ul>
     <pre class="sml-output" hidden></pre>`;
   const el = (sel) => container.querySelector(sel);
@@ -181,6 +186,16 @@ export function mountExercise(container, exercise, options = {}) {
   el('.sml-run').onclick = run;
   el('.sml-stop').onclick = () => finish('stopped');
   el('.sml-reset').onclick = () => setSource(exercise.starter);
+  if (exercise.solution) {
+    const btn = el('.sml-solution');
+    const view = el('.sml-solution-view');
+    view.querySelector('code').innerHTML = toHighlightedHtml(exercise.solution.trim());
+    btn.hidden = false;
+    btn.onclick = () => {
+      view.hidden = !view.hidden;
+      btn.textContent = view.hidden ? 'Show solution' : 'Hide solution';
+    };
+  }
   el('textarea').onkeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !el('.sml-run').disabled) run();
   };

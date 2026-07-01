@@ -14,6 +14,10 @@ prompt = "Define <code>repeat : 'a * int -> 'a list</code>, where <code>repeat (
 starter = '''
 fun repeat (x, n) = raise Fail "unimplemented"
 '''
+solution = '''
+fun repeat (x, 0) = []
+  | repeat (x, n) = x :: repeat (x, n - 1)
+'''
 tests = [
   { name = "zero copies", expr = "repeat (true, 0) = []" },
   { name = "at type int", expr = "repeat (7, 3) = [7, 7, 7]" },

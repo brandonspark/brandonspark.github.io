@@ -10,6 +10,8 @@
   .sml-exercise h3 { margin-top: 0; }
   .sml-exercise .sml-editor { font: 14px/1.4 ui-monospace, monospace;
                               border: 1px solid #8884; background: #8881; }
+  .sml-solution-view { font: 14px/1.4 ui-monospace, monospace; background: #8881;
+                       border: 1px dashed #8886; padding: 0.5rem; }
   .sml-kw { color: #c678dd; }
   .sml-con { color: #b58900; }
   .sml-str { color: #50a14f; }
@@ -64,6 +66,7 @@ mountExercise(document.getElementById('ex-fact'), {
   title: 'Warm-up: factorial',
   prompt: 'Define <code>fact : int -> int</code> computing <code>n!</code>. You may assume <code>n >= 0</code>.',
   starter: 'fun fact n = raise Fail "unimplemented"\n',
+  solution: 'fun fact 0 = 1\n  | fact n = n * fact (n - 1)\n',
   tests: [
     { name: 'fact 0 = 1', expr: 'fact 0 = 1' },
     { name: 'fact 1 = 1', expr: 'fact 1 = 1' },

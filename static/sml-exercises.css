@@ -20,6 +20,18 @@
 /* the site styles code elements (purple, background); not inside the editor */
 .sml-exercise .sml-highlight code { color: inherit; background: none; }
 
+.sml-solution-view {
+  font-family: Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px dashed var(--accent-alpha-70);
+  padding: 0.5rem;
+  white-space: pre;
+  overflow-x: auto;
+}
+.sml-exercise .sml-solution-view code { color: inherit; background: none; }
+
 /* Fallback token colors (built-in tokenizer) — only used if the page's
    highlight.js + sml grammar is unavailable; normally syntax_colors.css
    styles the .hljs-* classes instead. */
