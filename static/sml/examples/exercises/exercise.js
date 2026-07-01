@@ -42,6 +42,20 @@ function ensureEditorCss() {
   document.head.appendChild(style);
 }
 
+// Prefer the page's own highlight.js SML setup when present (so the editor
+// matches the site's other code blocks and theme); otherwise use the
+// built-in tokenizer. hljs.highlight throws on `illegal` matches unless
+// ignoreIllegals — and half-typed code hits those constantly.
+function toHighlightedHtml(source) {
+  const hl = globalThis.hljs;
+  if (hl?.getLanguage?.('sml')) {
+    try {
+      return hl.highlight(source, { language: 'sml', ignoreIllegals: true }).value;
+    } catch { /* fall through */ }
+  }
+  return highlightSML(source);
+}
+
 // Wire live highlighting: input re-renders, scrolling stays in sync, Tab
 // indents instead of moving focus. Returns a setter for programmatic value
 // changes (Reset).
@@ -50,7 +64,7 @@ function attachHighlighting(editor) {
   const code = editor.querySelector('code');
   const render = () => {
     const v = textarea.value;
-    code.innerHTML = highlightSML(v.endsWith('\n') ? v + ' ' : v);
+    code.innerHTML = toHighlightedHtml(v.endsWith('\n') ? v + ' ' : v);
   };
   const sync = () => {
     const pre = editor.querySelector('pre');

@@ -20,7 +20,9 @@
 /* the site styles code elements (purple, background); not inside the editor */
 .sml-exercise .sml-highlight code { color: inherit; background: none; }
 
-/* SML token colors (see web-sml examples/exercises/highlight-sml.mjs) */
+/* Fallback token colors (built-in tokenizer) — only used if the page's
+   highlight.js + sml grammar is unavailable; normally syntax_colors.css
+   styles the .hljs-* classes instead. */
 .sml-kw { color: var(--accent); }
 .sml-con { color: #e5c07b; }
 .sml-str { color: #6bd968; }
