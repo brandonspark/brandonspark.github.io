@@ -8,6 +8,30 @@ name = "poly"
 number="08"
 url="https://youtube.com/embed/kQ9Zo7bbIWA"
 colorscheme="lecture_red"
+[[extra.exercises]]
+title = "A genuinely polymorphic function"
+prompt = "Define <code>repeat : 'a * int -> 'a list</code>, where <code>repeat (x, n)</code> is the list of <code>n</code> copies of <code>x</code>. Note the tests use it at <em>two different types</em> — an <code>int list</code> annotation will not survive them."
+starter = '''
+fun repeat (x, n) = raise Fail "unimplemented"
+'''
+tests = [
+  { name = "zero copies", expr = "repeat (true, 0) = []" },
+  { name = "at type int", expr = "repeat (7, 3) = [7, 7, 7]" },
+  { name = "at type string", expr = 'repeat ("a", 2) = ["a", "a"]' },
+]
+
+[[extra.exercises]]
+kind = "choice"
+title = "Type inference"
+prompt = "Without annotations, what type does SML infer for <code>fn (x, y) => x</code>?"
+choices = [
+  "<code>'a * 'a -> 'a</code>",
+  "<code>'a * 'b -> 'a</code>",
+  "<code>'a -> 'b -> 'a</code>",
+  "<code>int * int -> int</code>",
+]
+answer = 1
+explain = "Nothing constrains <code>x</code> and <code>y</code> to be related, so each gets its own type variable — <code>'a * 'b -> 'a</code> is the <em>most general</em> type. (<code>'a * 'a -> 'a</code> would work but needlessly forces the components to match; the curried type has the wrong shape for a tuple argument.)"
 +++
 
 This semester, we have been type-annotating all of our declarations and

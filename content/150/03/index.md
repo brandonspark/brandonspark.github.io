@@ -8,6 +8,31 @@ name = "induction"
 number="03"
 url="https://youtube.com/embed/6HsZypI7Osg"
 colorscheme="lecture_teal"
+
+[[extra.exercises]]
+title = "Factorial"
+prompt = "Define <code>fact : int -> int</code> so that <code>fact n</code> evaluates to <code>n!</code>. You may assume <code>n >= 0</code>."
+starter = '''
+fun fact (n : int) : int = raise Fail "unimplemented"
+'''
+tests = [
+  { name = "fact 0 = 1", expr = "fact 0 = 1" },
+  { name = "fact 5 = 120", expr = "fact 5 = 120" },
+  { name = "fact 10 = 3628800", expr = "fact 10 = 3628800" },
+]
+
+[[extra.exercises]]
+kind = "choice"
+title = "The recursive leap of faith"
+prompt = "When proving <code>fact</code> correct by induction on <code>n</code>, the <em>induction hypothesis</em> corresponds to which assumption about the code?"
+choices = [
+  "That <code>fact 0</code> evaluates to <code>1</code>",
+  "That the recursive call <code>fact (n - 1)</code> correctly computes <code>(n - 1)!</code>",
+  "That <code>fact</code> terminates on every input",
+  "That multiplication is commutative",
+]
+answer = 1
+explain = "The leap of faith from lecture <em>is</em> the induction hypothesis: assume the recursive call already works on the smaller input, and show that the current case is correct given that. (The base case is proven separately, and termination is what the decreasing argument buys you.)"
 +++
 
 Early on, it was claimed that almost every function in 150 would be recursive.

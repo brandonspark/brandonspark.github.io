@@ -32,6 +32,27 @@
             <iframe src="{{ page.extra.url }}" frameborder="0" allowfullscreen></iframe>
           </div>
 
+        {% if page.extra.exercises %}
+        <link rel="stylesheet" href="/sml-exercises.css">
+        <div class="sml-exercises">
+          <h2>Try it yourself</h2>
+          <p class="sml-exercises-blurb">These run entirely in your browser
+          (Moscow ML on WebAssembly, via
+          <a href="https://github.com/brandonspark/web-sml">web-sml</a>).
+          For code questions, Ctrl+Enter runs the hidden tests.</p>
+          <div class="sml-exercise-list"></div>
+        </div>
+        <script type="module">
+          import { mountQuestion } from '/sml/examples/exercises/exercise.js';
+          const list = document.querySelector('.sml-exercise-list');
+          for (const q of {{ page.extra.exercises | json_encode() | safe }}) {
+            const div = document.createElement('div');
+            list.appendChild(div);
+            mountQuestion(div, q);
+          }
+        </script>
+        {% endif %}
+
         {{ post_macros::earlier_later(page=page) }}
     </div>
 {% endblock content %}

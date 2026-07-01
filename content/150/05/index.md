@@ -8,6 +8,33 @@ name = "trees"
 number="05"
 url="https://youtube.com/embed/2s1o_oqcEHI"
 colorscheme="lecture_pink"
+
+[[extra.exercises]]
+title = "Summing a tree"
+prompt = "Define <code>treeSum : tree -> int</code>, which sums every element in the tree. Notice how the two recursive calls mirror the two induction hypotheses from lecture."
+starter = '''
+datatype tree = Empty | Node of tree * int * tree
+
+fun treeSum (t : tree) : int = raise Fail "unimplemented"
+'''
+tests = [
+  { name = "empty tree sums to 0", expr = "treeSum Empty = 0" },
+  { name = "single node", expr = "treeSum (Node (Empty, 7, Empty)) = 7" },
+  { name = "three nodes", expr = "treeSum (Node (Node (Empty, 1, Empty), 2, Node (Empty, 3, Empty))) = 6" },
+]
+
+[[extra.exercises]]
+kind = "choice"
+title = "Induction on trees"
+prompt = "The principle of structural induction for trees differs from that for lists in what way?"
+choices = [
+  "There is no base case, because trees can be infinite",
+  "The inductive step assumes <em>two</em> induction hypotheses — one per subtree",
+  "It only applies to balanced trees",
+  "It requires proving the theorem for every traversal order",
+]
+answer = 1
+explain = "A <code>Node</code> has two recursive positions, so the inductive step gets an induction hypothesis for the left subtree <em>and</em> one for the right — exactly mirroring the two recursive calls in functions like <code>treeSum</code>. The base case is <code>Empty</code>, just as <code>[]</code> is for lists."
 +++
 
 Like lists, trees are immensely important data structures in computer science.

@@ -8,6 +8,27 @@ name = "parallel"
 number="07"
 url="https://youtube.com/embed/cy5B4iSohxY"
 colorscheme="lecture_gold"
+[[extra.exercises]]
+title = "Merge"
+prompt = "Define <code>merge : int list * int list -> int list</code>, which merges two lists that are each sorted in increasing order into one sorted list — the heart of merge sort from lecture."
+starter = '''
+fun merge (xs : int list, ys : int list) : int list =
+  raise Fail "unimplemented"
+'''
+tests = [
+  { name = "both empty", expr = "merge ([], []) = []" },
+  { name = "one empty", expr = "merge ([1, 2], []) = [1, 2]" },
+  { name = "interleaved", expr = "merge ([1, 3, 5], [2, 4]) = [1, 2, 3, 4, 5]" },
+  { name = "duplicates survive", expr = "merge ([1, 2], [2, 3]) = [1, 2, 2, 3]" },
+]
+
+[[extra.exercises]]
+kind = "choice"
+title = "The tree method"
+prompt = "Merge sort satisfies <code>W(n) = 2 W(n/2) + c·n</code>. Using the tree method — cost per level times number of levels — what bound do you get?"
+choices = ["O(n)", "O(n log n)", "O(n<sup>2</sup>)", "O(2<sup>n</sup>)"]
+answer = 1
+explain = "Each level of the call tree does <code>c·n</code> total work (the halves are smaller, but there are more of them), and halving <code>n</code> gives <code>log n</code> levels: <code>n</code> work per level × <code>log n</code> levels = <code>O(n log n)</code>."
 +++
 
 This lecture expanded upon the discussions on asymptotic complexity of

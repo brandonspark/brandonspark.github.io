@@ -8,6 +8,27 @@ name = "equivalence"
 number="02"
 url="https://youtube.com/embed/QTXrbizKQOs"
 colorscheme="lecture_purple"
+[[extra.exercises]]
+kind = "choice"
+title = "Shadowing"
+prompt = "What does <code>y</code> evaluate to?<pre><code>val x = 5\nval y = let val x = 10 in x + x end</code></pre>"
+choices = ["10", "15", "20", "This code does not typecheck"]
+answer = 2
+explain = "The inner <code>val x = 10</code> <em>shadows</em> the outer binding — it is a brand-new variable that happens to share the name. Inside the <code>let</code>, <code>x</code> is 10, so <code>x + x</code> is 20. The outer <code>x</code> is unchanged (and unused)."
+
+[[extra.exercises]]
+title = "Pattern matching on tuples"
+prompt = "Define <code>dist : (int * int) * (int * int) -> int</code> computing the Manhattan distance between two points: <code>|x1 - x2| + |y1 - y2|</code>. Use tuple patterns to take the points apart, and <code>abs</code> for absolute value."
+starter = '''
+fun dist (p1 : int * int, p2 : int * int) : int =
+  raise Fail "unimplemented"
+'''
+tests = [
+  { name = "same point", expr = "dist ((0, 0), (0, 0)) = 0" },
+  { name = "axis-aligned", expr = "dist ((0, 0), (3, 0)) = 3" },
+  { name = "general", expr = "dist ((1, 2), (4, 6)) = 7" },
+  { name = "order does not matter", expr = "dist ((4, 6), (1, 2)) = 7" },
+]
 +++
 
 Following the first lecture, this lesson went into more about

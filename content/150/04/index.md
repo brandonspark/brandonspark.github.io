@@ -8,6 +8,29 @@ name = "structural"
 number="04"
 url="https://youtube.com/embed/BlOKPMMCiNM"
 colorscheme="lecture_green"
+[[extra.exercises]]
+kind = "choice"
+title = "Spotting tail recursion"
+prompt = "Which of these functions is tail-recursive?"
+choices = [
+  "<code>fun f [] = 0 | f (x::xs) = x + f xs</code>",
+  "<code>fun g (acc, []) = acc | g (acc, x::xs) = g (acc + x, xs)</code>",
+  "<code>fun h n = if n = 0 then 1 else n * h (n - 1)</code>",
+]
+answer = 1
+explain = "In <code>g</code>, the recursive call is the <em>entire</em> result — nothing remains to do when it returns. <code>f</code> and <code>h</code> both have work pending after the call (<code>x + …</code> and <code>n * …</code>), so they must remember it, costing stack space."
+
+[[extra.exercises]]
+title = "Tail-recursive sum"
+prompt = "Define <code>tsum : int list -> int</code> which sums a list <em>tail-recursively</em>: write a helper that carries an accumulator, in the style of <code>tlength</code> from lecture. (The tests cannot check tail recursion itself — that part is on you.)"
+starter = '''
+fun tsum (xs : int list) : int = raise Fail "unimplemented"
+'''
+tests = [
+  { name = "tsum [] = 0", expr = "tsum [] = 0" },
+  { name = "tsum [1, 2, 3] = 6", expr = "tsum [1, 2, 3] = 6" },
+  { name = "negatives cancel", expr = "tsum [~1, 1, ~2, 2] = 0" },
+]
 +++
 
 Simple induction on the natural numbers can get us reasonably far
