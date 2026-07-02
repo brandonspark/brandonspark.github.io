@@ -135,9 +135,11 @@ export function mountExercise(container, exercise, options = {}) {
   }
 
   function renderOutput() {
+    // The toplevel emits a trailing newline on exit even in quiet mode;
+    // whitespace-only output should not surface an (empty) pane.
     const pre = el('.sml-output');
-    pre.hidden = outputLines.length === 0;
-    pre.textContent = outputLines.join('\n');
+    pre.hidden = !outputLines.some((line) => line.trim() !== '');
+    pre.textContent = outputLines.join('\n').replace(/\s+$/, '');
   }
 
   function finish(status) {
