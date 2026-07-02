@@ -8,6 +8,26 @@ name = "regex"
 number="13"
 url="https://youtube.com/embed/cVkPmxI2MO0"
 colorscheme="lecture_pinkish_red"
+[[extra.exercises]]
+kind = "choice"
+title = "Reading a regular expression"
+prompt = "Consider the regular expression <code>a*b</code> (any number of <code>a</code>s, then one <code>b</code>). Which of these strings is <em>not</em> in its language?"
+choices = ["b", "ab", "aaab", "aba"]
+answer = 3
+explain = "<code>a*</code> can match zero <code>a</code>s (so <code>b</code> is in), one (<code>ab</code>), or three (<code>aaab</code>). But <code>aba</code> has a trailing <code>a</code> after the <code>b</code>, and nothing in <code>a*b</code> can match anything after the <code>b</code>."
+
+[[extra.exercises]]
+kind = "choice"
+title = "The matcher's specification"
+prompt = "In the lecture's matcher, matching <code>Concat (r1, r2)</code> against a string <code>s</code> requires finding:"
+choices = [
+  "A split of <code>s</code> into a prefix matching <code>r1</code> and a suffix matching <code>r2</code>",
+  "That <code>s</code> matches both <code>r1</code> and <code>r2</code> entirely",
+  "That <code>s</code> matches either <code>r1</code> or <code>r2</code>",
+  "That some character of <code>s</code> matches <code>r1</code> and the rest match <code>r2</code>",
+]
+answer = 0
+explain = "Concatenation means: some way of cutting <code>s</code> into <code>p ^ q</code> where <code>p</code> is in the language of <code>r1</code> and <code>q</code> in that of <code>r2</code>. The matcher searches over the possible split points — this is why reasoning via the prefix/suffix specification (or the picture!) keeps the implementation honest."
 +++
 
 String validation is an important problem in computer science. We are often

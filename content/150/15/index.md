@@ -8,6 +8,60 @@ name = "functors"
 number="15"
 url="https://youtube.com/embed/2d5-DdZyRDE"
 colorscheme="lecture_dark_orange"
+[[extra.exercises]]
+title = "Your first functor"
+prompt = "Complete the functor <code>MaxFn</code>, which takes a structure of the <code>ORD</code> type class and produces a structure with a <code>max</code> function for that type."
+starter = '''
+signature ORD =
+sig
+  type t
+  val compare : t * t -> order
+end
+
+functor MaxFn (O : ORD) =
+struct
+  fun max (a : O.t, b : O.t) : O.t = raise Fail "unimplemented"
+end
+
+structure IntMax = MaxFn (struct type t = int val compare = Int.compare end)
+structure StrMax = MaxFn (struct type t = string val compare = String.compare end)
+'''
+solution = '''
+signature ORD =
+sig
+  type t
+  val compare : t * t -> order
+end
+
+functor MaxFn (O : ORD) =
+struct
+  fun max (a, b) =
+    case O.compare (a, b) of
+      LESS => b
+    | _ => a
+end
+
+structure IntMax = MaxFn (struct type t = int val compare = Int.compare end)
+structure StrMax = MaxFn (struct type t = string val compare = String.compare end)
+'''
+tests = [
+  { name = "int instance, second larger", expr = "IntMax.max (2, 5) = 5" },
+  { name = "int instance, first larger", expr = "IntMax.max (7, 3) = 7" },
+  { name = "string instance", expr = 'StrMax.max ("apple", "banana") = "banana"' },
+]
+
+[[extra.exercises]]
+kind = "choice"
+title = "Why a type class?"
+prompt = "The lecture's dictionary functor takes an <code>ORD</code> structure rather than having every operation accept a comparison function argument. The main benefit is:"
+choices = [
+  "It runs faster, because functors are compiled away",
+  "One fixed ordering is baked in at instantiation, so operations can never be called with inconsistent comparisons",
+  "It avoids currying, which is expensive",
+  "It allows the dictionary to store keys of several different types at once",
+]
+answer = 1
+explain = "If every <code>insert</code> and <code>lookup</code> took its own comparison function, nothing would stop a caller from mixing two different orderings on the same dictionary — silently corrupting the search-tree invariant. Instantiating the functor with one <code>ORD</code> makes the ordering part of the dictionary's identity."
 +++
 
 This lecture continues our exploration of the SML module system, by introducing

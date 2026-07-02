@@ -8,6 +8,31 @@ name = "seq"
 number="17"
 url="https://youtube.com/embed/Y9YuN4Aw3LE"
 colorscheme="lecture_yellow"
+[[extra.exercises]]
+kind = "choice"
+title = "Why sequences parallelize"
+prompt = "With unboundedly many processors, mapping a constant-time function over an <em>n</em>-element sequence has span:"
+choices = [
+  "O(1) — every element is computed simultaneously",
+  "O(log n) — elements combine in a tree",
+  "O(n) — same as a list",
+  "O(n log n)",
+]
+answer = 0
+explain = "A sequence offers constant-time access to every cell, so all <em>n</em> applications are independent and can happen at once: constant span (for a constant-time function). A list can't do this — reaching the k-th element takes k steps, so mapping over a list has at least linear span. (Total <em>work</em> is still O(n) either way.)"
+
+[[extra.exercises]]
+kind = "choice"
+title = "When lists win"
+prompt = "Sequences are not better at everything. For which workload are plain lists the better structure?"
+choices = [
+  "Serial processing that repeatedly adds or removes one element at the front",
+  "Random access to arbitrary positions",
+  "Bulk operations like map and reduce over all elements at once",
+  "Anything requiring parallelism",
+]
+answer = 0
+explain = "Consing onto a list is O(1) and shares the tail; the analogous operation on a fixed-size immutable array means copying. Sequences shine for bulk, whole-collection operations with the size known up front; lists shine for incremental, element-at-a-time serial work."
 +++
 
 We have discussed the importance of parallelism several times thus far in the

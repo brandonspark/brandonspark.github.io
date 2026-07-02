@@ -18,6 +18,8 @@ datatype tree = Empty | Node of tree * int * tree
 fun treeSum (t : tree) : int = raise Fail "unimplemented"
 '''
 solution = '''
+datatype tree = Empty | Node of tree * int * tree
+
 fun treeSum (Empty : tree) : int = 0
   | treeSum (Node (l, x, r)) = treeSum l + x + treeSum r
 '''

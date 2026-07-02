@@ -8,6 +8,36 @@ name = "hofs"
 number="09"
 url="https://youtube.com/embed/c78ypORDm0Q"
 colorscheme="lecture_turquoise"
+[[extra.exercises]]
+title = "A higher-order function"
+prompt = "Define <code>exists : ('a -> bool) -> 'a list -> bool</code>, curried, which tells whether some element of the list satisfies the predicate. (Don't use <code>List.exists</code> — write the recursion yourself.)"
+starter = '''
+fun exists (p : 'a -> bool) (xs : 'a list) : bool =
+  raise Fail "unimplemented"
+'''
+solution = '''
+fun exists p [] = false
+  | exists p (x::xs) = p x orelse exists p xs
+'''
+tests = [
+  { name = "finds a match", expr = "exists (fn x => x > 2) [1, 2, 3] = true" },
+  { name = "no match", expr = "exists (fn x => x < 0) [1, 2, 3] = false" },
+  { name = "works at other types", expr = 'exists (fn s => s = "b") ["a", "b"] = true' },
+  { name = "partial application", expr = "let val hasEven = exists (fn x => x mod 2 = 0) in hasEven [1, 3, 5] = false andalso hasEven [1, 4] = true end" },
+]
+
+[[extra.exercises]]
+kind = "choice"
+title = "The type of map"
+prompt = "Without looking it up: what is the type of <code>List.map</code>?"
+choices = [
+  "<code>('a -> 'b) -> 'a list -> 'b list</code>",
+  "<code>('a -> 'b) * 'a list -> 'b list</code>",
+  "<code>'a list -> ('a -> 'b) -> 'b list</code>",
+  "<code>('a -> 'a) -> 'a list -> 'a list</code>",
+]
+answer = 0
+explain = "<code>map</code> is curried (function first, list second — enabling partial applications like <code>List.map Int.toString</code>), and the element types may differ before and after: <code>'a</code> in, <code>'b</code> out."
 +++
 
 We have so far learned that values can be passed into functions and returned
