@@ -37,7 +37,14 @@ const EDITOR_CSS = `
   -webkit-text-fill-color: transparent; caret-color: currentColor;
   white-space: pre; overflow-wrap: normal; overflow: auto; resize: vertical;
 }
-.sml-editor.sml-monaco { padding: 0; height: 15rem; resize: vertical; overflow: hidden; }`;
+.sml-editor.sml-monaco { padding: 0; height: 15rem; resize: vertical; overflow: hidden; }
+.sml-problems { list-style: none; padding: 0.2rem 0 0; margin: 0; font-size: 0.85rem; cursor: pointer; }
+/* host pages often style code/pre globally (borders, colors); not inside
+   Monaco's hover widget */
+.monaco-hover code, .monaco-hover pre {
+  border: none !important; background: none !important;
+  color: inherit !important; margin: 0 !important; padding: 0 !important;
+}`;
 
 function ensureEditorCss() {
   if (document.querySelector('style[data-sml-editor]')) return;

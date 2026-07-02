@@ -125,7 +125,16 @@ export async function upgrade(host, value, ide, onCtrlEnter) {
     scrollBeyondLastLine: false,
     automaticLayout: true,
     overviewRulerLanes: 0,
+    // Render hover/suggest widgets position:fixed so a small embedded
+    // editor (overflow: hidden) can never clip them.
+    fixedOverflowWidgets: true,
   });
+  // Diagnostics also render as a list under the editor — the message must
+  // not be reachable only through hover.
+  const problems = document.createElement('ul');
+  problems.className = 'sml-problems';
+  problems.hidden = true;
+  host.insertAdjacentElement('afterend', problems);
   const model = editor.getModel();
   const millet = new Millet();
   registry.set(model, millet);
@@ -147,6 +156,18 @@ export async function upgrade(host, value, ide, onCtrlEnter) {
       code: String(d.code),
       severity: SEVERITY[d.severity] ?? 2,
     })));
+    problems.hidden = diags.length === 0;
+    problems.innerHTML = '';
+    for (const d of diags.slice(0, 4)) {
+      const li = document.createElement('li');
+      li.className = d.severity === 'error' ? 'sml-fail' : 'sml-not-run';
+      li.textContent = `line ${d.range.start.line + 1}: ${d.message}`;
+      li.onclick = () => {
+        editor.setPosition({ lineNumber: d.range.start.line + 1, column: d.range.start.character + 1 });
+        editor.focus();
+      };
+      problems.appendChild(li);
+    }
   };
   let timer = null;
   model.onDidChangeContent(() => {
