@@ -9,22 +9,20 @@ number="10"
 url="https://youtube.com/embed/w-WpXPUMtM4"
 colorscheme="lecture_hot_pink"
 [[extra.exercises]]
-title = "The pipe operator"
-prompt = "Declare and define the pipe operator <code>|></code>, so that <code>x |> f</code> applies <code>f</code> to <code>x</code>. The <code>infix</code> declaration is provided — you write the function."
+title = "The twice combinator"
+prompt = "Define <code>twice : ('a -> 'a) -> 'a -> 'a</code>, curried, where <code>twice f</code> is the function applying <code>f</code> two times. Then ponder the last test: what does <code>twice twice</code> mean?"
 starter = '''
-infix |>
-fun x |> f = raise Fail "unimplemented"
+fun twice (f : 'a -> 'a) (x : 'a) : 'a = raise Fail "unimplemented"
 '''
 solution = '''
-infix |>
-fun x |> f = f x
+fun twice f x = f (f x)
 '''
 tests = [
-  { name = "single pipe", expr = "([1, 2, 3] |> List.length) = 3" },
-  { name = "chained pipes", expr = "(5 |> (fn x => x + 1) |> (fn x => x * 2)) = 12" },
-  { name = "other types", expr = '("hello" |> String.size) = 5' },
+  { name = "twice an increment", expr = "twice (fn x => x + 1) 0 = 2" },
+  { name = "other types", expr = 'twice (fn s => s ^ "!") "hi" = "hi!!"' },
+  { name = "partial application", expr = "let val quadruple = twice (fn x => x * 2) in quadruple 3 = 12 end" },
+  { name = "twice twice", expr = "twice twice (fn x => x + 1) 0 = 4" },
 ]
-
 [[extra.exercises]]
 kind = "choice"
 title = "Staging"

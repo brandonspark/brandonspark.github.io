@@ -9,26 +9,23 @@ number="07"
 url="https://youtube.com/embed/cy5B4iSohxY"
 colorscheme="lecture_gold"
 [[extra.exercises]]
-title = "Merge"
-prompt = "Define <code>merge : int list * int list -> int list</code>, which merges two lists that are each sorted in increasing order into one sorted list — the heart of merge sort from lecture."
+title = "Checking sortedness"
+prompt = "Merge sort's specification promises a <em>sorted</em> output. Write the checker: <code>sorted : int list -> bool</code>, true when the list is in non-decreasing order (duplicates allowed)."
 starter = '''
-fun merge (xs : int list, ys : int list) : int list =
-  raise Fail "unimplemented"
+fun sorted (xs : int list) : bool = raise Fail "unimplemented"
 '''
 solution = '''
-fun merge ([] : int list, ys : int list) : int list = ys
-  | merge (xs, []) = xs
-  | merge (x::xs, y::ys) =
-      if x <= y then x :: merge (xs, y::ys)
-      else y :: merge (x::xs, ys)
+fun sorted [] = true
+  | sorted [x] = true
+  | sorted (x :: y :: rest) = x <= y andalso sorted (y :: rest)
 '''
 tests = [
-  { name = "both empty", expr = "merge ([], []) = []" },
-  { name = "one empty", expr = "merge ([1, 2], []) = [1, 2]" },
-  { name = "interleaved", expr = "merge ([1, 3, 5], [2, 4]) = [1, 2, 3, 4, 5]" },
-  { name = "duplicates survive", expr = "merge ([1, 2], [2, 3]) = [1, 2, 2, 3]" },
+  { name = "empty list is sorted", expr = "sorted [] = true" },
+  { name = "singleton is sorted", expr = "sorted [1] = true" },
+  { name = "duplicates allowed", expr = "sorted [1, 2, 2, 3] = true" },
+  { name = "detects disorder", expr = "sorted [1, 3, 2] = false" },
+  { name = "disorder at the end", expr = "sorted [1, 2, 3, 0] = false" },
 ]
-
 [[extra.exercises]]
 kind = "choice"
 title = "The tree method"

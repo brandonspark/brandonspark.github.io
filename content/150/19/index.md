@@ -9,26 +9,25 @@ number="19"
 url="https://youtube.com/embed/x49LBQzRt80"
 colorscheme="lecture_grey"
 [[extra.exercises]]
-title = "A stateful counter"
-prompt = "Define <code>makeCounter : unit -> (unit -> int)</code>. Each call to <code>makeCounter ()</code> creates a <em>fresh</em> counter: a function that returns 1, then 2, then 3, … Use a <code>ref</code> cell captured in the closure."
+title = "Swapping two boxes"
+prompt = "Define <code>swap : 'a ref * 'a ref -> unit</code>, which exchanges the contents of two ref cells. Careful with evaluation order — you'll want a temporary. (What should happen when both arguments are the <em>same</em> box?)"
 starter = '''
-fun makeCounter () : unit -> int =
-  raise Fail "unimplemented"
+fun swap (a : 'a ref, b : 'a ref) : unit = raise Fail "unimplemented"
 '''
 solution = '''
-fun makeCounter () =
+fun swap (a, b) =
   let
-    val r = ref 0
+    val tmp = !a
   in
-    fn () => (r := !r + 1; !r)
+    a := !b;
+    b := tmp
   end
 '''
 tests = [
-  { name = "counts up", expr = "let val c = makeCounter () in (c (); c ()) = 2 end" },
-  { name = "starts at one", expr = "let val c = makeCounter () in c () = 1 end" },
-  { name = "counters are independent", expr = "let val c1 = makeCounter () val c2 = makeCounter () in (c1 (); c1 (); c2 ()) = 1 end" },
+  { name = "swaps ints", expr = "let val a = ref 1 val b = ref 2 in (swap (a, b); (!a, !b) = (2, 1)) end" },
+  { name = "swaps strings", expr = 'let val a = ref "x" val b = ref "y" in (swap (a, b); (!a, !b) = ("y", "x")) end' },
+  { name = "self-swap is harmless", expr = "let val a = ref 5 in (swap (a, a); !a = 5) end" },
 ]
-
 [[extra.exercises]]
 kind = "choice"
 title = "Aliasing"
