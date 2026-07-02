@@ -44,11 +44,16 @@
         </div>
         <script type="module">
           import { mountQuestion } from '/sml/examples/exercises/exercise.js';
+          const ide = {
+            monacoBase: '/sml-ide/monaco-vs',
+            workerUrl: '/sml-ide/monaco-vs/assets/editor.worker-Be8ye1pW.js',
+            milletUrl: '/sml-ide/millet/millet_wasm.js',
+          };
           const list = document.querySelector('.sml-exercise-list');
           for (const q of {{ page.extra.exercises | json_encode() | safe }}) {
             const div = document.createElement('div');
             list.appendChild(div);
-            mountQuestion(div, q);
+            mountQuestion(div, q, { ide });
           }
         </script>
         {% endif %}

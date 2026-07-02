@@ -36,7 +36,8 @@ const EDITOR_CSS = `
   color: inherit; background: transparent;
   -webkit-text-fill-color: transparent; caret-color: currentColor;
   white-space: pre; overflow-wrap: normal; overflow: auto; resize: vertical;
-}`;
+}
+.sml-editor.sml-monaco { padding: 0; height: 15rem; resize: vertical; overflow: hidden; }`;
 
 function ensureEditorCss() {
   if (document.querySelector('style[data-sml-editor]')) return;
@@ -118,7 +119,19 @@ export function mountExercise(container, exercise, options = {}) {
   el('h3').textContent = exercise.title;
   el('.sml-prompt').innerHTML = exercise.prompt;
   el('textarea').value = exercise.starter;
-  const setSource = attachHighlighting(el('.sml-editor'));
+
+  // Source access goes through an indirection so the optional Monaco+millet
+  // IDE (options.ide) can upgrade the editor in place after it loads; until
+  // then (or if loading fails) the overlay editor keeps working.
+  let getSource = () => el('textarea').value;
+  let setSource = attachHighlighting(el('.sml-editor'));
+  if (options.ide) {
+    import(new URL('./monaco-editor.js', import.meta.url))
+      .then((mod) => mod.upgrade(el('.sml-editor'), getSource(), options.ide,
+        () => { if (!el('.sml-run').disabled) run(); }))
+      .then((api) => { getSource = api.getValue; setSource = api.setValue; })
+      .catch((e) => console.warn('sml: IDE editor unavailable, using plain editor:', e));
+  }
 
   let worker = null, timer = null, outputLines = [];
 
@@ -177,7 +190,7 @@ export function mountExercise(container, exercise, options = {}) {
     };
     worker.onerror = (e) => { outputLines.push(e.message ?? 'worker error'); finish('worker error'); };
     worker.postMessage({
-      source: buildTestSource(el('textarea').value, exercise.tests),
+      source: buildTestSource(getSource(), exercise.tests),
       quiet,
     });
     timer = setTimeout(() => {
