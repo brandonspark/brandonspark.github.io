@@ -151,6 +151,17 @@ await page.waitForTimeout(600);
 const filled = await page.evaluate(() => window.monaco.editor.getModels()[0].getValue());
 check('fill-case quick fix inserts SOME arm', filled.includes('SOME'));
 
+// semantic tokens from millet's real lexer: a fun name on the NEXT line
+// gets the function color — impossible for the line-based Monarch fallback
+await page.evaluate(() => window.monaco.editor.getModels()[0].setValue('fun\nfact2 n = 1\n'));
+await page.waitForFunction(() => {
+  for (const s of document.querySelectorAll('.view-line span span')) {
+    if (s.textContent === 'fact2' && getComputedStyle(s).color === 'rgb(62, 212, 207)') return true;
+  }
+  return false;
+}, null, { timeout: 15000 });
+check('semantic tokens: cross-line fun name colored by real lexer', true);
+
 await browser.close();
 server.close();
 process.exit(failures ? 1 : 0);

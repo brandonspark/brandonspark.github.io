@@ -55,7 +55,7 @@ function registerSML(monaco) {
       root: [
         [/\(\*/, 'comment', '@comment'],
         [/#?"/, 'string', '@string'],
-        [/''?[A-Za-z][A-Za-z0-9_']*/, 'type.identifier'],
+        [/''?[A-Za-z][A-Za-z0-9_']*/, 'tyvar'],
         [/~?0wx[0-9a-fA-F]+|~?0x[0-9a-fA-F]+|~?0w[0-9]+|~?[0-9]+(\.[0-9]+)?([eE]~?[0-9]+)?/, 'number'],
         [/\(\)|\[\]/, 'literal'],
         [/(fun)(\s+)([A-Za-z_][A-Za-z0-9_']*)/, ['keyword', 'white', 'function']],
@@ -196,9 +196,39 @@ function load(ide) {
     });
     const milletMod = await import(/* @vite-ignore */ ide.milletUrl);
     await milletMod.default();
+    if (milletMod.lex_tokens) registerSemanticTokens(monaco, milletMod.lex_tokens);
     return { monaco, Millet: milletMod.Millet };
   })();
   return loading;
+}
+
+// Highlighting from millet's real SML lexer, layered over (and overriding)
+// the Monarch approximation once the wasm is ready. This is what makes
+// cross-line `fun` names and exotic nesting come out right — a line-based
+// regex tokenizer can't.
+const TOKEN_TYPES = ['keyword', 'string', 'number', 'comment', 'tyvar',
+  'constructor', 'literal', 'builtin', 'function', 'symbol'];
+
+function registerSemanticTokens(monaco, lexTokens) {
+  const index = new Map(TOKEN_TYPES.map((t, i) => [t, i]));
+  monaco.languages.registerDocumentSemanticTokensProvider('sml', {
+    getLegend: () => ({ tokenTypes: TOKEN_TYPES, tokenModifiers: [] }),
+    provideDocumentSemanticTokens(model) {
+      const toks = JSON.parse(lexTokens(model.getValue()));
+      const data = [];
+      let prevLine = 0, prevChar = 0;
+      for (const t of toks) {
+        data.push(
+          t.line - prevLine,
+          t.line === prevLine ? t.character - prevChar : t.character,
+          t.length, index.get(t.type), 0);
+        prevLine = t.line;
+        prevChar = t.character;
+      }
+      return { data: new Uint32Array(data), resultId: undefined };
+    },
+    releaseDocumentSemanticTokens() {},
+  });
 }
 
 /// Replace the contents of `host` (the .sml-editor div) with a Monaco editor
@@ -234,6 +264,7 @@ export async function upgrade(host, value, ide, onCtrlEnter, onChange) {
     // Render hover/suggest widgets position:fixed so a small embedded
     // editor (overflow: hidden) can never clip them.
     fixedOverflowWidgets: true,
+    'semanticHighlighting.enabled': true,
   });
   // Diagnostics also render as a list under the editor — the message must
   // not be reachable only through hover.
