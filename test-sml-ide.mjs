@@ -32,6 +32,12 @@ let failures = 0;
 const check = (name, cond) => { console.log(`${cond ? 'PASS' : 'FAIL'} ${name}`); if (!cond) failures++; };
 
 await page.goto(`${base}/induction/`);
+// Lazy loading: the IDE must NOT load while the exercises are below the fold…
+await page.waitForTimeout(1500);
+check('IDE not loaded before scrolling near exercises',
+  await page.evaluate(() => !window.monaco));
+// …and must load once they scroll into view.
+await page.locator('.sml-exercises').scrollIntoViewIfNeeded();
 await page.waitForFunction(() => window.monaco?.editor.getModels().length > 0, null, { timeout: 30000 });
 check('editor upgraded to Monaco', await page.locator('.sml-editor.sml-monaco').count() === 1);
 
@@ -150,6 +156,30 @@ await page.keyboard.press('Enter');
 await page.waitForTimeout(600);
 const filled = await page.evaluate(() => window.monaco.editor.getModels()[0].getValue());
 check('fill-case quick fix inserts SOME arm', filled.includes('SOME'));
+
+// a non-compiling program shows diagnostics, not phantom test rows
+await page.evaluate(() => window.monaco.editor.getModels()[0].setValue('fun fact = '));
+const exNC = page.locator('.sml-exercise').first();
+await exNC.locator('.sml-run').click();
+await page.waitForFunction(() => [...document.querySelectorAll('.sml-status')]
+  .some((s) => /did not compile|passed|error/.test(s.textContent)), null, { timeout: 60000 });
+check('non-compiling: says did not compile',
+  (await exNC.locator('.sml-status').textContent()) === 'did not compile');
+check('non-compiling: no phantom test rows',
+  (await exNC.locator('.sml-results li').count()) === 0);
+
+// share links round-trip through the URL fragment
+await page.evaluate(() => window.monaco.editor.getModels()[0].setValue('fun fact n = 42 (* shared *)'));
+await exNC.locator('.sml-share').click();
+const hash = await page.evaluate(() => location.hash);
+check('share sets fragment', hash.startsWith('#sml=0.'));
+await page.goto(`${base}/induction/${hash}`);
+await page.waitForFunction(() => window.monaco?.editor.getModels().length > 0, null, { timeout: 30000 });
+check('shared link restores code in Monaco', await page.evaluate(() =>
+  window.monaco.editor.getModels()[0].getValue().includes('shared')));
+await page.goto(`${base}/induction/`);
+await page.locator('.sml-exercises').scrollIntoViewIfNeeded();
+await page.waitForFunction(() => window.monaco?.editor.getModels().length > 0, null, { timeout: 30000 });
 
 // semantic tokens from millet's real lexer: a fun name on the NEXT line
 // gets the function color — impossible for the line-based Monarch fallback

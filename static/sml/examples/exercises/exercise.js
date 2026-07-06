@@ -19,6 +19,21 @@ function hashCode(s) {
   return h.toString(36);
 }
 
+// URL-safe base64 of UTF-8 text, for share links.
+const b64enc = (s) => btoa(String.fromCharCode(...new TextEncoder().encode(s)))
+  .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64dec = (s) => new TextDecoder().decode(
+  Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0)));
+
+// Share-link fragment: #sml=<exercise index>.<starter hash>.<base64 code>.
+// The starter hash keeps a stale link from being applied to the wrong (or a
+// since-edited) exercise.
+function sharedCodeFor(exIndex, starter) {
+  const m = location.hash.match(/^#sml=(\d+)\.([a-z0-9]+)\.([A-Za-z0-9_-]+)$/);
+  if (!m || Number(m[1]) !== exIndex || m[2] !== hashCode(starter)) return null;
+  try { return b64dec(m[3]); } catch { return null; }
+}
+
 // Structural CSS for the highlighting editor (a transparent-text textarea
 // over a highlighted <pre> with identical metrics). Colors and fonts are the
 // page's business; this is only geometry and layering.
@@ -124,6 +139,7 @@ export function mountExercise(container, exercise, options = {}) {
       <button class="sml-run">Run tests</button>
       <button class="sml-stop" disabled>Stop</button>
       <button class="sml-reset">Reset</button>
+      <button class="sml-share" title="Copy a link to this code">Share</button>
       <button class="sml-solution" hidden>Show solution</button>
       <span class="sml-status"></span>
     </div>
@@ -137,10 +153,14 @@ export function mountExercise(container, exercise, options = {}) {
   // Work in progress survives reloads: restore from localStorage, save
   // (debounced) on every edit, forget when Reset is pressed or the buffer
   // returns to the pristine starter.
+  const exIndex = document.querySelectorAll('.sml-exercise').length - 1;
   const storageKey = `sml-code:${exercise.title}:${hashCode(exercise.starter)}`;
   let stored = null;
   try { stored = localStorage.getItem(storageKey); } catch { /* private mode */ }
-  el('textarea').value = stored ?? exercise.starter;
+  // An explicit share link beats saved work; a shared page scrolls to its exercise.
+  const shared = sharedCodeFor(exIndex, exercise.starter);
+  el('textarea').value = shared ?? stored ?? exercise.starter;
+  if (shared !== null) setTimeout(() => container.scrollIntoView({ block: 'center' }), 50);
   let persistTimer = null;
   const persist = () => {
     clearTimeout(persistTimer);
@@ -160,11 +180,27 @@ export function mountExercise(container, exercise, options = {}) {
   let setSource = attachHighlighting(el('.sml-editor'));
   el('textarea').addEventListener('input', persist);
   if (options.ide) {
-    import(new URL('./monaco-editor.js', import.meta.url))
-      .then((mod) => mod.upgrade(el('.sml-editor'), getSource(), options.ide,
-        () => { if (!el('.sml-run').disabled) run(); }, persist))
-      .then((api) => { getSource = api.getValue; setSource = api.setValue; })
-      .catch((e) => console.warn('sml: IDE editor unavailable, using plain editor:', e));
+    // The IDE weighs a few MB; load it only when the exercise is about to be
+    // seen (or is focused), not for every visitor who came for the video.
+    let ideStarted = false;
+    const startIde = () => {
+      if (ideStarted) return;
+      ideStarted = true;
+      import(new URL('./monaco-editor.js', import.meta.url))
+        .then((mod) => mod.upgrade(el('.sml-editor'), getSource(), options.ide,
+          () => { if (!el('.sml-run').disabled) run(); }, persist))
+        .then((api) => { getSource = api.getValue; setSource = api.setValue; })
+        .catch((e) => console.warn('sml: IDE editor unavailable, using plain editor:', e));
+    };
+    el('textarea').addEventListener('focus', startIde, { once: true });
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((en) => en.isIntersecting)) { io.disconnect(); startIde(); }
+      }, { rootMargin: '400px' });
+      io.observe(container);
+    } else {
+      startIde();
+    }
   }
 
   let worker = null, timer = null, outputLines = [];
@@ -207,28 +243,36 @@ export function mountExercise(container, exercise, options = {}) {
     el('.sml-stop').disabled = false;
     el('.sml-status').textContent = 'running…';
 
+    // Fresh random sentinel per run: printing sentinel-shaped lines from
+    // user code neither spoofs results nor leaks harness noise.
+    const marker = `MOSML_TEST_${Math.random().toString(36).slice(2, 10)}`;
     const stdoutLines = [];
     worker = new Worker(workerUrl, { type: 'module' });
     worker.onmessage = (e) => {
       const msg = e.data;
       if (msg.type === 'line') {
         if (msg.stream === 'out') stdoutLines.push(msg.text);
-        if (!isTestLine(msg.text)) { outputLines.push(msg.text); renderOutput(); }
+        if (!isTestLine(msg.text, marker)) { outputLines.push(msg.text); renderOutput(); }
       } else if (msg.type === 'result' || msg.type === 'error') {
-        const results = gradeRun(exercise.tests, stdoutLines);
-        renderResults(results);
+        const results = gradeRun(exercise.tests, stdoutLines, marker);
+        // If nothing ran, the program didn't compile: per-test rows would be
+        // statements about runs that never happened, so show only the
+        // compiler's diagnostics.
+        const ran = results.some((r) => r.status !== 'not run');
+        renderResults(ran ? results : []);
         const passed = results.filter((r) => r.status === 'pass').length;
         finish(msg.type === 'error' ? `runner error: ${msg.message}`
-                                    : `${passed}/${results.length} passed`);
+          : ran ? `${passed}/${results.length} passed`
+          : 'did not compile');
       }
     };
     worker.onerror = (e) => { outputLines.push(e.message ?? 'worker error'); finish('worker error'); };
     worker.postMessage({
-      source: buildTestSource(getSource(), exercise.tests),
+      source: buildTestSource(getSource(), exercise.tests, marker),
       quiet,
     });
     timer = setTimeout(() => {
-      renderResults(gradeRun(exercise.tests, stdoutLines));
+      renderResults(gradeRun(exercise.tests, stdoutLines, marker));
       finish('timed out');
     }, timeoutMs);
   }
@@ -238,6 +282,18 @@ export function mountExercise(container, exercise, options = {}) {
   el('.sml-reset').onclick = () => {
     setSource(exercise.starter);
     try { localStorage.removeItem(storageKey); } catch { /* private mode */ }
+  };
+  el('.sml-share').onclick = () => {
+    const hash = `#sml=${exIndex}.${hashCode(exercise.starter)}.${b64enc(getSource())}`;
+    history.replaceState(null, '', hash);
+    const url = location.href;
+    const done = (msg) => { el('.sml-status').textContent = msg; };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(url)
+        .then(() => done('link copied'), () => done('link ready in the address bar'));
+    } else {
+      done('link ready in the address bar');
+    }
   };
   if (exercise.solution) {
     const btn = el('.sml-solution');
