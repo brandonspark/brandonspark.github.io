@@ -101,6 +101,18 @@ function load(ide) {
     });
     registerSML(monaco);
     registerProviders(monaco);
+    // Transparent background: the host page's own code-box styling (color,
+    // translucency, border) shows through, so the editor matches the site's
+    // plain editors across color schemes.
+    monaco.editor.defineTheme('sml-exercise', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#00000000',
+        'editorGutter.background': '#00000000',
+      },
+    });
     const milletMod = await import(/* @vite-ignore */ ide.milletUrl);
     await milletMod.default();
     return { monaco, Millet: milletMod.Millet };
@@ -118,13 +130,26 @@ export async function upgrade(host, value, ide, onCtrlEnter) {
   const editor = monaco.editor.create(host, {
     language: 'sml',
     value,
-    theme: ide.theme ?? 'vs-dark',
+    theme: ide.theme ?? 'sml-exercise',
+    // Lightweight, prose-like chrome: no line numbers, gutters, folding,
+    // or line highlight — visually a plain code box that happens to have
+    // squiggles and hovers.
+    lineNumbers: ide.lineNumbers ?? 'off',
+    glyphMargin: false,
+    folding: false,
+    lineDecorationsWidth: 6,
+    lineNumbersMinChars: 0,
+    renderLineHighlight: 'none',
+    guides: { indentation: false },
     minimap: { enabled: false },
-    fontSize: 14,
-    lineNumbersMinChars: 3,
+    fontSize: ide.fontSize ?? 16,
+    ...(ide.fontFamily ? { fontFamily: ide.fontFamily } : {}),
+    padding: { top: 8, bottom: 8 },
+    scrollbar: { verticalScrollbarSize: 8, horizontalScrollbarSize: 8 },
     scrollBeyondLastLine: false,
     automaticLayout: true,
     overviewRulerLanes: 0,
+    overviewRulerBorder: false,
     // Render hover/suggest widgets position:fixed so a small embedded
     // editor (overflow: hidden) can never clip them.
     fixedOverflowWidgets: true,

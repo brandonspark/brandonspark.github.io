@@ -48,6 +48,7 @@
             monacoBase: '/sml-ide/monaco-vs',
             workerUrl: '/sml-ide/monaco-vs/assets/editor.worker-Be8ye1pW.js',
             milletUrl: '/sml-ide/millet/millet_wasm.js',
+            fontFamily: 'Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace',
           };
           const list = document.querySelector('.sml-exercise-list');
           for (const q of {{ page.extra.exercises | json_encode() | safe }}) {
