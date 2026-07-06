@@ -188,6 +188,18 @@ await page.goto(`${base}/induction/`);
 await page.locator('.sml-exercises').scrollIntoViewIfNeeded();
 await page.waitForFunction(() => window.monaco?.editor.getModels().length > 0, null, { timeout: 30000 });
 
+// clause heads: the second clause's name gets the function color too
+await page.evaluate(() => window.monaco.editor.getModels()[0].setValue(
+  'fun fact 0 = 1\n  | fact n = n * fact (n - 1)\n'));
+await page.waitForFunction(() => {
+  let hits = 0;
+  for (const s of document.querySelectorAll('.view-line span span')) {
+    if (s.textContent === 'fact' && getComputedStyle(s).color === 'rgb(62, 212, 207)') hits++;
+  }
+  return hits >= 2;
+}, null, { timeout: 15000 });
+check('second clause head shares the function color', true);
+
 // semantic tokens from millet's real lexer: a fun name on the NEXT line
 // gets the function color — impossible for the line-based Monarch fallback
 await page.evaluate(() => window.monaco.editor.getModels()[0].setValue('fun\nfact2 n = 1\n'));
