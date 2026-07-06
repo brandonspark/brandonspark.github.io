@@ -69,6 +69,7 @@ menu_items = [
     {name = "about me", url = "$BASE_URL/about"},
     {name = "teaching", url = "$BASE_URL/teaching"},
     {name = "15150", url = "$BASE_URL/150"},
+    {name = "playground", url = "$BASE_URL/playground"},
     {name = "creative", url = "$BASE_URL/creative"},
     {name = "projects", url = "$BASE_URL/projects"},
 
