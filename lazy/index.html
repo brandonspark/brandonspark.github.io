@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lecture 18 - Lazy Programming</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/lecture_light_blue.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/playground">playground</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/lazy/">Lecture 18 - Lazy Programming</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="coolthing">
+          <a href="/lazy/lecture18.png" target="_blank">
+          <img src="/lazy/lecture18.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/lazy/lecture18.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            <p>We are now comfortable with the idea of using functions as first-class values,
+which means that the can be bound to variables, passed to functions, and treated
+like pretty much any other value.</p>
+<p>This lecture introduces <span style="color:rgb(255, 179, 48)">lazy programming</span>, which entails
+programming by trying to do as little work as possible, until it is absolutely
+necessary. For instance, when mapping a function onto a list, SML will eagerly
+compute each new entry, even if we don't use any of the entries for anything.</p>
+<p>We can simulate such lazy structures by using <span style="color:rgb(255, 179, 48)">thunks</span>, which
+are functions that take in a useless <code>unit</code> parameter, which suspends the
+body of the function, causing no computations to occur. This lets us define
+<span style="color:rgb(255, 179, 48)">lazy data structures</span>, which compute elements only when they
+are asked for them. This results in less work overall, and the ability to
+theoretically store "infinitely" many elements.</p>
+<p>In addition to lazy lists, we discussed <span style="color:rgb(255, 179, 48)">streams</span>, which are
+lazy lists that are <span style="color:rgb(255, 179, 48)">maximally lazy</span>, by making sure that
+the least amount of work is done when the stream is not being actively
+queried for elements.</p>
+
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="https:&#x2F;&#x2F;youtube.com&#x2F;embed&#x2F;dBb1HnvPX0A" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        
+        <link rel="stylesheet" href="/sml-exercises.css">
+        <div class="sml-exercises">
+          <h2>Try it yourself</h2>
+          <p class="sml-exercises-blurb">These run entirely in your browser
+          (Moscow ML on WebAssembly, via
+          <a href="https://github.com/brandonspark/web-sml">web-sml</a>).
+          For code questions, Ctrl+Enter runs the hidden tests.</p>
+          <div class="sml-exercise-list"></div>
+        </div>
+        <script type="module">
+          import { mountQuestion } from '/sml/examples/exercises/exercise.js';
+          const ide = {
+            monacoBase: '/sml-ide/monaco-vs',
+            workerUrl: '/sml-ide/monaco-vs/assets/editor.worker-Be8ye1pW.js',
+            milletUrl: '/sml-ide/millet/millet_wasm.js',
+            fontFamily: 'Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace',
+            // Palette from /static/syntax_colors.css (the site's custom SML scheme)
+            themeData: {
+              base: 'vs-dark',
+              inherit: true,
+              rules: [
+                { token: 'keyword', foreground: '9178dd' },
+                { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
+                { token: 'string', foreground: 'db6969' },
+                { token: 'string.escape', foreground: 'db6969' },
+                { token: 'tyvar', foreground: 'f2e464' },
+                { token: 'number', foreground: 'd19a66' },
+                { token: 'constructor', foreground: 'd19a66' },
+                { token: 'literal', foreground: '56b6c2' },
+                { token: 'builtin', foreground: '88e67b' },
+                { token: 'function', foreground: '3ed4cf' },
+                { token: 'symbol', foreground: '61aeee' },
+                { token: 'operator', foreground: 'abb2bf' },
+                { token: 'identifier', foreground: 'abb2bf' },
+              ],
+              colors: {
+                'editor.background': '#00000000',
+                'editorGutter.background': '#00000000',
+                'editor.foreground': '#abb2bf',
+                // no rainbow brackets: match the site's flat scheme
+                'editorBracketHighlight.foreground1': '#abb2bf',
+                'editorBracketHighlight.foreground2': '#abb2bf',
+                'editorBracketHighlight.foreground3': '#abb2bf',
+                'editorBracketHighlight.foreground4': '#abb2bf',
+                'editorBracketHighlight.foreground5': '#abb2bf',
+                'editorBracketHighlight.foreground6': '#abb2bf',
+              },
+            },
+          };
+          const list = document.querySelector('.sml-exercise-list');
+          for (const q of [{"prompt":"Using the stream type below (<code>take</code> is given), define <code>nats : int -> int stream</code>, the infinite stream counting up from its argument. The recursive call must live <em>inside</em> the thunk — otherwise it would run forever!","solution":"datatype 'a stream = Cons of 'a * (unit -> 'a stream)\n\nfun take (Cons (x, tl), n) =\n  if n <= 0 then [] else x :: take (tl (), n - 1)\n\nfun nats start = Cons (start, fn () => nats (start + 1))\n","starter":"datatype 'a stream = Cons of 'a * (unit -> 'a stream)\n\nfun take (Cons (x, tl), n) =\n  if n <= 0 then [] else x :: take (tl (), n - 1)\n\nfun nats (start : int) : int stream =\n  raise Fail \"unimplemented\"\n","tests":[{"expr":"take (nats 0, 5) = [0, 1, 2, 3, 4]","name":"first five naturals"},{"expr":"take (nats 10, 3) = [10, 11, 12]","name":"starts where asked"},{"expr":"take (nats ~2, 4) = [~2, ~1, 0, 1]","name":"negative start"}],"title":"An infinite stream"},{"answer":0,"choices":["A function body is only evaluated when the function is <em>applied</em>","The <code>unit</code> type tells the compiler the value is unused","Functions are compiled lazily in SML","<code>fn</code> expressions are cached after their first evaluation"],"explain":"SML is eager everywhere except one place: the body of a <code>fn</code> waits until the function is called. A thunk exploits exactly that — <code>e</code> costs nothing until you say <code>thunk ()</code>. (Note the last option describes memoization, which plain thunks do <em>not</em> do: calling twice recomputes.)","kind":"choice","prompt":"Wrapping an expression as <code>fn () => e</code> suspends its computation because:","title":"Why thunks delay work"}]) {
+            const div = document.createElement('div');
+            list.appendChild(div);
+            mountQuestion(div, q, { ide });
+          }
+        </script>
+        
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2026
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

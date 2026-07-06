@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lecture 15 - Functors</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/lecture_dark_orange.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/playground">playground</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/functors/">Lecture 15 - Functors</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="coolthing">
+          <a href="/functors/lecture15.png" target="_blank">
+          <img src="/functors/lecture15.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/functors/lecture15.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            <p>This lecture continues our exploration of the SML module system, by introducing
+the idea of <span style="color:rgb(255, 179, 48)">functors</span>, which are simply module-level functions
+which take in structures and produce other structures.</p>
+<p>We motivated this idea by trying to implement a structure for polymorphic
+dictionaries, which are dictionaries that can map from keys of arbitrary (but fixed)
+type to values of also arbitrary type. To do this, we required taking in a
+comparison function to order the keys, but this ended up producing unsafe behavior
+in the event that this comparison function was used erroneously.</p>
+<p>We found that a safer approach was to parameterize our structure on a <span style="color:rgb(255, 179, 48)">type class</span> <code>ORD</code>, which describes structures of types that have
+included comparison functions. By defining it according to a singular instance
+of the <code>ORD</code> type class, we were able to then translate the code into a functor,
+which assumed the type class as an argument.</p>
+<p>We then saw that we could reuse the same dictionary-creating code for many
+different type classes, at minimal extra burden. This demonstrates the power of
+functors, which allow us to parameterize software components based on other
+software components in a well-specified way.</p>
+
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="https:&#x2F;&#x2F;youtube.com&#x2F;embed&#x2F;2d5-DdZyRDE" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        
+        <link rel="stylesheet" href="/sml-exercises.css">
+        <div class="sml-exercises">
+          <h2>Try it yourself</h2>
+          <p class="sml-exercises-blurb">These run entirely in your browser
+          (Moscow ML on WebAssembly, via
+          <a href="https://github.com/brandonspark/web-sml">web-sml</a>).
+          For code questions, Ctrl+Enter runs the hidden tests.</p>
+          <div class="sml-exercise-list"></div>
+        </div>
+        <script type="module">
+          import { mountQuestion } from '/sml/examples/exercises/exercise.js';
+          const ide = {
+            monacoBase: '/sml-ide/monaco-vs',
+            workerUrl: '/sml-ide/monaco-vs/assets/editor.worker-Be8ye1pW.js',
+            milletUrl: '/sml-ide/millet/millet_wasm.js',
+            fontFamily: 'Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace',
+            // Palette from /static/syntax_colors.css (the site's custom SML scheme)
+            themeData: {
+              base: 'vs-dark',
+              inherit: true,
+              rules: [
+                { token: 'keyword', foreground: '9178dd' },
+                { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
+                { token: 'string', foreground: 'db6969' },
+                { token: 'string.escape', foreground: 'db6969' },
+                { token: 'tyvar', foreground: 'f2e464' },
+                { token: 'number', foreground: 'd19a66' },
+                { token: 'constructor', foreground: 'd19a66' },
+                { token: 'literal', foreground: '56b6c2' },
+                { token: 'builtin', foreground: '88e67b' },
+                { token: 'function', foreground: '3ed4cf' },
+                { token: 'symbol', foreground: '61aeee' },
+                { token: 'operator', foreground: 'abb2bf' },
+                { token: 'identifier', foreground: 'abb2bf' },
+              ],
+              colors: {
+                'editor.background': '#00000000',
+                'editorGutter.background': '#00000000',
+                'editor.foreground': '#abb2bf',
+                // no rainbow brackets: match the site's flat scheme
+                'editorBracketHighlight.foreground1': '#abb2bf',
+                'editorBracketHighlight.foreground2': '#abb2bf',
+                'editorBracketHighlight.foreground3': '#abb2bf',
+                'editorBracketHighlight.foreground4': '#abb2bf',
+                'editorBracketHighlight.foreground5': '#abb2bf',
+                'editorBracketHighlight.foreground6': '#abb2bf',
+              },
+            },
+          };
+          const list = document.querySelector('.sml-exercise-list');
+          for (const q of [{"prompt":"Complete the functor <code>MaxFn</code>, which takes a structure of the <code>ORD</code> type class and produces a structure with a <code>max</code> function for that type.","solution":"signature ORD =\nsig\n  type t\n  val compare : t * t -> order\nend\n\nfunctor MaxFn (O : ORD) =\nstruct\n  fun max (a, b) =\n    case O.compare (a, b) of\n      LESS => b\n    | _ => a\nend\n\nstructure IntMax = MaxFn (struct type t = int val compare = Int.compare end)\nstructure StrMax = MaxFn (struct type t = string val compare = String.compare end)\n","starter":"signature ORD =\nsig\n  type t\n  val compare : t * t -> order\nend\n\nfunctor MaxFn (O : ORD) =\nstruct\n  fun max (a : O.t, b : O.t) : O.t = raise Fail \"unimplemented\"\nend\n\nstructure IntMax = MaxFn (struct type t = int val compare = Int.compare end)\nstructure StrMax = MaxFn (struct type t = string val compare = String.compare end)\n","tests":[{"expr":"IntMax.max (2, 5) = 5","name":"int instance, second larger"},{"expr":"IntMax.max (7, 3) = 7","name":"int instance, first larger"},{"expr":"StrMax.max (\"apple\", \"banana\") = \"banana\"","name":"string instance"}],"title":"Your first functor"},{"answer":1,"choices":["It runs faster, because functors are compiled away","One fixed ordering is baked in at instantiation, so operations can never be called with inconsistent comparisons","It avoids currying, which is expensive","It allows the dictionary to store keys of several different types at once"],"explain":"If every <code>insert</code> and <code>lookup</code> took its own comparison function, nothing would stop a caller from mixing two different orderings on the same dictionary — silently corrupting the search-tree invariant. Instantiating the functor with one <code>ORD</code> makes the ordering part of the dictionary's identity.","kind":"choice","prompt":"The lecture's dictionary functor takes an <code>ORD</code> structure rather than having every operation accept a comparison function argument. The main benefit is:","title":"Why a type class?"}]) {
+            const div = document.createElement('div');
+            list.appendChild(div);
+            mountQuestion(div, q, { ide });
+          }
+        </script>
+        
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2026
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SML Playground</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/blue.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        <nav class="menu">
+            <ul class="menu__inner">
+                <li><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li class="active"><a href="https://brandonspark.github.io/playground">playground</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/playground/">SML Playground</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="post-content">
+            <p>Standard ML, entirely in your browser — the code runs on
+<a rel="external" href="https://github.com/brandonspark/web-sml">Moscow ML compiled to WebAssembly</a>,
+with live type checking by
+<a rel="external" href="https://github.com/brandonspark/millet-wasm">millet</a>. Toplevel responses
+(<code>val x = 5 : int</code>) are shown like a REPL would; hover things to see their
+types, and share your code with the Share button. Nothing leaves your
+machine.</p>
+
+        </div>
+
+        <link rel="stylesheet" href="/sml-exercises.css">
+        <div class="sml-exercises">
+          <div id="sml-playground"></div>
+        </div>
+        <script type="module">
+          import { mountPlayground } from '/sml/examples/exercises/exercise.js';
+          const ide = {
+            monacoBase: '/sml-ide/monaco-vs',
+            workerUrl: '/sml-ide/monaco-vs/assets/editor.worker-Be8ye1pW.js',
+            milletUrl: '/sml-ide/millet/millet_wasm.js',
+            fontFamily: 'Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace',
+            // Palette from /static/syntax_colors.css (the site's custom SML scheme)
+            themeData: {
+              base: 'vs-dark',
+              inherit: true,
+              rules: [
+                { token: 'keyword', foreground: '9178dd' },
+                { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
+                { token: 'string', foreground: 'db6969' },
+                { token: 'string.escape', foreground: 'db6969' },
+                { token: 'tyvar', foreground: 'f2e464' },
+                { token: 'number', foreground: 'd19a66' },
+                { token: 'constructor', foreground: 'd19a66' },
+                { token: 'literal', foreground: '56b6c2' },
+                { token: 'builtin', foreground: '88e67b' },
+                { token: 'function', foreground: '3ed4cf' },
+                { token: 'symbol', foreground: '61aeee' },
+                { token: 'operator', foreground: 'abb2bf' },
+                { token: 'identifier', foreground: 'abb2bf' },
+              ],
+              colors: {
+                'editor.background': '#00000000',
+                'editorGutter.background': '#00000000',
+                'editor.foreground': '#abb2bf',
+                // no rainbow brackets: match the site's flat scheme
+                'editorBracketHighlight.foreground1': '#abb2bf',
+                'editorBracketHighlight.foreground2': '#abb2bf',
+                'editorBracketHighlight.foreground3': '#abb2bf',
+                'editorBracketHighlight.foreground4': '#abb2bf',
+                'editorBracketHighlight.foreground5': '#abb2bf',
+                'editorBracketHighlight.foreground6': '#abb2bf',
+              },
+            },
+          };
+          mountPlayground(document.getElementById('sml-playground'), { ide, timeoutMs: 15000 });
+        </script>
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2026
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

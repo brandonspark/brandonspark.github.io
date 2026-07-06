@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lecture 5 - Trees</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/style.css">
+    <link rel="stylesheet" href="https://brandonspark.github.io/color/lecture_pink.css">
+
+    <link rel="stylesheet" href="https://brandonspark.github.io/font-hack-subset.css">
+<link rel="stylesheet" href="/syntax_colors.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Custom syntax groups for SML, cause I didn't like theirs -->
+    <script src="/sml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/ocaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+    <!-- ADDED for mathjax support -->
+    
+        
+            <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+              }
+            };
+            </script>
+        
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    
+    </head>
+
+<!-- ADDED: Tag for Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-94K3LZTQ8V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-94K3LZTQ8V');
+</script>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://brandonspark.github.io" style="text-decoration: none;">
+                    
+                    <img src="/header.png" style="width:100%; border-radius:0%" class="center">
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://brandonspark.github.io">home</a></li>
+            
+                <li><a href="https://brandonspark.github.io/blog">blog</a></li>
+            
+                <li><a href="https://brandonspark.github.io/about">about me</a></li>
+            
+                <li><a href="https://brandonspark.github.io/teaching">teaching</a></li>
+            
+                <li><a href="https://brandonspark.github.io/150">15150</a></li>
+            
+                <li><a href="https://brandonspark.github.io/playground">playground</a></li>
+            
+                <li><a href="https://brandonspark.github.io/creative">creative</a></li>
+            
+                <li><a href="https://brandonspark.github.io/projects">projects</a></li>
+            
+                <li><a href="https://github.com/brandonspark" target="_blank" rel="noopener noreferrer">github</a></li>
+            
+                <li><a href="https://twitter.com/onefiftyman" target="_blank" rel="noopener noreferrer">twitter</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://brandonspark.github.io/trees/">Lecture 5 - Trees</a></h1>
+    <div class="post-meta-inline">
+        
+    <span class="post-date"></span>
+
+    </div>
+
+    
+
+
+        <div class="coolthing">
+          <a href="/trees/lecture05.png" target="_blank">
+          <img src="/trees/lecture05.png",
+                style="
+                  width: calc(100% - 20px);
+                  margin-left: 20px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
+                "/>
+          </a>
+          <center><a href="/trees/lecture05.pdf">
+          <span style="color:rgb(255, 179, 48)">click here for lecture slides</span>
+
+          </a></center>
+          </div>
+
+          <div class="post-content">
+            <p>Like lists, trees are immensely important data structures in computer science.
+In this lecture, we saw how we could formulate trees in SML using a new language
+feature of <span style="color:rgb(255, 179, 48)">datatype declarations</span>, which allow us to create brand
+new types, with their own constructors.</p>
+<p>We then explored the idea of different kinds of <span style="color:rgb(255, 179, 48)">tree traversals</span>,
+which are prescribed ways to traverse the nodes of a binary tree, and which
+also admit a simple recursive implementation in SML.</p>
+<p>To prove theorems on trees, we saw that we also can derive a principle of
+structural induction on trees, which differs from that of lists in that it
+involves assuming two induction hypotheses -- one for the left subtree, and one
+for the right. We then used this technique to prove a theorem showing the
+equivalence of summing the elements of a tree by first turning it into a list,
+and by summing the elements of the tree directly.</p>
+<p>This lecture also introduced the idea of <span style="color:rgb(255, 179, 48)">totality citations</span>,
+which are an important part of ensuring that our proofs on SML code remain accurate.</p>
+<p>We finished off by discussing the <code>order</code> type, which is a type with three constructors,
+corresponding to the output of a comparison function. We saw how using a new type
+explicitly for this purpose is more robust than other methods, like using an <code>int</code> or
+a <code>string</code>. This represents a core benefit of a functional language like SML, which lets
+us design our types to fit our use cases faithfully.</p>
+
+          </div>
+
+          <div class="responsive-iframe-container">
+            <iframe src="https:&#x2F;&#x2F;youtube.com&#x2F;embed&#x2F;2s1o_oqcEHI" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+        
+        <link rel="stylesheet" href="/sml-exercises.css">
+        <div class="sml-exercises">
+          <h2>Try it yourself</h2>
+          <p class="sml-exercises-blurb">These run entirely in your browser
+          (Moscow ML on WebAssembly, via
+          <a href="https://github.com/brandonspark/web-sml">web-sml</a>).
+          For code questions, Ctrl+Enter runs the hidden tests.</p>
+          <div class="sml-exercise-list"></div>
+        </div>
+        <script type="module">
+          import { mountQuestion } from '/sml/examples/exercises/exercise.js';
+          const ide = {
+            monacoBase: '/sml-ide/monaco-vs',
+            workerUrl: '/sml-ide/monaco-vs/assets/editor.worker-Be8ye1pW.js',
+            milletUrl: '/sml-ide/millet/millet_wasm.js',
+            fontFamily: 'Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace',
+            // Palette from /static/syntax_colors.css (the site's custom SML scheme)
+            themeData: {
+              base: 'vs-dark',
+              inherit: true,
+              rules: [
+                { token: 'keyword', foreground: '9178dd' },
+                { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
+                { token: 'string', foreground: 'db6969' },
+                { token: 'string.escape', foreground: 'db6969' },
+                { token: 'tyvar', foreground: 'f2e464' },
+                { token: 'number', foreground: 'd19a66' },
+                { token: 'constructor', foreground: 'd19a66' },
+                { token: 'literal', foreground: '56b6c2' },
+                { token: 'builtin', foreground: '88e67b' },
+                { token: 'function', foreground: '3ed4cf' },
+                { token: 'symbol', foreground: '61aeee' },
+                { token: 'operator', foreground: 'abb2bf' },
+                { token: 'identifier', foreground: 'abb2bf' },
+              ],
+              colors: {
+                'editor.background': '#00000000',
+                'editorGutter.background': '#00000000',
+                'editor.foreground': '#abb2bf',
+                // no rainbow brackets: match the site's flat scheme
+                'editorBracketHighlight.foreground1': '#abb2bf',
+                'editorBracketHighlight.foreground2': '#abb2bf',
+                'editorBracketHighlight.foreground3': '#abb2bf',
+                'editorBracketHighlight.foreground4': '#abb2bf',
+                'editorBracketHighlight.foreground5': '#abb2bf',
+                'editorBracketHighlight.foreground6': '#abb2bf',
+              },
+            },
+          };
+          const list = document.querySelector('.sml-exercise-list');
+          for (const q of [{"prompt":"Define <code>treeSum : tree -> int</code>, which sums every element in the tree. Notice how the two recursive calls mirror the two induction hypotheses from lecture.","solution":"datatype tree = Empty | Node of tree * int * tree\n\nfun treeSum (Empty : tree) : int = 0\n  | treeSum (Node (l, x, r)) = treeSum l + x + treeSum r\n","starter":"datatype tree = Empty | Node of tree * int * tree\n\nfun treeSum (t : tree) : int = raise Fail \"unimplemented\"\n","tests":[{"expr":"treeSum Empty = 0","name":"empty tree sums to 0"},{"expr":"treeSum (Node (Empty, 7, Empty)) = 7","name":"single node"},{"expr":"treeSum (Node (Node (Empty, 1, Empty), 2, Node (Empty, 3, Empty))) = 6","name":"three nodes"}],"title":"Summing a tree"},{"answer":1,"choices":["There is no base case, because trees can be infinite","The inductive step assumes <em>two</em> induction hypotheses — one per subtree","It only applies to balanced trees","It requires proving the theorem for every traversal order"],"explain":"A <code>Node</code> has two recursive positions, so the inductive step gets an induction hypothesis for the left subtree <em>and</em> one for the right — exactly mirroring the two recursive calls in functions like <code>treeSum</code>. The base case is <code>Empty</code>, just as <code>[]</code> is for lists.","kind":"choice","prompt":"The principle of structural induction for trees differs from that for lists in what way?","title":"Induction on trees"}]) {
+            const div = document.createElement('div');
+            list.appendChild(div);
+            mountQuestion(div, q, { ide });
+          }
+        </script>
+        
+
+        
+    </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright">
+                        <span>© 
+    2026
+ Brandon Wu</span>
+                    </div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

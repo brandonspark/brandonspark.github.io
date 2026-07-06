@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SML exercises</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+  .sml-exercise { border: 1px solid #8884; border-radius: 8px; padding: 1rem; margin: 1.5rem 0; }
+  .sml-exercise h3 { margin-top: 0; }
+  .sml-exercise .sml-editor { font: 14px/1.4 ui-monospace, monospace;
+                              border: 1px solid #8884; background: #8881; }
+  .sml-solution-view { font: 14px/1.4 ui-monospace, monospace; background: #8881;
+                       border: 1px dashed #8886; padding: 0.5rem; }
+  .sml-kw { color: #c678dd; }
+  .sml-con { color: #b58900; }
+  .sml-str { color: #50a14f; }
+  .sml-com { color: #888; font-style: italic; }
+  .sml-num { color: #b5762a; }
+  .sml-tyvar { color: #3a8fa3; font-style: italic; }
+  .sml-controls { display: flex; gap: 0.8rem; align-items: center; margin: 0.5rem 0; }
+  .sml-results { list-style: none; padding: 0; font: 14px/1.6 ui-monospace, monospace; }
+  .sml-pass { color: #27ae60; }
+  .sml-fail { color: #c0392b; }
+  .sml-not-run { color: #888; }
+  .sml-output { font: 13px/1.4 ui-monospace, monospace; background: #8881;
+                padding: 0.5rem; white-space: pre-wrap; max-height: 12rem; overflow-y: auto; }
+  .sml-status { color: #888; font-size: 0.9rem; }
+  .sml-choices { list-style: none; padding: 0; }
+  .sml-choices li { margin: 0.3rem 0; }
+  .sml-choices button { font: inherit; padding: 0.3rem 0.8rem; cursor: pointer; }
+  .sml-choices li.sml-fail button { outline: 2px solid #c0392b; }
+  .sml-choices li.sml-pass button { outline: 2px solid #27ae60; }
+  .sml-explain { border-left: 3px solid #27ae60; padding-left: 0.6rem; margin: 0.6rem 0; }
+  code { background: #8882; padding: 0 0.2em; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>SML exercises</h1>
+<p>Solutions run entirely in your browser (Ctrl+Enter to run). Hidden tests
+grade each attempt; program output, compile errors, and exceptions appear
+below the results.</p>
+
+<div id="ex-fact"></div>
+<div id="ex-rev"></div>
+<div id="ex-tree"></div>
+<div id="ex-choice"></div>
+
+<h2>Playground</h2>
+<p>Free-form SML — toplevel responses shown unless hidden.</p>
+<div id="playground"></div>
+
+<script type="module">
+import { mountExercise, mountQuestion, mountPlayground } from './exercise.js';
+
+mountPlayground(document.getElementById('playground'));
+
+mountQuestion(document.getElementById('ex-choice'), {
+  kind: 'choice',
+  title: 'Conceptual: tail recursion',
+  prompt: 'Which of these functions is tail-recursive?',
+  choices: [
+    '<code>fun f [] = 0 | f (x::xs) = x + f xs</code>',
+    '<code>fun g (acc, []) = acc | g (acc, x::xs) = g (acc + x, xs)</code>',
+    '<code>fun h n = if n = 0 then 1 else n * h (n - 1)</code>',
+  ],
+  answer: 1,
+  explain: 'In <code>g</code>, the recursive call is the entire result — nothing is left to do afterwards. Both <code>f</code> and <code>h</code> still have work pending (<code>x + …</code>, <code>n * …</code>) after their recursive calls return.',
+});
+
+mountExercise(document.getElementById('ex-fact'), {
+  title: 'Warm-up: factorial',
+  prompt: 'Define <code>fact : int -> int</code> computing <code>n!</code>. You may assume <code>n >= 0</code>.',
+  starter: 'fun fact n = raise Fail "unimplemented"\n',
+  solution: 'fun fact 0 = 1\n  | fact n = n * fact (n - 1)\n',
+  tests: [
+    { name: 'fact 0 = 1', expr: 'fact 0 = 1' },
+    { name: 'fact 1 = 1', expr: 'fact 1 = 1' },
+    { name: 'fact 5 = 120', expr: 'fact 5 = 120' },
+    { name: 'fact 10 = 3628800', expr: 'fact 10 = 3628800' },
+  ],
+});
+
+mountExercise(document.getElementById('ex-rev'), {
+  title: 'Lists: reverse, tail-recursively',
+  prompt: 'Define <code>rev\' : \'a list -> \'a list</code> without using <code>List.rev</code>, in O(n) time.',
+  starter: "fun rev' xs = raise Fail \"unimplemented\"\n",
+  tests: [
+    { name: 'empty list', expr: "rev' ([] : int list) = []" },
+    { name: 'singleton', expr: "rev' [1] = [1]" },
+    { name: '[1,2,3]', expr: "rev' [1,2,3] = [3,2,1]" },
+    { name: 'strings', expr: 'rev\' ["a","b"] = ["b","a"]' },
+  ],
+});
+
+mountExercise(document.getElementById('ex-tree'), {
+  title: 'Datatypes: tree sum',
+  prompt: 'Given <code>datatype tree = Leaf | Node of tree * int * tree</code> (already in scope), define <code>sum : tree -> int</code>.',
+  starter: 'datatype tree = Leaf | Node of tree * int * tree\n\nfun sum t = raise Fail "unimplemented"\n',
+  tests: [
+    { name: 'Leaf sums to 0', expr: 'sum Leaf = 0' },
+    { name: 'single node', expr: 'sum (Node (Leaf, 7, Leaf)) = 7' },
+    { name: 'nested', expr: 'sum (Node (Node (Leaf, 1, Leaf), 2, Node (Leaf, 3, Leaf))) = 6' },
+  ],
+});
+</script>
+</body>
+</html>
