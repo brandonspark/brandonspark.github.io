@@ -10,6 +10,9 @@ that these notes and videos are **not a substitute for going to lecture**. You w
 by being in an environment live, rather than 2x speeding through the material late at night.
 Use these lectures only as a reference.
 
+New: try SML right in your browser — no installation — at the
+[playground](/playground), or in the exercises under each lecture video.
+
 I give you these resources in the pursuit of your learning. I trust you to make the right
 choice to make the optimal use of it.
 

@@ -338,6 +338,153 @@ export function mountExercise(container, exercise, options = {}) {
   };
 }
 
+// Free-form playground: editor + Run + output, no tests. Toplevel responses
+// (`val x = 5 : int`) show by default — that's the learning experience — with
+// a checkbox to hide them. Persistence, share links, and the optional
+// Monaco+millet IDE work exactly as in exercises.
+export function mountPlayground(container, options = {}) {
+  const { timeoutMs = 10000 } = options;
+  const workerUrl = options.workerUrl ?? new URL('../../web/worker.js', import.meta.url);
+  const sample = options.sample ?? `fun fact 0 = 1
+  | fact n = n * fact (n - 1)
+
+val () = print ("fact 10 = " ^ Int.toString (fact 10) ^ "\\n")
+`;
+
+  ensureEditorCss();
+  container.classList.add('sml-exercise', 'sml-playground');
+  container.innerHTML = `
+    <div class="sml-editor">
+      <pre class="sml-highlight" aria-hidden="true"><code class="nohighlight"></code></pre>
+      <textarea spellcheck="false" wrap="off"></textarea>
+    </div>
+    <div class="sml-controls">
+      <button class="sml-run" title="Ctrl+Enter">Run</button>
+      <button class="sml-stop" disabled>Stop</button>
+      <button class="sml-reset">Reset</button>
+      <button class="sml-share" title="Copy a link to this code">Share</button>
+      <label class="sml-quiet"><input type="checkbox"> hide toplevel responses</label>
+      <span class="sml-status"></span>
+    </div>
+    <pre class="sml-output" hidden></pre>`;
+  const el = (sel) => container.querySelector(sel);
+
+  const exIndex = document.querySelectorAll('.sml-exercise').length - 1;
+  const storageKey = `sml-playground:${hashCode(sample)}`;
+  let stored = null;
+  try { stored = localStorage.getItem(storageKey); } catch { /* private mode */ }
+  el('textarea').value = stored ?? sample;
+
+  let getSource = () => el('textarea').value;
+  let setSource = attachHighlighting(el('.sml-editor'));
+  sharedCodeFor(exIndex, sample).then((shared) => {
+    if (shared === null) return;
+    setSource(shared);
+    container.scrollIntoView({ block: 'center' });
+  });
+
+  let persistTimer = null;
+  const persist = () => {
+    clearTimeout(persistTimer);
+    persistTimer = setTimeout(() => {
+      try {
+        const v = getSource();
+        if (v === sample) localStorage.removeItem(storageKey);
+        else localStorage.setItem(storageKey, v);
+      } catch { /* private mode */ }
+    }, 400);
+  };
+  el('textarea').addEventListener('input', persist);
+
+  if (options.ide) {
+    let ideStarted = false;
+    const startIde = () => {
+      if (ideStarted) return;
+      ideStarted = true;
+      import(new URL('./monaco-editor.js', import.meta.url))
+        .then((mod) => mod.upgrade(el('.sml-editor'), getSource(), options.ide,
+          () => { if (!el('.sml-run').disabled) run(); }, persist))
+        .then((api) => { getSource = api.getValue; setSource = api.setValue; })
+        .catch((e) => console.warn('sml: IDE editor unavailable, using plain editor:', e));
+    };
+    el('textarea').addEventListener('focus', startIde, { once: true });
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((en) => en.isIntersecting)) { io.disconnect(); startIde(); }
+      }, { rootMargin: '400px' });
+      io.observe(container);
+    } else {
+      startIde();
+    }
+  }
+
+  let worker = null, timer = null, outputLines = [];
+  function renderOutput() {
+    const pre = el('.sml-output');
+    const hasContent = outputLines.some((l) => l.trim() !== '');
+    pre.hidden = !hasContent;
+    if (hasContent) pre.textContent = outputLines.join('\n').replace(/\n+$/, '');
+  }
+  function finish(status) {
+    if (timer) clearTimeout(timer);
+    if (worker) worker.terminate();
+    timer = worker = null;
+    el('.sml-run').disabled = false;
+    el('.sml-stop').disabled = true;
+    el('.sml-status').textContent = status;
+  }
+  function run() {
+    if (worker) return;
+    outputLines = [];
+    renderOutput();
+    el('.sml-run').disabled = true;
+    el('.sml-stop').disabled = false;
+    el('.sml-status').textContent = 'running…';
+    worker = new Worker(workerUrl, { type: 'module' });
+    worker.onmessage = (e) => {
+      const msg = e.data;
+      if (msg.type === 'line') {
+        outputLines.push(msg.text);
+        renderOutput();
+      } else if (msg.type === 'result') {
+        finish(`done (exit ${msg.exitCode})`);
+      } else if (msg.type === 'error') {
+        outputLines.push(msg.message);
+        renderOutput();
+        finish('runner error');
+      }
+    };
+    worker.onerror = (e) => { outputLines.push(e.message ?? 'worker error'); renderOutput(); finish('worker error'); };
+    worker.postMessage({
+      source: getSource(),
+      quiet: el('.sml-quiet input').checked,
+    });
+    timer = setTimeout(() => { finish('timed out'); }, timeoutMs);
+  }
+
+  el('.sml-run').onclick = run;
+  el('.sml-stop').onclick = () => finish('stopped');
+  el('.sml-reset').onclick = () => {
+    setSource(sample);
+    try { localStorage.removeItem(storageKey); } catch { /* private mode */ }
+  };
+  el('.sml-share').onclick = async () => {
+    const hash = `#sml=${exIndex}.${hashCode(sample)}.${await encodeShare(getSource())}`;
+    history.replaceState(null, '', hash);
+    const url = location.href;
+    const done = (msg) => { el('.sml-status').textContent = msg; };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(url)
+        .then(() => done('link copied'), () => done('link ready in the address bar'));
+    } else {
+      done('link ready in the address bar');
+    }
+  };
+  el('textarea').onkeydown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !el('.sml-run').disabled) run();
+  };
+}
+
 // Conceptual multiple-choice question (yes/no is just a two-choice question).
 // question: {title, prompt, choices: [html], answer: index, explain?: html}
 // Wrong picks are marked and can be retried; the right pick locks the

@@ -8,6 +8,8 @@
   margin: 1.2rem 0;
 }
 .sml-exercise h3 { margin: 0 0 0.4rem; color: var(--accent); }
+.sml-playground .sml-editor.sml-monaco { height: 24rem; }
+.sml-playground textarea { min-height: 20rem; }
 .sml-exercise .sml-editor {
   font-family: Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace;
   font-size: 0.9rem;

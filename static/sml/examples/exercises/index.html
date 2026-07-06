@@ -46,8 +46,14 @@ below the results.</p>
 <div id="ex-tree"></div>
 <div id="ex-choice"></div>
 
+<h2>Playground</h2>
+<p>Free-form SML — toplevel responses shown unless hidden.</p>
+<div id="playground"></div>
+
 <script type="module">
-import { mountExercise, mountQuestion } from './exercise.js';
+import { mountExercise, mountQuestion, mountPlayground } from './exercise.js';
+
+mountPlayground(document.getElementById('playground'));
 
 mountQuestion(document.getElementById('ex-choice'), {
   kind: 'choice',

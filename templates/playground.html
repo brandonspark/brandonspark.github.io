@@ -1,0 +1,55 @@
+{% extends "index.html" %}
+
+{%- block title -%}
+{{ title_macros::title(page_title=page.title, main_title=config.title) }}
+{%- endblock -%}
+
+{% block content %}
+    <div class="post">
+        {{ post_macros::header(page=page) }}
+
+        <div class="post-content">
+            {{ page.content | safe }}
+        </div>
+
+        <link rel="stylesheet" href="/sml-exercises.css">
+        <div class="sml-exercises">
+          <div id="sml-playground"></div>
+        </div>
+        <script type="module">
+          import { mountPlayground } from '/sml/examples/exercises/exercise.js';
+          const ide = {
+            monacoBase: '/sml-ide/monaco-vs',
+            workerUrl: '/sml-ide/monaco-vs/assets/editor.worker-Be8ye1pW.js',
+            milletUrl: '/sml-ide/millet/millet_wasm.js',
+            fontFamily: 'Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace',
+            // Palette from /static/syntax_colors.css (the site's custom SML scheme)
+            themeData: {
+              base: 'vs-dark',
+              inherit: true,
+              rules: [
+                { token: 'keyword', foreground: '9178dd' },
+                { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
+                { token: 'string', foreground: 'db6969' },
+                { token: 'string.escape', foreground: 'db6969' },
+                { token: 'tyvar', foreground: 'f2e464' },
+                { token: 'number', foreground: 'd19a66' },
+                { token: 'constructor', foreground: 'd19a66' },
+                { token: 'literal', foreground: '56b6c2' },
+                { token: 'builtin', foreground: '88e67b' },
+                { token: 'function', foreground: '3ed4cf' },
+                { token: 'symbol', foreground: '61aeee' },
+                { token: 'operator', foreground: 'abb2bf' },
+                { token: 'identifier', foreground: 'abb2bf' },
+              ],
+              colors: {
+                'editor.background': '#00000000',
+                'editorGutter.background': '#00000000',
+                'editor.foreground': '#abb2bf',
+              },
+            },
+          };
+          mountPlayground(document.getElementById('sml-playground'), { ide, timeoutMs: 15000 });
+        </script>
+    </div>
+{% endblock content %}

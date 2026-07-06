@@ -192,6 +192,23 @@ await page.waitForFunction(() => {
 }, null, { timeout: 15000 });
 check('semantic tokens: cross-line fun name colored by real lexer', true);
 
+// playground page: mounts, upgrades to Monaco, runs with toplevel echoes
+await page.goto(`${base}/playground/`);
+await page.locator('#sml-playground').scrollIntoViewIfNeeded();
+await page.waitForFunction(() => window.monaco?.editor.getModels().length > 0, null, { timeout: 30000 });
+await page.evaluate(() => window.monaco.editor.getModels()[0].setValue('val x = 2 + 3;'));
+const pg = page.locator('#sml-playground');
+await pg.locator('.sml-run').click();
+await page.waitForFunction(() =>
+  /done|error|timed/.test(document.querySelector('#sml-playground .sml-status').textContent),
+  null, { timeout: 60000 });
+check('playground: echo output', (await pg.locator('.sml-output').textContent()).includes('val x = 5 : int'));
+check('playground: millet active', await page.evaluate(async () => {
+  window.monaco.editor.getModels()[0].setValue('val y : int = "no"');
+  await new Promise((r) => setTimeout(r, 1500));
+  return window.monaco.editor.getModelMarkers({ owner: 'millet' }).length > 0;
+}));
+
 await browser.close();
 server.close();
 process.exit(failures ? 1 : 0);
