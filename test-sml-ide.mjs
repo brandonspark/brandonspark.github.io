@@ -96,6 +96,13 @@ const kwColor = await page.evaluate(() => {
   return null;
 });
 check('custom palette applied (fun is #9178dd)', kwColor === 'rgb(145, 120, 221)');
+check('no rainbow brackets', await page.evaluate(() => {
+  for (const s of document.querySelectorAll('.view-line span span')) {
+    const c = getComputedStyle(s).color;
+    if (c === 'rgb(255, 215, 0)' || c === 'rgb(218, 112, 214)') return false;
+  }
+  return true;
+}));
 
 check('choice question unaffected', await page.locator('.sml-choice').count() === 1);
 

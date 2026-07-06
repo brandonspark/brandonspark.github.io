@@ -252,6 +252,9 @@ export async function upgrade(host, value, ide, onCtrlEnter, onChange) {
     lineNumbersMinChars: 0,
     renderLineHighlight: 'none',
     guides: { indentation: false },
+    // Rainbow brackets fight the page's flat palette (gold/orchid parens),
+    // and swallow the unit literal (). Brackets follow the theme instead.
+    bracketPairColorization: { enabled: false },
     minimap: { enabled: false },
     fontSize: ide.fontSize ?? 16,
     ...(ide.fontFamily ? { fontFamily: ide.fontFamily } : {}),
