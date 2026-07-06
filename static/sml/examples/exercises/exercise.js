@@ -19,19 +19,43 @@ function hashCode(s) {
   return h.toString(36);
 }
 
-// URL-safe base64 of UTF-8 text, for share links.
-const b64enc = (s) => btoa(String.fromCharCode(...new TextEncoder().encode(s)))
+// URL-safe base64 over bytes, for share links.
+const b64enc = (bytes) => btoa(String.fromCharCode(...bytes))
   .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-const b64dec = (s) => new TextDecoder().decode(
-  Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0)));
+const b64dec = (s) =>
+  Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
 
-// Share-link fragment: #sml=<exercise index>.<starter hash>.<base64 code>.
+// SML source is repetitive; deflate (built into the browser) shrinks share
+// links to roughly a third. Payloads are tagged: "z" deflate-raw, "r" plain.
+async function pipeBytes(bytes, stream) {
+  const out = new Response(new Blob([bytes]).stream().pipeThrough(stream));
+  return new Uint8Array(await out.arrayBuffer());
+}
+
+async function encodeShare(text) {
+  const bytes = new TextEncoder().encode(text);
+  if (typeof CompressionStream !== 'undefined') {
+    return 'z' + b64enc(await pipeBytes(bytes, new CompressionStream('deflate-raw')));
+  }
+  return 'r' + b64enc(bytes);
+}
+
+async function decodeShare(payload) {
+  const bytes = b64dec(payload.slice(1));
+  if (payload[0] === 'z') {
+    return new TextDecoder().decode(
+      await pipeBytes(bytes, new DecompressionStream('deflate-raw')));
+  }
+  return new TextDecoder().decode(bytes);
+}
+
+// Share-link fragment: #sml=<exercise index>.<starter hash>.<tagged payload>.
 // The starter hash keeps a stale link from being applied to the wrong (or a
 // since-edited) exercise.
-function sharedCodeFor(exIndex, starter) {
-  const m = location.hash.match(/^#sml=(\d+)\.([a-z0-9]+)\.([A-Za-z0-9_-]+)$/);
+async function sharedCodeFor(exIndex, starter) {
+  const m = location.hash.match(/^#sml=(\d+)\.([a-z0-9]+)\.([zr][A-Za-z0-9_-]+)$/);
   if (!m || Number(m[1]) !== exIndex || m[2] !== hashCode(starter)) return null;
-  try { return b64dec(m[3]); } catch { return null; }
+  try { return await decodeShare(m[3]); } catch { return null; }
 }
 
 // Structural CSS for the highlighting editor (a transparent-text textarea
@@ -157,10 +181,14 @@ export function mountExercise(container, exercise, options = {}) {
   const storageKey = `sml-code:${exercise.title}:${hashCode(exercise.starter)}`;
   let stored = null;
   try { stored = localStorage.getItem(storageKey); } catch { /* private mode */ }
-  // An explicit share link beats saved work; a shared page scrolls to its exercise.
-  const shared = sharedCodeFor(exIndex, exercise.starter);
-  el('textarea').value = shared ?? stored ?? exercise.starter;
-  if (shared !== null) setTimeout(() => container.scrollIntoView({ block: 'center' }), 50);
+  el('textarea').value = stored ?? exercise.starter;
+  // An explicit share link beats saved work; a shared page scrolls to its
+  // exercise. Decoding is async (native deflate), so it lands via setSource.
+  sharedCodeFor(exIndex, exercise.starter).then((shared) => {
+    if (shared === null) return;
+    setSource(shared);
+    container.scrollIntoView({ block: 'center' });
+  });
   let persistTimer = null;
   const persist = () => {
     clearTimeout(persistTimer);
@@ -283,8 +311,8 @@ export function mountExercise(container, exercise, options = {}) {
     setSource(exercise.starter);
     try { localStorage.removeItem(storageKey); } catch { /* private mode */ }
   };
-  el('.sml-share').onclick = () => {
-    const hash = `#sml=${exIndex}.${hashCode(exercise.starter)}.${b64enc(getSource())}`;
+  el('.sml-share').onclick = async () => {
+    const hash = `#sml=${exIndex}.${hashCode(exercise.starter)}.${await encodeShare(getSource())}`;
     history.replaceState(null, '', hash);
     const url = location.href;
     const done = (msg) => { el('.sml-status').textContent = msg; };
