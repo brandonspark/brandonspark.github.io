@@ -102,6 +102,18 @@ await page.waitForFunction(() => {
 const probs = await page.evaluate(() => document.querySelector('.sml-problems').innerHTML);
 check('problems list renders code spans, no raw backticks',
   probs.includes('<code>') && !probs.includes('`'));
+const layout = await page.evaluate(() => {
+  const li = document.querySelector('.sml-problems li');
+  const editor = document.querySelector('.sml-editor.sml-monaco');
+  const before = getComputedStyle(li, '::before');
+  return {
+    arrow: before.content,
+    liTop: li.getBoundingClientRect().top,
+    editorBottom: editor.getBoundingClientRect().bottom,
+  };
+});
+check('no theme arrow on problem rows', layout.arrow === 'none' || layout.arrow === 'normal');
+check('problems clear of the editor box', layout.liTop >= layout.editorBottom + 4);
 const mkMsg = await page.evaluate(() =>
   window.monaco.editor.getModelMarkers({ owner: 'millet' })[0].message);
 check('marker message uses quotes, not backticks', !mkMsg.includes('`') && mkMsg.includes("'int'"));

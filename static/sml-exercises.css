@@ -20,6 +20,16 @@
 /* the site styles code elements (purple, background); not inside the editor */
 .sml-exercise .sml-highlight code { color: inherit; background: none; }
 
+/* millet diagnostics under the IDE editor: clear of the editor box, and
+   without the theme's absolutely-positioned li arrows (they collide) */
+.sml-exercise .sml-problems { margin: 0.5rem 0 0; }
+.sml-exercise .sml-problems li { padding-left: 0; margin: 0.15rem 0; }
+.sml-exercise .sml-problems li::before { content: none; }
+.sml-exercise .sml-problems code {
+  border: none; background: rgba(0, 0, 0, 0.3); color: inherit;
+  margin: 0; padding: 0 0.25em; font-size: 0.95em;
+}
+
 .sml-solution-view {
   font-family: Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace;
   font-size: 0.9rem;
