@@ -82,7 +82,71 @@ function registerSML(monaco) {
   });
 }
 
+// Millet writes messages in its markdown convention: `code` in backticks.
+// Markers render as plain text, so backticks become quotes there; the
+// problems list renders them as real <code> spans.
+const plainMessage = (msg) => msg.replace(/`([^`]+)`/g, "'$1'");
+const htmlMessage = (msg) => msg
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/`([^`]+)`/g, '<code>$1</code>');
+
+const BASIS = [
+  'print', 'hd', 'tl', 'abs', 'map', 'foldl', 'foldr', 'length', 'rev',
+  'Int.toString', 'Int.compare', 'Int.min', 'Int.max', 'Real.toString',
+  'String.size', 'String.sub', 'String.concat', 'String.concatWith',
+  'String.compare', 'List.map', 'List.filter', 'List.foldl', 'List.foldr',
+  'List.length', 'List.rev', 'List.exists', 'List.all', 'List.tabulate',
+  'Option.map', 'Option.getOpt', 'Option.isSome', 'Char.ord', 'Char.chr',
+];
+
 function registerProviders(monaco) {
+  monaco.languages.registerCompletionItemProvider('sml', {
+    provideCompletionItems(model, position) {
+      const word = model.getWordUntilPosition(position);
+      const range = new monaco.Range(
+        position.lineNumber, word.startColumn, position.lineNumber, word.endColumn);
+      const K = monaco.languages.CompletionItemKind;
+      const snippet = (label, insertText, documentation) => ({
+        label, insertText, documentation, range,
+        kind: K.Snippet,
+        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      });
+      return { suggestions: [
+        ...KEYWORDS.map((k) => ({ label: k, kind: K.Keyword, insertText: k, range })),
+        ...BASIS.map((f) => ({ label: f, kind: K.Function, insertText: f, range })),
+        snippet('case…of', 'case ${1:x} of\n  ${2:pat} => ${3:expr}', 'case expression'),
+        snippet('let…in…end', 'let\n  val ${1:x} = ${2:expr}\nin\n  ${3:body}\nend', 'let expression'),
+        snippet('fun (clauses)', 'fun ${1:name} ${2:pat} = ${3:expr}\n  | ${1:name} ${4:pat} = ${5:expr}', 'clausal function'),
+        snippet('datatype', 'datatype ${1:t} = ${2:Con1} | ${3:Con2}', 'datatype declaration'),
+      ] };
+    },
+  });
+  monaco.languages.registerCodeActionProvider('sml', {
+    provideCodeActions(model, _range, context) {
+      const millet = registry.get(model);
+      if (!millet) return { actions: [], dispose() {} };
+      const actions = [];
+      const seen = new Set();
+      for (const mk of context.markers ?? []) {
+        const json = millet.fill_case(mk.startLineNumber - 1, mk.startColumn - 1);
+        if (!json || seen.has(json)) continue;
+        seen.add(json);
+        const e = JSON.parse(json);
+        actions.push({
+          title: 'Fill in the missing cases',
+          kind: 'quickfix',
+          diagnostics: [mk],
+          edit: { edits: [{ resource: model.uri, textEdit: {
+            range: new monaco.Range(
+              e.range.start.line + 1, e.range.start.character + 1,
+              e.range.end.line + 1, e.range.end.character + 1),
+            text: e.text,
+          } }] },
+        });
+      }
+      return { actions, dispose() {} };
+    },
+  });
   monaco.languages.registerHoverProvider('sml', {
     provideHover(model, pos) {
       const millet = registry.get(model);
@@ -139,7 +203,7 @@ function load(ide) {
 
 /// Replace the contents of `host` (the .sml-editor div) with a Monaco editor
 /// carrying live millet diagnostics. Returns {getValue, setValue}.
-export async function upgrade(host, value, ide, onCtrlEnter) {
+export async function upgrade(host, value, ide, onCtrlEnter, onChange) {
   const { monaco, Millet } = await load(ide);
 
   host.classList.add('sml-monaco');
@@ -194,7 +258,7 @@ export async function upgrade(host, value, ide, onCtrlEnter) {
       startColumn: d.range.start.character + 1,
       endLineNumber: d.range.end.line + 1,
       endColumn: d.range.end.character + 1,
-      message: d.message,
+      message: plainMessage(d.message),
       code: String(d.code),
       severity: SEVERITY[d.severity] ?? 2,
     })));
@@ -203,7 +267,7 @@ export async function upgrade(host, value, ide, onCtrlEnter) {
     for (const d of diags.slice(0, 4)) {
       const li = document.createElement('li');
       li.className = d.severity === 'error' ? 'sml-fail' : 'sml-not-run';
-      li.textContent = `line ${d.range.start.line + 1}: ${d.message}`;
+      li.innerHTML = `line ${d.range.start.line + 1}: ${htmlMessage(d.message)}`;
       li.onclick = () => {
         editor.setPosition({ lineNumber: d.range.start.line + 1, column: d.range.start.character + 1 });
         editor.focus();
@@ -215,6 +279,7 @@ export async function upgrade(host, value, ide, onCtrlEnter) {
   model.onDidChangeContent(() => {
     clearTimeout(timer);
     timer = setTimeout(refresh, 250);
+    onChange?.();
   });
   refresh();
 

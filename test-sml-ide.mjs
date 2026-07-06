@@ -93,6 +93,52 @@ check('custom palette applied (fun is #9178dd)', kwColor === 'rgb(145, 120, 221)
 
 check('choice question unaffected', await page.locator('.sml-choice').count() === 1);
 
+// diagnostics formatting: no literal backticks; code spans render
+await page.evaluate(() => window.monaco.editor.getModels()[0].setValue('val x : int = "foo"\n'));
+await page.waitForFunction(() => {
+  const p = document.querySelector('.sml-problems');
+  return p && !p.hidden && p.querySelector('code');
+}, null, { timeout: 10000 });
+const probs = await page.evaluate(() => document.querySelector('.sml-problems').innerHTML);
+check('problems list renders code spans, no raw backticks',
+  probs.includes('<code>') && !probs.includes('`'));
+const mkMsg = await page.evaluate(() =>
+  window.monaco.editor.getModelMarkers({ owner: 'millet' })[0].message);
+check('marker message uses quotes, not backticks', !mkMsg.includes('`') && mkMsg.includes("'int'"));
+
+// persistence: edits survive a reload; Reset restores starter and forgets
+await page.evaluate(() => window.monaco.editor.getModels()[0].setValue('(* my work *) fun fact n = 99\n'));
+await page.waitForTimeout(700);
+await page.reload();
+await page.waitForFunction(() => window.monaco?.editor.getModels().length > 0, null, { timeout: 30000 });
+const restored = await page.evaluate(() => window.monaco.editor.getModels()[0].getValue());
+check('work restored after reload', restored.includes('my work'));
+const exR = page.locator('.sml-exercise').first();
+await exR.locator('.sml-reset').click();
+await page.waitForTimeout(700);
+await page.reload();
+await page.waitForFunction(() => window.monaco?.editor.getModels().length > 0, null, { timeout: 30000 });
+const afterReset = await page.evaluate(() => window.monaco.editor.getModels()[0].getValue());
+check('reset forgets stored work', afterReset.includes('unimplemented'));
+
+// fill_case quick fix end-to-end through the lightbulb
+await page.evaluate(() => window.monaco.editor.getModels()[0].setValue(
+  'fun f (x : int option) : int = case x of NONE => 0\n'));
+await page.waitForFunction(() => window.monaco.editor.getModelMarkers({ owner: 'millet' }).length > 0,
+  null, { timeout: 10000 });
+await page.evaluate(() => {
+  const ed = window.monaco.editor.getEditors()[0];
+  const mk = window.monaco.editor.getModelMarkers({ owner: 'millet' })[0];
+  ed.setPosition({ lineNumber: mk.startLineNumber, column: mk.startColumn });
+  ed.focus();
+  ed.trigger('t', 'editor.action.quickFix', {});
+});
+await page.waitForSelector('.action-widget, .monaco-menu, .context-view', { timeout: 10000 });
+await page.keyboard.press('Enter');
+await page.waitForTimeout(600);
+const filled = await page.evaluate(() => window.monaco.editor.getModels()[0].getValue());
+check('fill-case quick fix inserts SOME arm', filled.includes('SOME'));
+
 await browser.close();
 server.close();
 process.exit(failures ? 1 : 0);

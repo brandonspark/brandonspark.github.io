@@ -52,6 +52,22 @@ export class Millet {
         return v1;
     }
     /**
+     * If the position is on a `case` expression, the edit that fills in its
+     * missing arms, as JSON `{range, text}` — else null.
+     * @param {number} line
+     * @param {number} character
+     * @returns {string | undefined}
+     */
+    fill_case(line, character) {
+        const ret = wasm.millet_fill_case(this.__wbg_ptr, line, character);
+        let v1;
+        if (ret[0] !== 0) {
+            v1 = getStringFromWasm0(ret[0], ret[1]).slice();
+            wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+        }
+        return v1;
+    }
+    /**
      * Hover text (markdown) at a UTF-16 position, or null.
      * @param {number} line
      * @param {number} character

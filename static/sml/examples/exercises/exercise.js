@@ -12,6 +12,13 @@
 import { buildTestSource, gradeRun, isTestLine } from './exercise-core.mjs';
 import { highlightSML } from './highlight-sml.mjs';
 
+// djb2 — distinguishes persistence keys when an exercise's starter changes.
+function hashCode(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+
 // Structural CSS for the highlighting editor (a transparent-text textarea
 // over a highlighted <pre> with identical metrics). Colors and fonts are the
 // page's business; this is only geometry and layering.
@@ -39,6 +46,7 @@ const EDITOR_CSS = `
 }
 .sml-editor.sml-monaco { padding: 0; height: 15rem; resize: vertical; overflow: hidden; }
 .sml-problems { list-style: none; padding: 0.2rem 0 0; margin: 0; font-size: 0.85rem; cursor: pointer; }
+.sml-problems code { border: none; margin: 0; padding: 0 0.2em; color: inherit; background: rgba(128, 128, 128, 0.15); }
 /* host pages often style code/pre globally (borders, colors); not inside
    Monaco's hover widget */
 .monaco-hover code, .monaco-hover pre {
@@ -125,17 +133,36 @@ export function mountExercise(container, exercise, options = {}) {
   const el = (sel) => container.querySelector(sel);
   el('h3').textContent = exercise.title;
   el('.sml-prompt').innerHTML = exercise.prompt;
-  el('textarea').value = exercise.starter;
+
+  // Work in progress survives reloads: restore from localStorage, save
+  // (debounced) on every edit, forget when Reset is pressed or the buffer
+  // returns to the pristine starter.
+  const storageKey = `sml-code:${exercise.title}:${hashCode(exercise.starter)}`;
+  let stored = null;
+  try { stored = localStorage.getItem(storageKey); } catch { /* private mode */ }
+  el('textarea').value = stored ?? exercise.starter;
+  let persistTimer = null;
+  const persist = () => {
+    clearTimeout(persistTimer);
+    persistTimer = setTimeout(() => {
+      try {
+        const v = getSource();
+        if (v === exercise.starter) localStorage.removeItem(storageKey);
+        else localStorage.setItem(storageKey, v);
+      } catch { /* private mode */ }
+    }, 400);
+  };
 
   // Source access goes through an indirection so the optional Monaco+millet
   // IDE (options.ide) can upgrade the editor in place after it loads; until
   // then (or if loading fails) the overlay editor keeps working.
   let getSource = () => el('textarea').value;
   let setSource = attachHighlighting(el('.sml-editor'));
+  el('textarea').addEventListener('input', persist);
   if (options.ide) {
     import(new URL('./monaco-editor.js', import.meta.url))
       .then((mod) => mod.upgrade(el('.sml-editor'), getSource(), options.ide,
-        () => { if (!el('.sml-run').disabled) run(); }))
+        () => { if (!el('.sml-run').disabled) run(); }, persist))
       .then((api) => { getSource = api.getValue; setSource = api.setValue; })
       .catch((e) => console.warn('sml: IDE editor unavailable, using plain editor:', e));
   }
@@ -208,7 +235,10 @@ export function mountExercise(container, exercise, options = {}) {
 
   el('.sml-run').onclick = run;
   el('.sml-stop').onclick = () => finish('stopped');
-  el('.sml-reset').onclick = () => setSource(exercise.starter);
+  el('.sml-reset').onclick = () => {
+    setSource(exercise.starter);
+    try { localStorage.removeItem(storageKey); } catch { /* private mode */ }
+  };
   if (exercise.solution) {
     const btn = el('.sml-solution');
     const view = el('.sml-solution-view');
