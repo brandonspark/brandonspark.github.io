@@ -82,6 +82,15 @@ check('site font (Hack stack)', opts.fontFamily.includes('Hack'));
 check('transparent editor background',
   opts.background === 'rgba(0, 0, 0, 0)' || opts.background === 'transparent');
 
+// custom palette applied: `fun` keyword should be the site's purple
+const kwColor = await page.evaluate(() => {
+  for (const s of document.querySelectorAll('.view-line span span')) {
+    if (s.textContent === 'fun') return getComputedStyle(s).color;
+  }
+  return null;
+});
+check('custom palette applied (fun is #9178dd)', kwColor === 'rgb(145, 120, 221)');
+
 check('choice question unaffected', await page.locator('.sml-choice').count() === 1);
 
 await browser.close();

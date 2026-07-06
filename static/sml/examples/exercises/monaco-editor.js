@@ -28,6 +28,13 @@ const KEYWORDS = [
   'sharing', 'sig', 'signature', 'struct', 'structure', 'where',
 ];
 
+const BUILTINS = [
+  'array', 'bool', 'char', 'exn', 'int', 'list', 'option', 'order', 'real',
+  'ref', 'string', 'substring', 'vector', 'unit', 'word',
+];
+
+const LITERALS = ['true', 'false', 'nil', 'NONE', 'SOME', 'LESS', 'EQUAL', 'GREATER'];
+
 function registerSML(monaco) {
   monaco.languages.register({ id: 'sml', extensions: ['.sml', '.sig', '.fun'] });
   monaco.languages.setLanguageConfiguration('sml', {
@@ -42,15 +49,22 @@ function registerSML(monaco) {
   });
   monaco.languages.setMonarchTokensProvider('sml', {
     keywords: KEYWORDS,
+    builtins: BUILTINS,
+    literals: LITERALS,
     tokenizer: {
       root: [
         [/\(\*/, 'comment', '@comment'],
         [/#?"/, 'string', '@string'],
         [/''?[A-Za-z][A-Za-z0-9_']*/, 'type.identifier'],
         [/~?0wx[0-9a-fA-F]+|~?0x[0-9a-fA-F]+|~?0w[0-9]+|~?[0-9]+(\.[0-9]+)?([eE]~?[0-9]+)?/, 'number'],
-        [/[a-z_][A-Za-z0-9_']*/, { cases: { '@keywords': 'keyword', '@default': 'identifier' } }],
-        [/[A-Z][A-Za-z0-9_']*/, 'constructor'],
-        [/=>|->|\|>|::|[|=<>+\-*\/^@:;,.]/, 'operator'],
+        [/\(\)|\[\]/, 'literal'],
+        [/(fun)(\s+)([A-Za-z_][A-Za-z0-9_']*)/, ['keyword', 'white', 'function']],
+        [/[a-z_][A-Za-z0-9_']*/, { cases: {
+          '@keywords': 'keyword', '@builtins': 'builtin',
+          '@literals': 'literal', '@default': 'identifier' } }],
+        [/[A-Z][A-Za-z0-9_']*/, { cases: { '@literals': 'literal', '@default': 'constructor' } }],
+        [/=>|->|\|>|>>=/, 'symbol'],
+        [/::|[|=<>+\-*\/^@:;,.]/, 'operator'],
         [/[()[\]{}]/, '@brackets'],
       ],
       comment: [
@@ -103,8 +117,11 @@ function load(ide) {
     registerProviders(monaco);
     // Transparent background: the host page's own code-box styling (color,
     // translucency, border) shows through, so the editor matches the site's
-    // plain editors across color schemes.
-    monaco.editor.defineTheme('sml-exercise', {
+    // plain editors across color schemes. Pass ide.themeData (a full Monaco
+    // theme object) to substitute your own palette; token names are those of
+    // the tokenizer above (keyword, string, comment, number, constructor,
+    // literal, builtin, function, symbol, type.identifier, identifier).
+    monaco.editor.defineTheme('sml-exercise', ide.themeData ?? {
       base: 'vs-dark',
       inherit: true,
       rules: [],
