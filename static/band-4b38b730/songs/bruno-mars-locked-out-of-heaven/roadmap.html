@@ -638,14 +638,16 @@ var render = function (view) {
       // Auto-collapse: identical rows become one row with ×N (Brandon: save space), unless this view's player does
       // something different on one of the passes (different play/tacet, marker, crash or box override) — then stay unrolled.
       let b = b0, skip = 0;
-      if (!b0.rep && !b0.label && b0.rows.length > 1 && b0.rows.every(r => r === b0.rows[0])) {
-        const n1 = b0.rows[0].split(" ").length, P = b0.rows.length, ok = [...Array(P).keys()].every(r => [...Array(n1).keys()].every(k => {
+      // period K: the rows are P copies of their first K rows (e.g. a 2-row, 8-bar loop written out twice)
+      const K = b0.rep || b0.label ? 0 : [...Array(b0.rows.length).keys()].map(k => k + 1).find(k => k < b0.rows.length && b0.rows.length % k === 0 && b0.rows.every((r, i) => r === b0.rows[i % k]));
+      if (K) {
+        const n1 = b0.rows.slice(0, K).join(" ").split(" ").length, P = b0.rows.length / K, ok = [...Array(P).keys()].every(r => [...Array(n1).keys()].every(k => {
           const a = box + k + 1, c = box + r * n1 + k + 1, ma = m + k, mc = m + r * n1 + k;
           const pl = view === "band" || SONG.plays[view][ma] === SONG.plays[view][mc];
           const mk = JSON.stringify(marks[a] ? [marks[a].b, marks[a].crash] : null) === JSON.stringify(marks[c] ? [marks[c].b, marks[c].crash] : null);
           return pl && mk && (s.show?.[view]?.[a] || "") === (s.show?.[view]?.[c] || "");
         }));
-        if (ok) { b = { rows: [b0.rows[0]], rep: P }; skip = n1 * (P - 1); }
+        if (ok) { b = { rows: b0.rows.slice(0, K), rep: P }; skip = n1 * (P - 1); }
       }
       const toks = b.rows.map(r => r.split(" ")), n = toks.flat().length, rep = b.rep || 1, start = m;
       m += n * rep; total += n * rep;
