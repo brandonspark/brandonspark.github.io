@@ -87,8 +87,9 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
 /* Markers: a yellow numbered disc on a box means "play figure N here". The same disc sits next to the figure. */
 .figs { display: flex; flex-wrap: wrap; gap: calc(2.5 * var(--u)) calc(5 * var(--u)); align-items: center; min-width: 0; }
 .nota { display: flex; align-items: center; gap: calc(1.5 * var(--u)); min-width: 0; max-width: 100%; }
-.chart.drums { gap: calc(.6 * var(--u)); padding-bottom: calc(1 * var(--u)); }
-.drow svg { display: block; width: calc(100% * var(--nb) / 4); height: auto; }
+/* Drum lines at 70% of the tile width (Brandon: see more lines at once); 4 bars per line keeps phrases aligned. */
+.chart.drums { gap: 0; padding-bottom: calc(.5 * var(--u)); }
+.drow svg { display: block; width: calc(70% * var(--nb) / 4); height: auto; margin: calc(-.6 * var(--u)) 0; }
 .dtacet { font-family: var(--display); font-weight: 700; font-size: calc(5 * var(--u)); color: var(--muted); text-transform: uppercase; padding: calc(2 * var(--u)) 0; }
 .nota svg { display: block; flex: 0 1 auto; min-width: 0; width: calc(var(--w) * .4 * var(--u)); max-width: 100%; height: auto; }
 .nota svg[aria-label="guitar tab"] { width: calc(var(--w) * .32 * var(--u)); } /* tabs run ~20% smaller than staves: they are taller per bar */
