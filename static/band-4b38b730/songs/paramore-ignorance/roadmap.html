@@ -744,7 +744,19 @@ var render = function (view) {
       if (x.at) x.at.forEach(k => { const m = (marks[k] ??= { b: [], crash: false, rh: new Set() }); m.rh ??= new Set(); m.b.push(x._b); if (x._rh) m.rh.add(x._b); });
     });
     let total = 0, anyPlay = false, box = 0;
-    const blocks = s.blocks.map(b => {
+    const blocks = s.blocks.map(b0 => {
+      // Auto-collapse: identical rows become one row with ×N (Brandon: save space), unless this view's player does
+      // something different on one of the passes (different play/tacet, marker, crash or box override) — then stay unrolled.
+      let b = b0, skip = 0;
+      if (!b0.rep && !b0.label && b0.rows.length > 1 && b0.rows.every(r => r === b0.rows[0])) {
+        const n1 = b0.rows[0].split(" ").length, P = b0.rows.length, ok = [...Array(P).keys()].every(r => [...Array(n1).keys()].every(k => {
+          const a = box + k + 1, c = box + r * n1 + k + 1, ma = m + k, mc = m + r * n1 + k;
+          const pl = view === "band" || SONG.plays[view][ma] === SONG.plays[view][mc];
+          const mk = JSON.stringify(marks[a] ? [marks[a].b, marks[a].crash] : null) === JSON.stringify(marks[c] ? [marks[c].b, marks[c].crash] : null);
+          return pl && mk && (s.show?.[view]?.[a] || "") === (s.show?.[view]?.[c] || "");
+        }));
+        if (ok) { b = { rows: [b0.rows[0]], rep: P }; skip = n1 * (P - 1); }
+      }
       const toks = b.rows.map(r => r.split(" ")), n = toks.flat().length, rep = b.rep || 1, start = m;
       m += n * rep; total += n * rep;
       let k = 0;
@@ -756,6 +768,7 @@ var render = function (view) {
         const mk = marks[box], pv = j > 0 ? marks[box - 1] : null;
         return bar(s.show?.[view]?.[box] || tok, view, on, mk && { ...mk, shown: mk.b.filter(c => !(pv && pv.b.includes(c))) });
       }).join("")}</div>`).join("");
+      box += skip;
       const repHTML = b.rep ? "×" + b.rep : b.label ? `<span class="lb">${esc(b.label)}</span>` : "";
       return `<div class="block"><div class="rows">${rows}</div><div class="rep${repHTML ? "" : " none"}">${repHTML}</div></div>`;
     });
