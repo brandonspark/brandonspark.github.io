@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SongBook</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap">
+<style>
+:root { --bg:#0c0d11; --tile:#16181f; --ink:#f4f5f8; --muted:#9ba1b0; --faint:#4a505e; --line:#353a46; --road:#5b8fe0; --tab:#39b8a3; color-scheme: dark; }
+* { box-sizing: border-box; } body { margin: 0; background: var(--bg); color: var(--ink); font-family: Barlow, system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 18px; }
+h1 { margin: 0; font: 800 40px/1 "Barlow Condensed", "Arial Narrow", sans-serif; text-transform: uppercase; }
+#q { flex: 1 1 260px; font: 500 18px Barlow, sans-serif; padding: 10px 14px; border-radius: 8px; border: 2px solid var(--line); background: var(--tile); color: var(--ink); }
+#q:focus { outline: none; border-color: var(--road); }
+.count { color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 12px; }
+.card { background: var(--tile); border-radius: 8px; padding: 14px 16px; border-top: 4px solid var(--line); }
+.card h2 { margin: 0; font: 800 26px/1.05 "Barlow Condensed", sans-serif; text-transform: uppercase; }
+.artist { margin: 2px 0 10px; color: var(--muted); }
+.item { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
+a { color: inherit; text-decoration: none; }
+.main { font: 800 18px/1 "Barlow Condensed", sans-serif; text-transform: uppercase; padding: 8px 12px; border-radius: 6px; color: #0c0d11; background: var(--road); }
+.main.k-bass, .main.k-guitar { background: var(--tab); }
+.v { font: 700 15px/1 "Barlow Condensed", sans-serif; text-transform: uppercase; padding: 7px 9px; border: 2px solid var(--line); border-radius: 6px; color: var(--muted); }
+.v:hover, .ol:hover { color: var(--ink); border-color: var(--ink); }
+.ol { margin-left: auto; font-size: 14px; color: var(--muted); }
+.meta { flex-basis: 100%; font-size: 13px; color: var(--muted); }
+.empty { color: var(--muted); }
+</style></head><body><main>
+<header><h1>SongBook</h1><input id="q" type="search" placeholder="Search songs…" autofocus aria-label="Search songs"><span class="count" id="count"></span></header>
+<div class="grid" id="grid"><section class="card" data-q="ignorance paramore bass tab roadmap">
+      <h2>Ignorance</h2><p class="artist">Paramore</p><div class="item"><a class="main k-roadmap" href="songs/paramore-ignorance/roadmap.html">Roadmap</a><a class="v" href="songs/paramore-ignorance/roadmap.html#band">Band</a><a class="v" href="songs/paramore-ignorance/roadmap.html#gtr1">Gtr 1</a><a class="v" href="songs/paramore-ignorance/roadmap.html#gtr2">Gtr 2</a><a class="v" href="songs/paramore-ignorance/roadmap.html#bass">Bass</a><a class="v" href="songs/paramore-ignorance/roadmap.html#drums">Drums</a>
+          <span class="meta">Key Bm · 171 bpm · bass in drop D · updated 2026-10-16</span></div><div class="item"><a class="main k-bass" href="songs/paramore-ignorance/bass-tab.html">Bass tab</a>
+          <span class="meta">Drop D · from PookLowEnd&#x27;s playalong · updated 2026-10-16</span></div></section><section class="card" data-q="love song sara bareilles bass tab">
+      <h2>Love Song</h2><p class="artist">Sara Bareilles</p><div class="item"><a class="main k-bass" href="songs/sara-bareilles-love-song/bass-tab.html">Bass tab</a>
+          <span class="meta">123 bpm, swing · from Martin Motnik&#x27;s transcription · updated 2026-10-16</span></div></section><section class="card" data-q="pink pony club chappell roan roadmap">
+      <h2>Pink Pony Club</h2><p class="artist">Chappell Roan</p><div class="item"><a class="main k-roadmap" href="songs/chappell-roan-pink-pony-club/roadmap.html">Roadmap</a><a class="v" href="songs/chappell-roan-pink-pony-club/roadmap.html#band">Band</a><a class="v" href="songs/chappell-roan-pink-pony-club/roadmap.html#keys">Keys</a><a class="v" href="songs/chappell-roan-pink-pony-club/roadmap.html#guitar">Gtr</a><a class="v" href="songs/chappell-roan-pink-pony-club/roadmap.html#bass">Bass</a><a class="v" href="songs/chappell-roan-pink-pony-club/roadmap.html#drums">Drums</a>
+          <span class="meta">Key F# · 107 bpm · one loop: F# G#m D#m B · updated 2026-10-16</span></div></section><section class="card" data-q="stupid song olivia rodrigo roadmap">
+      <h2>Stupid Song</h2><p class="artist">Olivia Rodrigo</p><div class="item"><a class="main k-roadmap" href="songs/olivia-rodrigo-stupid-song/roadmap.html">Roadmap</a><a class="v" href="songs/olivia-rodrigo-stupid-song/roadmap.html#band">Band</a><a class="v" href="songs/olivia-rodrigo-stupid-song/roadmap.html#keys">Keys</a><a class="v" href="songs/olivia-rodrigo-stupid-song/roadmap.html#guitar">Gtr</a><a class="v" href="songs/olivia-rodrigo-stupid-song/roadmap.html#bass">Bass</a><a class="v" href="songs/olivia-rodrigo-stupid-song/roadmap.html#drums">Drums</a>
+          <span class="meta">Key B · 127 bpm · capo 4 · updated 2026-10-16</span></div></section></div><p class="empty" id="empty" hidden>No songs match.</p>
+</main><script>
+const q = document.getElementById("q"), cards = [...document.querySelectorAll(".card")];
+function filter() { const t = q.value.trim().toLowerCase(); let n = 0;
+  cards.forEach(c => { const on = !t || c.dataset.q.includes(t); c.hidden = !on; n += on; });
+  document.getElementById("count").textContent = n + (n === 1 ? " song" : " songs"); document.getElementById("empty").hidden = n > 0; }
+q.addEventListener("input", filter); filter();
+</script></body></html>
