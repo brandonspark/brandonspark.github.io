@@ -365,8 +365,8 @@ function score(spec) {
     }
   });
 
-  const rest = (x, d) => {
-    const y = yOf(4), dot = [3, 6, 12].includes(d) ? `<circle cx="${x + 9}" cy="${yOf(5)}" r="1.6" fill="var(--ink)"/>` : "";
+  const rest = (x, d, dy = 0) => {
+    const y = yOf(4) + dy, dot = [3, 6, 12].includes(d) ? `<circle cx="${x + 9}" cy="${yOf(5) + dy}" r="1.6" fill="var(--ink)"/>` : "";
     if (d >= 16) return G("𝄻", x - 5, y + CAL.whole);
     if (d >= 8) return G("𝄼", x - 5, y + CAL.half) + dot;
     if (d >= 4) return G("𝄽", x - 4, y + CAL.quarter) + dot;
@@ -378,7 +378,8 @@ function score(spec) {
     v.bars.forEach((ev, b) => (ev || []).forEach(e => {
       const x = X(b, e.p), D = e.dn ?? e.d; // D = notated length (dn overrides d, e.g. triplets)
       if (e.c) labels.push({ x, c: e.c });
-      if (e.r) { out.push(rest(x, e.d)); return; }
+      // Drum staff: the kick voice gets no rests, and hand rests sit in the upper half so they never collide (standard drum charting).
+      if (e.r) { if (spec.clef === "perc" && v.dir === 1) return; out.push(rest(x, e.d, spec.clef === "perc" ? -S * 1.5 : 0)); return; }
       let heads;
       if (e.drum) heads = e.drum.map(h => ({ st: DRUM[h.k].st, x: DRUM[h.k].x, open: h.open }));
       else if (e.n) heads = e.n.map(pn => ({ st: stepOf(pn) }));
