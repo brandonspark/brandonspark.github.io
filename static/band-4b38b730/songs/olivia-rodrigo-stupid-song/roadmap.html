@@ -9,7 +9,7 @@
 /* Layout: tablet-first stage chart (mild scrolling is fine), the whole song as tiles in reading order (1 box = 1 measure). An instrument switch filters one shared song model into Band / Keys / Guitar / Bass / Drums views. Dark only, for stage lighting. */
 :root {
   --bg: #0c0d11; --tile: #16181f; --ink: #f4f5f8; --muted: #9ba1b0; --faint: #4a505e; --line: #353a46;
-  --c-intro: #8796ad; --c-verse: #5b8fe0; --c-chorus: #ff6a45; --c-bridge: #39b8a3; --c-solo: #9b74f0; --hit: #ff6a45; --sel: #f4f5f8; --fig: #ffd23f;
+  --c-intro: #8796ad; --c-verse: #5b8fe0; --c-chorus: #ff6a45; --c-bridge: #39b8a3; --c-solo: #9b74f0; --hit: #ff6a45; --sel: #f4f5f8; --fig: #ffd23f; --rh: #8796ad;
   --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme: dark;
@@ -87,6 +87,9 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
 /* Markers: a yellow numbered disc on a box means "play figure N here". The same disc sits next to the figure. */
 .figs { display: flex; flex-wrap: wrap; gap: calc(2.5 * var(--u)) calc(5 * var(--u)); align-items: center; min-width: 0; }
 .nota { display: flex; align-items: center; gap: calc(1.5 * var(--u)); min-width: 0; max-width: 100%; }
+.chart.drums { gap: calc(.6 * var(--u)); padding-bottom: calc(1 * var(--u)); }
+.drow svg { display: block; width: calc(100% * var(--nb) / 4); height: auto; }
+.dtacet { font-family: var(--display); font-weight: 700; font-size: calc(5 * var(--u)); color: var(--muted); text-transform: uppercase; padding: calc(2 * var(--u)) 0; }
 .nota svg { display: block; flex: 0 1 auto; min-width: 0; width: calc(var(--w) * .4 * var(--u)); max-width: 100%; height: auto; }
 .nota svg[aria-label="guitar tab"] { width: calc(var(--w) * .32 * var(--u)); } /* tabs run ~20% smaller than staves: they are taller per bar */
 .bd { flex: none; display: inline-grid; place-items: center; min-width: 1.25em; height: 1.25em; padding: 0 .2em; border-radius: 99px; background: var(--fig); color: #111;
@@ -94,6 +97,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
 .bar .bd { position: absolute; top: calc(.8 * var(--u)); left: calc(.8 * var(--u)); font-size: calc(4.6 * var(--u)); }
 .bar .bd + .bd { left: calc(7.5 * var(--u)); }
 .bar.mk { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--fig); }
+.bar.mk.mkr { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--rh); }
+.bd.rh { background: var(--rh); }
 .bar .cr { position: absolute; bottom: calc(1.6 * var(--u)); left: calc(1 * var(--u)); width: calc(5 * var(--u)); height: calc(5 * var(--u)); }
 
 .ft { display: flex; align-items: center; gap: calc(3 * var(--u)); padding: calc(2 * var(--u)) calc(4 * var(--u)) calc(3 * var(--u)); min-width: 0; }
@@ -339,6 +344,25 @@ function score(spec) {
   if (spec.clef === "perc") out.push(`<rect x="4" y="${yOf(6)}" width="3" height="${S * 2}" fill="var(--ink)"/><rect x="10" y="${yOf(6)}" width="3" height="${S * 2}" fill="var(--ink)"/>`);
   for (let i = 0; i < ks; i++) out.push(G("♯", 25 + i * 8.5, yOf(SHARPS[i]) + CAL.sharp, 26));
   for (let b = 0; b <= nb; b++) { const x = HDR + b * BW; out.push(`<line x1="${x}" x2="${x}" y1="${yOf(8)}" y2="${yOf(0)}" stroke="var(--ink)" stroke-width="${b === nb ? 3 : 1.4}"/>`); }
+  // Inline drum rows: { sim: n } = same as the previous bar (one-bar repeat sign, with a running count above);
+  // { rest: true } = drums sit out this bar (whole rest).
+  (spec.grids || []).forEach((g, b) => {
+    const cx = HDR + b * BW + BW / 2;
+    if (g.sim) {
+      const y = yOf(4);
+      out.push(`<circle cx="${cx - 11}" cy="${y - 6}" r="3" fill="var(--ink)"/><circle cx="${cx + 11}" cy="${y + 6}" r="3" fill="var(--ink)"/>`
+        + `<polygon points="${cx - 13},${y + 9} ${cx + 7},${y - 11} ${cx + 13},${y - 9} ${cx - 7},${y + 11}" fill="var(--ink)"/>`);
+      out.push(`<text x="${cx}" y="${yOf(8) - 6}" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="13" fill="var(--muted)">${g.sim}</text>`); grow(yOf(8) - 22);
+    }
+    if (g.rest) out.push(G("𝄻", cx - 6, yOf(4) + CAL.whole));
+    if (g.sim2 === 2) {   // two-bar repeat sign centred on the barline between this bar and the previous one
+      const x = HDR + b * BW, y = yOf(4);
+      out.push(`<circle cx="${x - 16}" cy="${y - 6}" r="3" fill="var(--ink)"/><circle cx="${x + 16}" cy="${y + 6}" r="3" fill="var(--ink)"/>`
+        + [-5, 5].map(o => `<polygon points="${x + o - 12},${y + 9} ${x + o + 6},${y - 11} ${x + o + 11},${y - 9} ${x + o - 7},${y + 11}" fill="var(--ink)"/>`).join("")
+        + `<rect x="${x - 2}" y="${yOf(8)}" width="4" height="${yOf(0) - yOf(8)}" fill="var(--tile)"/>`);
+      out.push(`<text x="${x}" y="${yOf(8) - 6}" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="13" fill="var(--muted)">${g.label}</text>`); grow(yOf(8) - 22);
+    }
+  });
 
   const rest = (x, d) => {
     const y = yOf(4), dot = [3, 6, 12].includes(d) ? `<circle cx="${x + 9}" cy="${yOf(5)}" r="1.6" fill="var(--ink)"/>` : "";
@@ -456,7 +480,9 @@ function placeNote([s, f], capo, tun = TUNING) {
 // Note flags: x = muted/dead (shows x), ns = no rhythm stem, trem = tremolo, tup = tuplet, dn = notated length.
 function tab(bars, capo, tun = TUNING) {
   const bw = bars.bw; if (!Array.isArray(bars)) bars = bars.bars;
-  const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, BW = bw || 16 * 12 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : 12;
+  // Fast runs of two-digit frets (16ths on 11, 14 …) would collide at 12 units per 16th, so such figures get wider spacing.
+  const dense = !bw && bars.some(ev => ev.some(e => e.d <= 1 && (e.n || []).some(([, f]) => f >= 10)));
+  const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = dense ? 18 : 12, BW = bw || 16 * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
   const X = (b, p) => HDR + b * BW + (bw ? 10 : 11) + p * SP, yl = s => s * LS, BOT = (NSTR - 1) * LS;
   const out = [], notes = [];
   for (let s = 0; s < NSTR; s++) out.push(`<line x1="0" x2="${W}" y1="${yl(s)}" y2="${yl(s)}" stroke="var(--muted)" stroke-width="1"/>`);
@@ -539,8 +565,8 @@ function bar(tok, view, playing, mk = { b: [], crash: false }) {
   const cls = [], q = tok.endsWith("?") && view !== "drums" ? '<span class="q">?</span>' : "";
   tok = tok.replace(/\?$/, "");
   if (view !== "band" && !playing) cls.push("tacet");
-  if (mk.b.length) cls.push("mk");
-  const deco = (mk.shown || mk.b).map(c => `<span class="bd">${esc(c)}</span>`).join("")
+  if (mk.b.length) cls.push(mk.rh && mk.b.every(c => mk.rh.has(c)) ? "mk mkr" : "mk");
+  const deco = (mk.shown || mk.b).map(c => `<span class="bd${mk.rh && mk.rh.has(c) ? " rh" : ""}">${esc(c)}</span>`).join("")
     + (mk.crash ? '<svg class="cr" viewBox="0 0 10 10" aria-label="crash"><path d="M1.5 1.5 8.5 8.5M1.5 8.5 8.5 1.5" stroke="var(--hit)" stroke-width="2.2" stroke-linecap="round"/></svg>' : "");
   if (tok === "%") return `<div class="bar sim ${cls.join(" ")}">%${deco}</div>`;
   if (tok === "NC") return `<div class="bar nc ${cls.join(" ")}">N.C.${deco}</div>`;
@@ -571,18 +597,83 @@ function spans(view, C) {
   return w;
 }
 
+// Drums view: no chord boxes or numbered markers. Every bar is engraved in playing order, 4 per line, so the drummer
+// reads left to right. Each bar's pattern = SONG.drumBars[bar] if given (e.g. straight from Songsterr), else the marked
+// figure on that box, else the section's unmarked figure, else the header groove. Crash marks are written into the bar.
+// A bar identical to the one before becomes a one-bar repeat sign with a running count.
+function drumBarPlan() {
+  const plan = []; let m = 0;
+  const pick = (spec, idx) => spec && spec.grids ? spec.grids[idx % spec.grids.length] : null;
+  SONG.form.forEach((s, si) => {
+    const ex = (s.extra && s.extra.drums) || [];
+    const crash = new Set(ex.filter(x => x.mark === "crash").flatMap(x => x.at || []));
+    const unmarked = ex.find(x => x.nota && !x.at && !x.mark);
+    let box = 0;
+    s.blocks.forEach(b => {
+      const toks = b.rows.flatMap(r => r.split(" ")), rep = b.rep || 1, b0 = box;
+      for (let r = 0; r < rep; r++) toks.forEach((_, k) => {
+        const bx = b0 + k + 1, mi = m++;
+        let g = SONG.drumBars && SONG.drumBars[mi];
+        if (!g) {
+          const fx = ex.find(x => x.nota && x.at && x.at.includes(bx));
+          if (fx) { let run = 0; while (fx.at.includes(bx - run - 1) && bx - run - 1 > b0) run++; g = pick(SONG.notation[fx.nota], run); }
+          else g = pick(unmarked && SONG.notation[unmarked.nota], k) || pick(SONG.notation[SONG.header.drums.nota], k);
+        }
+        g = { ...(g || {}) };
+        if (crash.has(bx)) g.CR = "x" + (g.CR || "................").slice(1);
+        const plays = SONG.plays.drums[mi] === "1";
+        plan.push({ si, g: plays ? g : { rest: true }, plays });
+      });
+      box += toks.length;
+    });
+  });
+  return plan;
+}
+function drumTile(s, i, bars) {
+  const PER = 4, rows = [];
+  // 1-bar repeats first; then 2-bar grooves (bars k-1,k equal to k-3,k-2) become a two-bar repeat sign, kept inside a line.
+  const keys = bars.map(({ g }) => JSON.stringify(g)), gs = [];
+  let run = 1;
+  keys.forEach((key, k) => {
+    if (k > 0 && key === keys[k - 1] && !bars[k].g.rest) { gs.push({ sim: ++run }); return; }
+    run = 1; gs.push(bars[k].g);
+  });
+  for (let k = 3; k < gs.length; k++) {
+    if (k % 2 !== 1 || gs[k].sim || gs[k - 1].sim || bars[k].g.rest) continue;
+    if (keys[k] === keys[k - 2] && keys[k - 1] === keys[k - 3] && keys[k] !== keys[k - 1]) {
+      gs[k - 1] = { sim2: 1 }; gs[k] = { sim2: 2, label: `${k}–${k + 1}` };
+    }
+  }
+  for (let k = 0; k < gs.length; k += PER) {
+    const chunk = gs.slice(k, k + PER);
+    rows.push(`<div class="drow" style="--nb:${chunk.length}">${score({ clef: "perc", grids: chunk })}</div>`);
+  }
+  const anyPlay = bars.some(b => b.plays);
+  const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
+  return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${bars.length} bars</span></div>
+    <div class="cue">${esc(s.cue)}</div>
+    ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
+    <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + bars.length + " bars"))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+  </div>`;
+}
+
 var render = function (view) {
   curView = view;
   let m = 0; // running measure index (0-based)
   const s4 = spans(view, 4), s2 = spans(view, 2);
+  const dplan = view === "drums" ? drumBarPlan() : null;
   const tiles = SONG.form.map((s, i) => {
+    if (dplan) return drumTile(s, i, dplan.filter(b => b.si === i));
     const extras = ((s.extra && s.extra[view]) || []).filter(x => !x.hide);
     // Number the figures that have markers, and collect each box's markers
     let auto = 0; const marks = {};
     extras.forEach(x => {
       if (x.mark) { (x.at || []).forEach(k => (marks[k] ??= { b: [], crash: false }).crash = true); return; }
       x._b = x.b || (x.at ? String(++auto) : "");
-      if (x.at) x.at.forEach(k => (marks[k] ??= { b: [], crash: false }).b.push(x._b));
+      // rhythm-only figure (slash notation) = muted marker; anything with notes to learn (tab, pitched staff, drum fill) = yellow
+      x._rh = !!(x.nota && SONG.notation[x.nota] && SONG.notation[x.nota].clef === "slash");
+      if (x.at) x.at.forEach(k => { const m = (marks[k] ??= { b: [], crash: false, rh: new Set() }); m.rh ??= new Set(); m.b.push(x._b); if (x._rh) m.rh.add(x._b); });
     });
     let total = 0, anyPlay = false, box = 0;
     const blocks = s.blocks.map(b => {
@@ -600,7 +691,7 @@ var render = function (view) {
       const repHTML = b.rep ? "×" + b.rep : b.label ? `<span class="lb">${esc(b.label)}</span>` : "";
       return `<div class="block"><div class="rows">${rows}</div><div class="rep${repHTML ? "" : " none"}">${repHTML}</div></div>`;
     });
-    const extraHTML = extras.filter(x => !x.mark).map(x => `<div class="nota">${x._b ? `<span class="bd">${esc(x._b)}</span>` : ""}${figure(x)}</div>`);
+    const extraHTML = extras.filter(x => !x.mark).map(x => `<div class="nota">${x._b ? `<span class="bd${x._rh ? " rh" : ""}">${esc(x._b)}</span>` : ""}${figure(x)}</div>`);
     const tag = s.tag[view] || (view === "band" || anyPlay ? (view === "band" ? s.tag.band || "" : "") : isGtr(view) ? "Sit out" : "Tacet");
     const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
     return `<div class="tile t-${s.type}${view !== "band" && !anyPlay ? " out" : ""}" style="--s4:${s4[i]};--s2:${s2[i]}">
@@ -623,7 +714,7 @@ var render = function (view) {
     + (cc.note ? `<p>${esc(cc.note)}</p>` : "") + cc.diffs.map(d => `<div class="d"><div class="wh">${esc(d.where)}</div><div>UG: ${nm(d.ug)}</div><div class="s">Songsterr: ${nm(d.ss)}</div></div>`).join("") + `</div>`;
   const h = SONG.header[view];
   document.getElementById("hdrExtra").innerHTML = (h.capo ? `<span class="capo">Capo <button type="button" id="capoDown" aria-label="Capo down">−</button><b>${capo || "off"}</b><button type="button" id="capoUp" aria-label="Capo up">+</button></span>` : "")
-    + (h.tune ? `<span class="tune">${esc(h.tune)}</span>` : "") + `${esc(h.label)} ${figure(h)}`;
+    + (h.tune ? `<span class="tune">${esc(h.tune)}</span>` : "") + (view === "drums" ? "" : `${esc(h.label)} ${figure(h)}`);
   document.querySelectorAll("#views button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === view)));
   const label = SONG.views.find(v => v[0] === view)[1];
   document.getElementById("notesTitle").textContent = view === "band" ? "Rehearsal notes" : `${label} notes`;
