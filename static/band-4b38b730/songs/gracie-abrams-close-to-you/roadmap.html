@@ -91,6 +91,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
 /* VexFlow lines: every line drawn at the same scale (a 4-bar line is ~1100 units wide = 70% of the tile), so the staff is one size everywhere. */
 .drow svg.vf { display: block; width: calc(70% * var(--w) / 1100); max-width: 100%; height: auto; color: var(--ink); --staff: #8a909e; margin: calc(.4 * var(--u)) 0; }
 .drow.legacy svg { display: block; width: calc(70% * var(--nb) / 4); height: auto; margin: calc(-.6 * var(--u)) 0; }
+/* Drum style note at the top of the Drums view, like the style marking on a printed chart ("Half-time ballad"). */
+.dstyle { font: 800 clamp(20px, 2.6vw, 30px)/1.05 var(--display); color: var(--ink); text-transform: none; letter-spacing: .01em; max-width: 14em; }
 .hdr .extra svg.dkey { width: min(calc(var(--w) * .8px), 94vw); color: var(--ink); --staff: #8a909e; }
 .dtacet { font-family: var(--display); font-weight: 700; font-size: calc(5 * var(--u)); color: var(--muted); text-transform: uppercase; padding: calc(2 * var(--u)) 0; }
 .tgroup { display: flex; gap: calc(1.2 * var(--u)); align-items: stretch; }
@@ -526,8 +528,7 @@ const SONG = {
    "label": "Suggested · root",
    "nota": "EIGHTHS"
   },
-  "drums": {
-   "badge": "Suggested groove · no transcription",
+  "drums": { "style": "Synth-pop, four on the floor", "badge": "Suggested groove · no transcription",
    "label": "Suggested",
    "nota": "DR_MAIN"
   }
@@ -555,6 +556,7 @@ const G = (ch, x, y, size = 28, extra = "") => `<text x="${x}" y="${y}" font-fam
 const CAL = { treble: 7, bass: 11.2, sharp: 3.4, whole: 7.3, half: 6.8, quarter: 14, eighth: 14, sixteenth: 14 };
 // Meter: bar length and beat-group length in 16ths. 4/4 = 16 / 4 (default); 6/8 = SONG.barLen 12, SONG.beatLen 6; 3/4 = 12 / 4.
 const BAR = SONG.barLen || 16, BEAT = SONG.beatLen || 4;
+const nbars = n => n + (n === 1 ? " bar" : " bars");
 function score(spec) {
   const S = 7, Y0 = 0, BW = BAR * 12 + 18, LET = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
   const yOf = st => Y0 + 4 * S - st * S / 2;
@@ -906,7 +908,7 @@ function drumBarPlan() {
 let dBAR = BAR, dBEAT = BEAT;   // meter of the bar being engraved (SONG.meters can change it per bar)
 const DK = {   // piece -> [VexFlow key (percussion clef positions), label for the drum key]
   CR: ["a/5/x2", "Crash"], CB: ["b/5/t2", "Cowbell"], TB: ["b/5/x2", "Tambourine"], HH: ["g/5/x2", "Hi-hat"],
-  HO: ["g/5/x2", "Open hi-hat"], HX: ["g/5/x2", "Half-open hat"], RD: ["f/5/x2", "Ride"], RB: ["f/5/d2", "Ride bell"],
+  HO: ["g/5/x2", "Open hi-hat"], HX: ["g/5/x2", "Half-open"], RD: ["f/5/x2", "Ride"], RB: ["f/5/d2", "Ride bell"],
   R1: ["e/5", "Tom 1"], R2: ["d/5", "Tom 2"], SN: ["c/5", "Snare"], RS: ["c/5", "Rimshot"], XS: ["c/5/x2", "Cross-stick"],
   CL: ["c/5/x3", "Clap"], R3: ["b/4", "Tom 3"], F1: ["a/4", "Floor tom"], F2: ["g/4", "Low floor"], BD: ["f/4", "Kick"],
   HF: ["d/4/x2", "Hi-hat foot"],
@@ -1106,18 +1108,20 @@ function drumLine(items, o) {
     st.setContext(ctx).draw();
     const top = st.getYForLine(0), mid = st.getYForLine(2), x0 = st.getNoteStartX(), x1 = st.getNoteEndX(), cx = (x0 + x1) / 2;
     if (!i && o.barNo) text(String(o.barNo), 2, top - 9, 13, "italic");
-    if (it.mrest) { new V.MultiMeasureRest(it.mrest, { show_number: true }).setStave(st).setContext(ctx).draw(); return; }
-    if (it.rest) {
-      const rn = new V.StaveNote({ keys: ["d/5"], duration: "wr", align_center: true });
-      const v = new V.Voice({ num_beats: 1, beat_value: 1 }).setMode(V.Voice.Mode.SOFT).addTickables([rn]);
-      new V.Formatter().joinVoices([v]).format([v], x1 - x0); v.draw(ctx, st); return;
-    }
-    if (it.sim) { new V.Glyph("repeat1Bar", 40).render(ctx, cx - 12, mid); if (it.sim > 1) text(String(it.sim), cx, top - 8, 13, "", "middle"); return; }
-    if (it.sim2 === 2) { new V.Glyph("repeat2Bars", 40).render(ctx, st.getX() - 17, mid); text("2", st.getX(), top - 8, 13, "", "middle"); return; }
-    if (it.sim2 === 1) return;
-    const [a, b] = vfDraw(ctx, st, built[i]); lo = Math.min(lo, a); hi = Math.max(hi, b);
-    // ×N over the closing repeat barline, clear of the notes in that bar
-    if (it.repEnd) { const y = Math.min(top - 8, a - 3); svgText(div, "×" + it.repEnd, st.getX() + st.getWidth() - 1, y, 27, "", "end", "Barlow Condensed, Arial Narrow, sans-serif", "700"); lo = Math.min(lo, y - 22); }
+    const drawn = (() => {   // returns the top of what this bar drew
+      if (it.mrest) { new V.MultiMeasureRest(it.mrest, { show_number: true }).setStave(st).setContext(ctx).draw(); return top - 20; }
+      if (it.rest) {
+        const rn = new V.StaveNote({ keys: ["d/5"], duration: "wr", align_center: true });
+        const v = new V.Voice({ num_beats: 1, beat_value: 1 }).setMode(V.Voice.Mode.SOFT).addTickables([rn]);
+        new V.Formatter().joinVoices([v]).format([v], x1 - x0); v.draw(ctx, st); return top;
+      }
+      if (it.sim) { new V.Glyph("repeat1Bar", 40).render(ctx, cx - 12, mid); if (it.sim > 1) text(String(it.sim), cx, top - 8, 13, "", "middle"); return top; }
+      if (it.sim2 === 2) { new V.Glyph("repeat2Bars", 40).render(ctx, st.getX() - 17, mid); text("2", st.getX(), top - 8, 13, "", "middle"); return top; }
+      if (it.sim2 === 1) return top;
+      const [a, b] = vfDraw(ctx, st, built[i]); lo = Math.min(lo, a); hi = Math.max(hi, b); return a;
+    })();
+    // ×N over the closing repeat barline, clear of whatever the bar holds (notes, a repeat sign, a rest)
+    if (it.repEnd) { const y = Math.min(top - 8, drawn - 3); svgText(div, "×" + it.repEnd, st.getX() + st.getWidth() - 1, y, 27, "", "end", "Barlow Condensed, Arial Narrow, sans-serif", "700"); lo = Math.min(lo, y - 22); }
   });
   return vfSVG(div, W, HT, "vf", "drum notation", Math.floor(lo), Math.ceil(hi));
 }
@@ -1148,7 +1152,7 @@ function drumKey() {
   const order = ["CR", "CB", "TB", "HH", "HO", "HX", "RD", "RB", "R1", "T1", "T2", "R2", "T3", "T4", "SN", "RS", "XS", "CL", "R3", "F1", "T5", "T6", "F2", "BD", "HF"];
   const seen = new Set(), list = order.filter(k => used.has(k) && !seen.has(DK[k][1]) && seen.add(DK[k][1]));
   if (!list.length || !VFok()) return "";
-  const V = window.Vex.Flow, div = document.createElement("div"), step = 76, W = 56 + list.length * step, HT = 136;
+  const V = window.Vex.Flow, div = document.createElement("div"), step = 84, W = 56 + list.length * step, HT = 136;
   const r = new V.Renderer(div, V.Renderer.Backends.SVG); r.resize(W, HT); const ctx = r.getContext();
   const st = new V.Stave(0, 0, W).addClef("percussion"); st.setBegBarType(V.Barline.type.NONE); st.setEndBarType(V.Barline.type.NONE); st.setContext(ctx).draw();
   const notes = list.map(k => {
@@ -1180,14 +1184,15 @@ function toGrid(g) {
 // One tile per section, engraved like a printed drum part: runs of rests become multi-bar rests, a bar identical to
 // the one before becomes a one-bar repeat sign (with a running count), a repeating 2-bar groove a two-bar repeat sign.
 // Bar numbers start each line; the time signature opens the song; a double bar ends each section, a final bar the song.
-let drumTS = "";   // meter in force at the end of the last drawn line ("" before the first line; reset by render)
+let drumTS = "";   // meter in force at the end of the last drawn line ("" = show the time signature on the next line)
 function drumTile(s, i, bars) {
   if (!VFok()) return drumTileLegacy(s, i, bars);
   const PER = 4, rows = [], last = i === SONG.form.length - 1, items = [];
   for (let k = 0; k < bars.length;) {
     const b = bars[k];
     if (b.rest) { let n = 1; while (k + n < bars.length && bars[k + n].rest && bars[k + n].ts === b.ts) n++; items.push(n > 1 ? { mrest: n, m: b.m, ts: b.ts } : { rest: true, m: b.m, ts: b.ts }); k += n; continue; }
-    items.push({ g: b.g, m: b.m, ts: b.ts, key: b.ts + JSON.stringify(b.g) }); k++;
+    // bars are "the same" when their notes are (a dynamic marking on the first one carries on, as on paper)
+    items.push({ g: b.g, m: b.m, ts: b.ts, key: b.ts + JSON.stringify(Array.isArray(b.g) ? b.g.map(({ dyn, cr, ...e }) => e) : b.g) }); k++;
   }
   // Repeats (Brandon: save space): a groove played 4+ times in a row, or a 2- or 4-bar phrase played 2+ times, is written
   // once between repeat barlines with ×N; 2-3 identical bars in a row use one-bar repeat signs with a running count.
@@ -1214,7 +1219,8 @@ function drumTile(s, i, bars) {
   out.forEach(it => it.ts = it.ts || songTS);
   const lines = [];
   out.forEach(it => { const l = lines.at(-1); if (!l || l.length === PER || (it.pair && l.length > PER - it.pair)) lines.push([it]); else l.push(it); });
-  if (bars.some(b => !b.rest)) lines.forEach((chunk, li) => {   // a tacet section draws nothing (and keeps the time signature for the first drawn line)
+  drumTS = "";   // every section opens with its time signature (Brandon: drum charts should show it; a drummer may jump to any section)
+  if (bars.some(b => !b.rest)) lines.forEach((chunk, li) => {   // a tacet section draws nothing
     const o = { barNo: chunk[0].m + 1, ts0: drumTS, end: li === lines.length - 1 ? (last ? "final" : "double") : "single" };
     drumTS = chunk.at(-1).ts;
     rows.push(`<div class="drow">${drumLine(chunk, o)}</div>`);
@@ -1222,10 +1228,10 @@ function drumTile(s, i, bars) {
   const anyPlay = bars.some(b => !b.rest);
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
-    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${bars.length} bars</span></div>
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
     <div class="cue">${esc(s.cue)}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
-    <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + bars.length + " bars"))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+    <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
 }
 // Without VexFlow (offline with no local copy): the older built-in staff, on a 16-step grid.
@@ -1244,10 +1250,10 @@ function drumTileLegacy(s, i, bars) {
   const anyPlay = bars.some(b => !b.rest);
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
-    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${bars.length} bars</span></div>
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
     <div class="cue">${esc(s.cue)}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
-    <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + bars.length + " bars"))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+    <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
 }
 
@@ -1300,16 +1306,16 @@ function bassTile(s, i, bars, view = "bass") {
   // A repeating group of lines (e.g. an F line then a Dm line, twice) collapses to one group with ×N, like chord rows
   const K = [...Array(lines.length).keys()].map(k => k + 1).find(k => k < lines.length && lines.length % k === 0 && k > 1
     && lines.every((l, i) => !l.rest && l.n === 1 && l.chunk.length === PER && l.key === lines[i % k].key));
-  const line = l => l.rest ? `<div class="trest">Rest · ${l.bars} bars</div>` : `<div class="trow">${tab(l.chunk, gtr ? capo : 0, tun)}${l.n > 1 ? `<span class="rep">×${l.n}</span>` : ""}</div>`;
+  const line = l => l.rest ? `<div class="trest">Rest · ${nbars(l.bars)}</div>` : `<div class="trow">${tab(l.chunk, gtr ? capo : 0, tun)}${l.n > 1 ? `<span class="rep">×${l.n}</span>` : ""}</div>`;
   if (K) rows.push(`<div class="block tgroup"><div class="rows">${lines.slice(0, K).map(line).join("")}</div><div class="rep">×${lines.length / K}</div></div>`);
   else lines.forEach(l => rows.push(line(l)));
   const anyPlay = bars.some(b => b.plays);
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
-    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${bars.length} bars</span></div>
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
     <div class="cue">${esc(s.cue)}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
-    <div class="ft"><span class="tag">${esc(s.tag[view] || (anyPlay ? "" : (gtr ? "Sit out · " : "Tacet · ") + bars.length + " bars"))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+    <div class="ft"><span class="tag">${esc(s.tag[view] || (anyPlay ? "" : (gtr ? "Sit out · " : "Tacet · ") + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
 }
 
@@ -1367,7 +1373,7 @@ var render = function (view) {
     const tag = s.tag[view] || (view === "band" || anyPlay ? (view === "band" ? s.tag.band || "" : "") : isGtr(view) ? "Sit out" : "Tacet");
     const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
     return `<div class="tile t-${s.type}${view !== "band" && !anyPlay ? " out" : ""}" style="--s4:${s4[i]};--s2:${s2[i]}">
-      <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${total} bars</span></div>
+      <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(total)}</span></div>
       <div class="cue">${esc(s.cue)}</div>
       <div class="chart">${blocks.join("")}${extraHTML.length ? `<div class="figs">${extraHTML.join("")}</div>` : ""}</div>
       <div class="ft"><span class="tag">${esc(tag)}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
@@ -1386,7 +1392,7 @@ var render = function (view) {
     + (cc.note ? `<p>${esc(cc.note)}</p>` : "") + cc.diffs.map(d => `<div class="d"><div class="wh">${esc(d.where)}</div><div>UG: ${nm(d.ug)}</div><div class="s">Songsterr: ${nm(d.ss)}</div></div>`).join("") + `</div>`;
   const h = SONG.header[view];
   document.getElementById("hdrExtra").innerHTML = (h.capo ? `<span class="capo">Capo <button type="button" id="capoDown" aria-label="Capo down">−</button><b>${capo || "off"}</b><button type="button" id="capoUp" aria-label="Capo up">+</button></span>` : "")
-    + (h.tune ? `<span class="tune">${esc(h.tune)}</span>` : "") + (h.badge ? `<span class="tune">${esc(h.badge)}</span>` : "") + (view === "drums" ? drumKey() : inlineBars(view) ? "" : `${esc(h.label)} ${figure(h)}`);
+    + (h.tune ? `<span class="tune">${esc(h.tune)}</span>` : "") + (h.badge ? `<span class="tune">${esc(h.badge)}</span>` : "") + (view === "drums" ? (h.style ? `<span class="dstyle">${esc(h.style)}</span>` : "") + drumKey() : inlineBars(view) ? "" : `${esc(h.label)} ${figure(h)}`);
   document.querySelectorAll("#views button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === view)));
   const label = SONG.views.find(v => v[0] === view)[1];
   document.getElementById("notesTitle").textContent = view === "band" ? "Rehearsal notes" : `${label} notes`;
