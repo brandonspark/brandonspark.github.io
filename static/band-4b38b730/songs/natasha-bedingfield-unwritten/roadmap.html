@@ -3406,7 +3406,7 @@ function vfBar(V, g, ts) {
     segs.forEach((s, i) => { if (s.tup) (byBeat[s.beat] ??= []).push(i); });
     Object.values(byBeat).forEach(ix => {
       const k = segs[ix[0]].tup, occ = dBEAT === 6 ? (k === 2 ? 3 : 6) : { 3: 2, 6: 4, 12: 8 }[k] || k / 1.5;
-      tuplets.push(new V.Tuplet(ix.map(i => notes[i]), { num_notes: k, notes_occupied: occ, bracketed: ix.some(i => segs[i].rest), location: feet ? V.Tuplet.LOCATION_BOTTOM : V.Tuplet.LOCATION_TOP }));
+      tuplets.push(new V.Tuplet(ix.map(i => notes[i]), { num_notes: k, notes_occupied: occ, ratioed: false, bracketed: ix.some(i => segs[i].rest), location: feet ? V.Tuplet.LOCATION_BOTTOM : V.Tuplet.LOCATION_TOP }));
     });
     // beams: notes shorter than a beat, grouped by beat (rests inside a beat stay under the beam)
     // (a quarter or longer breaks the group: in 6/8, quarter + 8th stays unbeamed)
@@ -3440,7 +3440,7 @@ function vfDraw(ctx, st, b) {
     const bb = n.getBoundingBox(), up = n.getModifiers().some(m => m.getCategory() === "Articulation" || m.getCategory() === "GraceNoteGroup") ? 16 : 3;
     lo = Math.min(lo, bb.getY() - up); hi = Math.max(hi, bb.getY() + bb.getH() + 3);
   }));
-  if (b.tuplets.length) lo -= 14;
+  if (b.tuplets.length) lo -= 26;   // tuplet number (and bracket, over rests) sits above the stems
   const y = st.getYForLine(4) + 46, done = new Set();
   b.voices.forEach(v => v.getTickables().forEach(n => {
     if (!n._dyn) return; const x = Math.round(n.getAbsoluteX()); if (done.has(x)) return; done.add(x);
