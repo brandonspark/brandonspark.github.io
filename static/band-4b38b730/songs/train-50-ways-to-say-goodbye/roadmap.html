@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a>
-<title>50 Ways to Say Goodbye Roadmap</title>
+<html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a><title>50 Ways to Say Goodbye Roadmap</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1326,7 +1325,9 @@ function score(spec) {
   // Voices: percussion grids split into hands (stems up) and feet (stems down); everything else is one voice.
   let voices;
   if (spec.clef === "perc") {
-    voices = [{ dir: -1, pieces: ["CR", "RD", "HH", "T1", "T2", "T3", "T4", "SN", "T5", "T6"] }, { dir: 1, pieces: ["BD"] }].map(v => ({ dir: v.dir, bars: spec.grids.map(g => {
+    // One voice, stems up: kick, snare, toms and cymbals share stems and beams, with rests only where nothing plays.
+    // This is how most pop/rock drum charts write grooves (the drummer found the old hands-up / kick-down split hard to read).
+    voices = [{ dir: -1, pieces: ["CR", "RD", "HH", "T1", "T2", "T3", "T4", "SN", "T5", "T6", "BD"] }].map(v => ({ dir: v.dir, bars: spec.grids.map(g => {
       const on = []; for (let i = 0; i < BAR; i++) { const hits = v.pieces.filter(k => g[k] && g[k][i] !== "."); if (hits.length) on.push({ i, hits: hits.map(k => ({ k, open: g[k][i] === "o" })) }); }
       if (!on.length) return null;
       const ev = [];
@@ -1382,15 +1383,17 @@ function score(spec) {
       const x = X(b, e.p), D = e.dn ?? e.d; // D = notated length (dn overrides d, e.g. triplets)
       if (e.c) labels.push({ x, c: e.c });
       // Drum staff: the kick voice gets no rests, and hand rests sit in the upper half so they never collide (standard drum charting).
-      if (e.r) { if (spec.clef === "perc" && v.dir === 1) return; out.push(rest(x, e.d, spec.clef === "perc" ? -S * 1.5 : 0)); return; }
+      if (e.r) { out.push(rest(x, e.d, 0)); return; }
       let heads;
       if (e.drum) heads = e.drum.map(h => ({ st: DRUM[h.k].st, x: DRUM[h.k].x, open: h.open }));
       else if (e.n) heads = e.n.map(pn => ({ st: stepOf(pn) }));
       else heads = [e.x ? { st: 4, x: true } : { st: 4, slash: true }];   // slash x = muted strum
       const sts = heads.map(h => h.st);
       const dir = v.dir || (heads[0].slash || spec.clef === "slash" ? -1 : sts.reduce((a, c) => a + c, 0) / sts.length >= 4 ? 1 : -1); // 1 = stem down, -1 = stem up
+      // Heads a step apart (a second, e.g. ride + hi-hat) can't share one side of the stem: the upper one moves across it.
+      [...heads].sort((a, b) => a.st - b.st).forEach((h, i, arr) => { if (i && h.st - arr[i - 1].st === 1 && !arr[i - 1].shift) h.shift = 8; });
       heads.forEach(h => {
-        const y = yOf(h.st); grow(y - 5); grow(y + 5);
+        const y = yOf(h.st), x0 = x; { const x = x0 + (h.shift || 0); grow(y - 5); grow(y + 5);
         for (let s = -2; s >= h.st; s -= 2) out.push(`<line x1="${x - 7}" x2="${x + 7}" y1="${yOf(s)}" y2="${yOf(s)}" stroke="var(--ink)" stroke-width="1.2"/>`);
         for (let s = 10; s <= h.st; s += 2) out.push(`<line x1="${x - 7}" x2="${x + 7}" y1="${yOf(s)}" y2="${yOf(s)}" stroke="var(--ink)" stroke-width="1.2"/>`);
         if (h.slash) out.push(D >= 8 ? `<polygon points="${x - 6},${y + 5} ${x + 1},${y - 5} ${x + 6},${y - 4} ${x - 1},${y + 6}" fill="none" stroke="var(--ink)" stroke-width="1.8"/>`
@@ -1398,7 +1401,7 @@ function score(spec) {
         else if (h.x) out.push(`<path d="M${x - 3.6} ${y - 3.6} L${x + 3.6} ${y + 3.6} M${x - 3.6} ${y + 3.6} L${x + 3.6} ${y - 3.6}" stroke="${h.st === 10 ? "var(--hit)" : "var(--ink)"}" stroke-width="1.8"/>`);
         else out.push(`<ellipse cx="${x}" cy="${y}" rx="4.3" ry="3" transform="rotate(-20 ${x} ${y})" fill="${D >= 8 ? "none" : "var(--ink)"}" stroke="var(--ink)" stroke-width="${D >= 8 ? 1.5 : 0}"/>`);
         if ([3, 6, 12].includes(D)) out.push(`<circle cx="${x + 8}" cy="${y - (h.st % 2 === 0 ? S / 2 : 0)}" r="1.6" fill="var(--ink)"/>`);
-      });
+      } });
       if (D < 16) {
         const sx = dir < 0 ? x + 4 : x - 4;
         const yEdge = dir < 0 ? Math.min(...sts.map(yOf)) : Math.max(...sts.map(yOf));
