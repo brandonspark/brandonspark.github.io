@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a>
+<title>Close To You Roadmap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&family=Noto+Music&family=Noto+Serif:wght@600&display=swap">
+<style>
+/* Layout: tablet-first stage chart (mild scrolling is fine), the whole song as tiles in reading order (1 box = 1 measure). An instrument switch filters one shared song model into Band / Keys / Guitar / Bass / Drums views. Dark only, for stage lighting. */
+:root {
+  --bg: #0c0d11; --tile: #16181f; --ink: #f4f5f8; --muted: #9ba1b0; --faint: #4a505e; --line: #353a46;
+  --c-intro: #8796ad; --c-verse: #5b8fe0; --c-chorus: #ff6a45; --c-bridge: #39b8a3; --c-solo: #9b74f0; --hit: #ff6a45; --sel: #f4f5f8; --fig: #ffd23f; --rh: #8796ad;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); }
+
+.stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-block: 8px;
+  padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
+
+.hdr { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; font-family: var(--display); line-height: 1; }
+.hdr h1 { margin: 0; font-size: clamp(24px, 3.2vw, 38px); font-weight: 800; text-transform: uppercase; }
+.hdr .facts { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: clamp(16px, 2vw, 24px); font-weight: 700; }
+.hdr .facts span { color: var(--muted); font-weight: 500; }
+.chk { position: relative; cursor: help; color: var(--hit); outline: none; }
+.chk.ok { color: var(--muted); }
+.chk .pop { display: none; position: absolute; z-index: 10; top: calc(100% + 8px); left: 0; width: min(440px, 86vw); padding: 12px 14px; background: var(--tile); border: 1px solid var(--faint); border-radius: 8px; box-shadow: 0 8px 24px rgb(0 0 0 / .5); font-family: var(--body, system-ui); font-size: 15px; font-weight: 400; line-height: 1.35; color: var(--ink); text-transform: none; }
+.chk:hover .pop, .chk:focus .pop, .chk:focus-within .pop { display: block; }
+.chk .pop p { margin: 0 0 8px; color: var(--muted); }
+.chk .pop .d { margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--faint); }
+.chk .pop .d .wh { display: block; font-family: var(--display); font-size: 17px; text-transform: uppercase; }
+.chk .pop .d .s { color: var(--muted); }
+.bar .q { position: absolute; top: .05em; right: .2em; font-size: .42em; color: var(--hit); font-weight: 800; }
+.hdr .extra { display: flex; align-items: center; gap: 8px; font-size: clamp(13px, 1.4vw, 16px); font-weight: 700; color: var(--muted); text-transform: uppercase; }
+.hdr .extra svg { width: min(calc(var(--w) * 1.45px), 56vw); height: auto; display: block; text-transform: none; }
+.capo { display: inline-flex; align-items: center; gap: 8px; font-size: clamp(18px, 2.2vw, 26px); color: var(--ink); text-transform: none; }
+.capo b { min-width: 1.6em; text-align: center; font-size: 1.2em; }
+.tune { font-size: clamp(18px, 2.2vw, 26px); color: #111; background: var(--fig); border-radius: 6px; padding: 4px 10px; text-transform: uppercase; font-weight: 800; }
+.capo button { font: 800 1em/1 var(--display); width: 1.7em; height: 1.7em; border-radius: 6px; border: 2px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+.capo button:focus-visible { outline: 2px solid var(--hit); }
+.views { margin-left: auto; display: flex; border: 2px solid var(--line); border-radius: 6px; overflow: hidden; }
+.views button { font: 700 clamp(14px, 1.6vw, 18px)/1 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+  background: transparent; border: 0; padding: 8px 12px; cursor: pointer; }
+.views button + button { border-left: 2px solid var(--line); }
+.views button[aria-pressed="true"] { background: var(--sel); color: var(--bg); }
+.views button:focus-visible { outline: 2px solid var(--hit); outline-offset: -2px; }
+
+.board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; align-items: stretch; }
+.board > .tile { grid-column: span var(--s4); --u: calc(1cqw / var(--s4)); }
+@media (orientation: portrait) and (max-width: 600px) { .board { grid-template-columns: repeat(2, minmax(0, 1fr)); } .board > .tile { grid-column: span var(--s2); --u: calc(1cqw / var(--s2)); } }
+
+/* Tiles size by width: --u is 1% of a single column's width (a tile spanning n columns uses 1/n %), so every box and label is the same physical size. */
+.tile { container-type: inline-size; min-width: 0; background: var(--tile); border-radius: 6px; overflow: hidden;
+  border-top: 6px solid var(--c); display: grid; grid-template-rows: auto auto 1fr auto; }
+.t-intro { --c: var(--c-intro); } .t-verse { --c: var(--c-verse); } .t-chorus { --c: var(--c-chorus); }
+.t-bridge { --c: var(--c-bridge); } .t-solo { --c: var(--c-solo); }
+.tile.out { background: color-mix(in srgb, var(--tile) 70%, var(--bg)); }
+
+.th { display: flex; align-items: baseline; gap: calc(3 * var(--u)); padding: calc(3 * var(--u)) calc(4 * var(--u)) 0; font-family: var(--display); line-height: 1; }
+.num { font-size: calc(8 * var(--u)); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.nm { font-size: calc(11 * var(--u)); font-weight: 800; color: var(--c); text-transform: uppercase; white-space: nowrap; }
+.bars { margin-left: auto; font-size: calc(7 * var(--u)); font-weight: 600; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cue { padding: calc(1 * var(--u)) calc(4 * var(--u)) calc(2 * var(--u)); font-size: calc(6 * var(--u)); line-height: 1.1; font-style: italic; color: var(--muted); }
+
+.chart { display: grid; gap: calc(3 * var(--u)); padding: 0 calc(4 * var(--u)); align-content: safe center; min-width: 0; }
+.block { display: grid; grid-template-columns: 1fr calc(11 * var(--u)); gap: calc(2 * var(--u)); align-items: center; }
+.rows { display: grid; gap: calc(1.5 * var(--u)); min-width: 0; }
+.row { display: grid; grid-template-columns: repeat(var(--n), 1fr); border-left: 2px solid var(--ink); }
+.bar { border-right: 2px solid var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 calc(1 * var(--u)); position: relative; min-width: 0;
+  height: calc(17 * var(--u)); font-family: var(--display); font-size: calc(9.5 * var(--u)); font-weight: 700; line-height: 1; white-space: nowrap; }
+.bar .sp { display: flex; gap: calc(1 * var(--u)); justify-content: space-around; width: 100%; }
+.bar.long { font-size: calc(6 * var(--u)); }
+.bar.split .sp { font-size: .72em; }
+.bar.split .sp span + span { border-left: 1px dashed var(--faint); padding-left: calc(1 * var(--u)); }
+.bar.sim { color: var(--faint); font-weight: 600; }
+.bar.nc { color: var(--muted); font-size: calc(6.5 * var(--u)); }
+.bar.tacet { color: var(--faint); background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--faint) 30%, transparent) 5px 6px); }
+.bar .shape { font-size: .56em; font-weight: 600; color: var(--muted); margin-top: .15em; }
+.bar.tacet .shape { color: var(--faint); }
+.bar .w { position: absolute; bottom: .1em; right: .2em; font-size: .42em; color: var(--hit); font-weight: 800; }
+.rep { font-family: var(--display); font-weight: 800; font-size: calc(8 * var(--u)); color: var(--c); text-align: center; line-height: 1;
+  border-left: 2px solid var(--c); padding-left: calc(1 * var(--u)); align-self: stretch; display: grid; place-items: center; }
+.rep.none { border: 0; }
+.rep .lb { font-size: .55em; }
+/* Markers: a yellow numbered disc on a box means "play figure N here". The same disc sits next to the figure. */
+.figs { display: flex; flex-wrap: wrap; gap: calc(2.5 * var(--u)) calc(5 * var(--u)); align-items: center; min-width: 0; }
+.nota { display: flex; align-items: center; gap: calc(1.5 * var(--u)); min-width: 0; max-width: 100%; }
+/* Drum lines at 70% of the tile width (Brandon: see more lines at once); 4 bars per line keeps phrases aligned. */
+.chart.drums { gap: 0; padding-bottom: calc(.5 * var(--u)); }
+.drow svg { display: block; width: calc(70% * var(--nb) / 4); height: auto; margin: calc(-.6 * var(--u)) 0; }
+.dtacet { font-family: var(--display); font-weight: 700; font-size: calc(5 * var(--u)); color: var(--muted); text-transform: uppercase; padding: calc(2 * var(--u)) 0; }
+.tgroup { display: flex; gap: calc(1.2 * var(--u)); align-items: stretch; }
+.tgroup .rep { font-size: calc(10 * var(--u)); }
+.trest { font: 700 calc(8 * var(--u)) / 1.6 var(--display); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.trow { display: flex; align-items: center; gap: calc(1.2 * var(--u)); }
+.trow .rep { font-size: calc(10 * var(--u)); }
+.trow svg { display: block; width: calc(var(--w) * .5 * var(--u)); max-width: 100%; height: auto; margin: calc(.3 * var(--u)) 0; }
+.nota svg { display: block; flex: 0 1 auto; min-width: 0; width: calc(var(--w) * .4 * var(--u)); max-width: 100%; height: auto; }
+.nota svg[aria-label="guitar tab"] { width: calc(var(--w) * .32 * var(--u)); } /* tabs run ~20% smaller than staves: they are taller per bar */
+.bd { flex: none; display: inline-grid; place-items: center; min-width: 1.25em; height: 1.25em; padding: 0 .2em; border-radius: 99px; background: var(--fig); color: #111;
+  font: 800 calc(6.5 * var(--u))/1 var(--display); }
+.bar .bd { position: absolute; top: calc(.8 * var(--u)); left: calc(.8 * var(--u)); font-size: calc(4.6 * var(--u)); }
+.bar .bd + .bd { left: calc(7.5 * var(--u)); }
+.bar.mk { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--fig); }
+.bar.mk.mkr { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--rh); }
+.bd.rh { background: var(--rh); }
+.bar .cr { position: absolute; bottom: calc(1.6 * var(--u)); left: calc(1 * var(--u)); width: calc(5 * var(--u)); height: calc(5 * var(--u)); }
+
+.ft { display: flex; align-items: center; gap: calc(3 * var(--u)); padding: calc(2 * var(--u)) calc(4 * var(--u)) calc(3 * var(--u)); min-width: 0; }
+.tag { font-family: var(--display); font-weight: 800; font-size: calc(7 * var(--u)); text-transform: uppercase; line-height: 1.1; min-width: 0; text-wrap: balance; }
+.tile.out .tag { color: var(--muted); }
+.meter { margin-left: auto; display: flex; gap: calc(1.2 * var(--u)); align-items: flex-end; flex: none; }
+.meter i { display: block; width: calc(2.6 * var(--u)); background: var(--line); border-radius: 1px; }
+.meter i.on { background: var(--c); }
+
+.notes { max-width: 1000px; margin: 0 auto; padding-block: 32px 48px; display: grid; gap: 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.notes h2 { font-family: var(--display); font-weight: 800; font-size: 26px; text-transform: uppercase; margin: 0 0 8px; }
+.notes ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 16px; line-height: 1.45; max-width: 75ch; }
+.notes p { margin: 0; color: var(--muted); font-size: 14px; max-width: 75ch; }
+.notes a { color: inherit; }
+.notes b { font-family: var(--display); font-size: 18px; }
+</style>
+
+<div class="stage">
+  <div class="hdr">
+    <h1>Close To You</h1>
+    <div class="facts"><div><span>Key</span> <span id="keyName" style="color:var(--ink);font-weight:700">F#</span></div><div>116 <span>bars</span></div><div class="chk" id="chk" tabindex="0"></div></div>
+    <div class="extra" id="hdrExtra"></div>
+    <div class="views" id="views" role="group" aria-label="Instrument"></div>
+  </div>
+  <div class="board" id="board"></div>
+</div>
+
+<div class="notes">
+  <section>
+    <h2 id="notesTitle">Rehearsal notes</h2>
+    <ul id="notesList"></ul>
+  </section>
+  <p>Rough chart: no Songsterr transcription exists. Chord names come from <a href="https://tabs.ultimate-guitar.com/tab/gracie-abrams/close-to-you-chords-5300016" target="_blank" rel="noopener">Ultimate Guitar chords</a> (ver. 1, 4.85★, 344 votes; half-step-down tuning), shown in concert pitch. Section lengths are estimated from the lyric lines.</p>
+</div>
+
+<script>
+/* ============ SONG MODEL (single source of truth) ============ */
+const SONG = {
+ "key": "F#",
+ "capo": 4,
+ "views": [
+  [
+   "band",
+   "Band"
+  ],
+  [
+   "keys",
+   "Keys"
+  ],
+  [
+   "guitar",
+   "Gtr"
+  ],
+  [
+   "bass",
+   "Bass"
+  ],
+  [
+   "drums",
+   "Drums"
+  ]
+ ],
+ "plays": {
+  "keys": "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+  "guitar": "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+  "bass": "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+  "drums": "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
+ },
+ "notation": {
+  "EIGHTHS": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 2
+     },
+     {
+      "p": 2,
+      "d": 2
+     },
+     {
+      "p": 4,
+      "d": 2
+     },
+     {
+      "p": 6,
+      "d": 2
+     },
+     {
+      "p": 8,
+      "d": 2
+     },
+     {
+      "p": 10,
+      "d": 2
+     },
+     {
+      "p": 12,
+      "d": 2
+     },
+     {
+      "p": 14,
+      "d": 2
+     }
+    ]
+   ]
+  },
+  "PUMP": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 2,
+      "d": 2
+     },
+     {
+      "p": 4,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 6,
+      "d": 2
+     },
+     {
+      "p": 8,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 10,
+      "d": 2
+     },
+     {
+      "p": 12,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 14,
+      "d": 2
+     }
+    ]
+   ]
+  },
+  "DR_MAIN": {
+   "clef": "perc",
+   "grids": [
+    {
+     "HH": "x.x.x.x.x.x.x.x.",
+     "SN": "....x.......x...",
+     "BD": "x...x...x...x..."
+    }
+   ]
+  }
+ },
+ "tabs": {},
+ "bassTabs": {},
+ "chordCheck": {
+  "ug": "UG Chords ver. 1 · 4.85★ · 344 votes (tuned down a half step, G shapes)",
+  "note": "No Songsterr transcription exists for this song. Chords are UG's (G C Em D shapes, tuned down a half step = F# B D#m C#); bar counts assume one chord per bar and one loop per lyric line. Check the section lengths against the record.",
+  "diffs": []
+ },
+ "form": [
+  {
+   "nm": "Intro",
+   "type": "intro",
+   "e": 1,
+   "cue": "“Close to you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Verse 1",
+   "type": "verse",
+   "e": 2,
+   "cue": "“I don't got a single problem…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#",
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   },
+   "span": 2
+  },
+  {
+   "nm": "Pre 1",
+   "type": "bridge",
+   "e": 3,
+   "cue": "“I burn for you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Chorus 1",
+   "type": "chorus",
+   "e": 4,
+   "cue": "“To be close to you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Post 1",
+   "type": "chorus",
+   "e": 4,
+   "cue": "“Close to you, close to you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Verse 2",
+   "type": "verse",
+   "e": 3,
+   "cue": "“And now your mouth is moving…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#",
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   },
+   "span": 2
+  },
+  {
+   "nm": "Pre 2",
+   "type": "bridge",
+   "e": 3,
+   "cue": "“I burn for you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Chorus 2",
+   "type": "chorus",
+   "e": 4,
+   "cue": "“To be close to you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Post 2",
+   "type": "chorus",
+   "e": 4,
+   "cue": "“Close to you, close to you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Bridge",
+   "type": "bridge",
+   "e": 2,
+   "cue": "“I burn for you… mm”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Chorus 3",
+   "type": "chorus",
+   "e": 5,
+   "cue": "“To be close to you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  },
+  {
+   "nm": "Post 3",
+   "type": "chorus",
+   "e": 5,
+   "cue": "“Close to you, close to you…”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#",
+      "F# B D#m C#",
+      "F# B D#m C#",
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   },
+   "span": 2
+  },
+  {
+   "nm": "Outro",
+   "type": "intro",
+   "e": 2,
+   "cue": "“…close to you”",
+   "blocks": [
+    {
+     "rows": [
+      "F# B D#m C#"
+     ]
+    }
+   ],
+   "tag": {
+    "band": ""
+   }
+  }
+ ],
+ "header": {
+  "band": {
+   "label": "Suggested",
+   "nota": "EIGHTHS"
+  },
+  "keys": {
+   "label": "Suggested",
+   "nota": "PUMP"
+  },
+  "guitar": {
+   "capo": true,
+   "label": "Suggested",
+   "nota": "EIGHTHS"
+  },
+  "bass": {
+   "label": "Suggested · root",
+   "nota": "EIGHTHS"
+  },
+  "drums": {
+   "label": "Suggested",
+   "nota": "DR_MAIN"
+  }
+ }
+,
+  notes: [
+    ["all", "<b>Rough chart</b>: there's no bar-by-bar transcription of this song anywhere I could read. The chords are certain (UG); the section lengths are estimated (one chord per bar, one 4-bar loop per lyric line), and every part figure is a suggestion, not the record. Check the lengths against the recording at rehearsal."],
+    ["all", "<b>One loop all song</b>: F# – B – D#m – C# (UG's G – C – Em – D shapes with the guitar tuned down a half step)."],
+    ["guitar", c => `<b>Record</b>: tuned down a half step, G-shape chords. In standard tuning use capo ${c || "off"} (the shapes shown here).`],
+    ["keys", "<b>Suggested</b>: off-beat synth chords (top figure) under a sustained pad."],
+    ["bass", "<b>Suggested</b>: root 8ths."],
+    ["drums", "<b>Suggested</b>: four-on-the-floor dance-pop groove; no transcription exists, so this is not the record's part."],
+  ],
+};
+
+/* ============ RENDERING ============ */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const INK = "var(--ink)";
+
+/* ---- Standard notation engine: 5-line staff, treble / bass / percussion / slash ---- */
+// Event: { p: start in 16ths, d: length in 16ths, n: ["B4", ...] pitches (written) | omitted for slash, r: true rest, c: label above, tie: true }
+const NS = "Noto Serif, Georgia, Times New Roman, serif", MF = "Noto Music, Bravura, Apple Symbols, serif";
+const G = (ch, x, y, size = 28, extra = "") => `<text x="${x}" y="${y}" font-family="${MF}" font-size="${size}" fill="var(--ink)"${extra}>${ch}</text>`;
+// Baseline offsets measured from Noto Music glyph bounds (rests are centered on the middle line at 500/1000 em).
+const CAL = { treble: 7, bass: 11.2, sharp: 3.4, whole: 7.3, half: 6.8, quarter: 14, eighth: 14, sixteenth: 14 };
+function score(spec) {
+  const S = 7, Y0 = 0, BW = 16 * 12 + 18, LET = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
+  const yOf = st => Y0 + 4 * S - st * S / 2;
+  const stepOf = pitch => {
+    const d = LET[pitch[0]] + 7 * parseInt(pitch.replace(/^[A-G][#b]?/, ""), 10);
+    return spec.clef === "bass" ? d - 18 : d - 30;
+  };
+  const DRUM = { HH: { st: 9, x: true }, CR: { st: 10, x: true }, RD: { st: 8, x: true }, SN: { st: 5 }, BD: { st: 1 },
+    T1: { st: 8 }, T2: { st: 7 }, T3: { st: 7 }, T4: { st: 6 }, T5: { st: 3 }, T6: { st: 3 } }; // T1 = highest tom … T6 = floor tom
+  const ks = spec.key || 0;
+  const SHARPS = spec.clef === "bass" ? [6, 3, 7, 4, 1] : [8, 5, 9, 6, 3];
+  const HDR = spec.clef === "perc" ? 16 : spec.clef === "slash" ? 4 : 25 + ks * 8.5 + 6;
+  const nb = spec.bars ? spec.bars.length : spec.grids.length, W = HDR + nb * BW + 4;
+  const X = (b, p) => HDR + b * BW + 11 + p * 12;
+  const out = [], top = [], labels = [];
+  let lo = yOf(8) - 2, hi = yOf(0) + 2;
+  const grow = y => { lo = Math.min(lo, y); hi = Math.max(hi, y); };
+
+  // Voices: percussion grids split into hands (stems up) and feet (stems down); everything else is one voice.
+  let voices;
+  if (spec.clef === "perc") {
+    voices = [{ dir: -1, pieces: ["CR", "RD", "HH", "T1", "T2", "T3", "T4", "SN", "T5", "T6"] }, { dir: 1, pieces: ["BD"] }].map(v => ({ dir: v.dir, bars: spec.grids.map(g => {
+      const on = []; for (let i = 0; i < 16; i++) { const hits = v.pieces.filter(k => g[k] && g[k][i] !== "."); if (hits.length) on.push({ i, hits: hits.map(k => ({ k, open: g[k][i] === "o" })) }); }
+      if (!on.length) return null;
+      const ev = [];
+      for (let beat = 0; beat < 4; beat++) {
+        const inB = on.filter(o => o.i >> 2 === beat);
+        if (!inB.length) { ev.push({ p: beat * 4, d: 4, r: true }); continue; }
+        if (inB[0].i > beat * 4) ev.push({ p: beat * 4, d: inB[0].i - beat * 4, r: true });
+        inB.forEach((o, j) => ev.push({ p: o.i, d: (j + 1 < inB.length ? inB[j + 1].i : beat * 4 + 4) - o.i, drum: o.hits }));
+      }
+      // merge 4 quarter beats of identical single hits is not needed; keep beat-wise notation
+      return ev;
+    }) })).filter(v => v.bars.some(Boolean));
+  } else voices = [{ dir: 0, bars: spec.bars }];
+
+  // Staff lines, clef, key signature, barlines
+  for (let l = 0; l < 5; l++) out.push(`<line x1="0" x2="${W}" y1="${yOf(l * 2)}" y2="${yOf(l * 2)}" stroke="var(--muted)" stroke-width="1"/>`);
+  if (spec.clef === "treble") out.push(G("𝄞", 1, yOf(4) + CAL.treble));
+  if (spec.clef === "bass") out.push(G("𝄢", 1, yOf(4) + CAL.bass));
+  if (spec.clef === "perc") out.push(`<rect x="4" y="${yOf(6)}" width="3" height="${S * 2}" fill="var(--ink)"/><rect x="10" y="${yOf(6)}" width="3" height="${S * 2}" fill="var(--ink)"/>`);
+  for (let i = 0; i < ks; i++) out.push(G("♯", 25 + i * 8.5, yOf(SHARPS[i]) + CAL.sharp, 26));
+  for (let b = 0; b <= nb; b++) { const x = HDR + b * BW; out.push(`<line x1="${x}" x2="${x}" y1="${yOf(8)}" y2="${yOf(0)}" stroke="var(--ink)" stroke-width="${b === nb ? 3 : 1.4}"/>`); }
+  // Inline drum rows: { sim: n } = same as the previous bar (one-bar repeat sign, with a running count above);
+  // { rest: true } = drums sit out this bar (whole rest).
+  (spec.grids || []).forEach((g, b) => {
+    const cx = HDR + b * BW + BW / 2;
+    if (g.sim) {
+      const y = yOf(4);
+      out.push(`<circle cx="${cx - 11}" cy="${y - 6}" r="3" fill="var(--ink)"/><circle cx="${cx + 11}" cy="${y + 6}" r="3" fill="var(--ink)"/>`
+        + `<polygon points="${cx - 13},${y + 9} ${cx + 7},${y - 11} ${cx + 13},${y - 9} ${cx - 7},${y + 11}" fill="var(--ink)"/>`);
+      out.push(`<text x="${cx}" y="${yOf(8) - 6}" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="13" fill="var(--muted)">${g.sim}</text>`); grow(yOf(8) - 22);
+    }
+    if (g.rest) out.push(G("𝄻", cx - 6, yOf(4) + CAL.whole));
+    if (g.sim2 === 2) {   // two-bar repeat sign centred on the barline between this bar and the previous one
+      const x = HDR + b * BW, y = yOf(4);
+      out.push(`<circle cx="${x - 16}" cy="${y - 6}" r="3" fill="var(--ink)"/><circle cx="${x + 16}" cy="${y + 6}" r="3" fill="var(--ink)"/>`
+        + [-5, 5].map(o => `<polygon points="${x + o - 12},${y + 9} ${x + o + 6},${y - 11} ${x + o + 11},${y - 9} ${x + o - 7},${y + 11}" fill="var(--ink)"/>`).join("")
+        + `<rect x="${x - 2}" y="${yOf(8)}" width="4" height="${yOf(0) - yOf(8)}" fill="var(--tile)"/>`);
+      out.push(`<text x="${x}" y="${yOf(8) - 6}" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="13" fill="var(--muted)">${g.label}</text>`); grow(yOf(8) - 22);
+    }
+  });
+
+  const rest = (x, d, dy = 0) => {
+    const y = yOf(4) + dy, dot = [3, 6, 12].includes(d) ? `<circle cx="${x + 9}" cy="${yOf(5) + dy}" r="1.6" fill="var(--ink)"/>` : "";
+    if (d >= 16) return G("𝄻", x - 5, y + CAL.whole);
+    if (d >= 8) return G("𝄼", x - 5, y + CAL.half) + dot;
+    if (d >= 4) return G("𝄽", x - 4, y + CAL.quarter) + dot;
+    if (d >= 2) return G("𝄾", x - 4, y + CAL.eighth) + dot;
+    return G("𝄿", x - 4, y + CAL.sixteenth);
+  };
+  voices.forEach(v => {
+    const placed = [];
+    v.bars.forEach((ev, b) => (ev || []).forEach(e => {
+      const x = X(b, e.p), D = e.dn ?? e.d; // D = notated length (dn overrides d, e.g. triplets)
+      if (e.c) labels.push({ x, c: e.c });
+      // Drum staff: the kick voice gets no rests, and hand rests sit in the upper half so they never collide (standard drum charting).
+      if (e.r) { if (spec.clef === "perc" && v.dir === 1) return; out.push(rest(x, e.d, spec.clef === "perc" ? -S * 1.5 : 0)); return; }
+      let heads;
+      if (e.drum) heads = e.drum.map(h => ({ st: DRUM[h.k].st, x: DRUM[h.k].x, open: h.open }));
+      else if (e.n) heads = e.n.map(pn => ({ st: stepOf(pn) }));
+      else heads = [e.x ? { st: 4, x: true } : { st: 4, slash: true }];   // slash x = muted strum
+      const sts = heads.map(h => h.st);
+      const dir = v.dir || (heads[0].slash || spec.clef === "slash" ? -1 : sts.reduce((a, c) => a + c, 0) / sts.length >= 4 ? 1 : -1); // 1 = stem down, -1 = stem up
+      heads.forEach(h => {
+        const y = yOf(h.st); grow(y - 5); grow(y + 5);
+        for (let s = -2; s >= h.st; s -= 2) out.push(`<line x1="${x - 7}" x2="${x + 7}" y1="${yOf(s)}" y2="${yOf(s)}" stroke="var(--ink)" stroke-width="1.2"/>`);
+        for (let s = 10; s <= h.st; s += 2) out.push(`<line x1="${x - 7}" x2="${x + 7}" y1="${yOf(s)}" y2="${yOf(s)}" stroke="var(--ink)" stroke-width="1.2"/>`);
+        if (h.slash) out.push(D >= 8 ? `<polygon points="${x - 6},${y + 5} ${x + 1},${y - 5} ${x + 6},${y - 4} ${x - 1},${y + 6}" fill="none" stroke="var(--ink)" stroke-width="1.8"/>`
+                                     : `<line x1="${x - 4.5}" y1="${y + 5}" x2="${x + 4.5}" y2="${y - 5}" stroke="var(--ink)" stroke-width="4.6"/>`);
+        else if (h.x) out.push(`<path d="M${x - 3.6} ${y - 3.6} L${x + 3.6} ${y + 3.6} M${x - 3.6} ${y + 3.6} L${x + 3.6} ${y - 3.6}" stroke="${h.st === 10 ? "var(--hit)" : "var(--ink)"}" stroke-width="1.8"/>`);
+        else out.push(`<ellipse cx="${x}" cy="${y}" rx="4.3" ry="3" transform="rotate(-20 ${x} ${y})" fill="${D >= 8 ? "none" : "var(--ink)"}" stroke="var(--ink)" stroke-width="${D >= 8 ? 1.5 : 0}"/>`);
+        if ([3, 6, 12].includes(D)) out.push(`<circle cx="${x + 8}" cy="${y - (h.st % 2 === 0 ? S / 2 : 0)}" r="1.6" fill="var(--ink)"/>`);
+      });
+      if (D < 16) {
+        const sx = dir < 0 ? x + 4 : x - 4;
+        const yEdge = dir < 0 ? Math.min(...sts.map(yOf)) : Math.max(...sts.map(yOf));
+        const yFar = dir < 0 ? Math.max(...sts.map(yOf)) : Math.min(...sts.map(yOf));
+        placed.push({ x, sx, b, e, dir, sts, slash: !!heads[0].slash, open: heads.some(h => h.open), y0: yFar, tip: yEdge + dir * 24 });
+      }
+    }));
+    // Beam groups: notes shorter than a quarter inside one beat
+    const groups = {};
+    const nd = n => n.e.dn ?? n.e.d;
+    placed.forEach(n => { if (nd(n) < 4) (groups[n.b + ":" + Math.floor(n.e.p / 4 + 1e-6)] ??= []).push(n); });
+    const inGroup = new Set();
+    Object.values(groups).forEach(g => {
+      if (g.length < 2) return;
+      g.forEach(n => inGroup.add(n));
+      if (!v.dir && !g[0].slash) {
+        const all = g.flatMap(n => n.sts), gd = all.reduce((a, c) => a + c, 0) / all.length >= 4 ? 1 : -1;
+        g.forEach(n => {
+          const ys = n.sts.map(yOf), edge = gd < 0 ? Math.min(...ys) : Math.max(...ys);
+          n.dir = gd; n.sx = gd < 0 ? n.x + 4 : n.x - 4; n.y0 = gd < 0 ? Math.max(...ys) : Math.min(...ys); n.tip = edge + gd * 24;
+        });
+      }
+      const dir = g[0].dir, by = dir < 0 ? Math.min(...g.map(n => n.tip)) : Math.max(...g.map(n => n.tip));
+      g.forEach(n => n.tip = by);
+      out.push(`<rect x="${g[0].sx - .7}" y="${dir < 0 ? by : by - 3.6}" width="${g.at(-1).sx - g[0].sx + 1.4}" height="3.6" fill="var(--ink)"/>`);
+      const y2 = dir < 0 ? by + 6 : by - 9.6;
+      for (let i = 0; i < g.length; i++) {
+        if (nd(g[i]) !== 1 && nd(g[i]) !== 3) continue;
+        const nx = g[i + 1], pv = g[i - 1];
+        if (nd(g[i]) === 1 && nx && nd(nx) === 1) out.push(`<rect x="${g[i].sx - .7}" y="${y2}" width="${nx.sx - g[i].sx + 1.4}" height="3.6" fill="var(--ink)"/>`);
+        else if (nd(g[i]) === 1 && !(pv && nd(pv) === 1)) { const L = nx ? 6 : -6; out.push(`<rect x="${Math.min(g[i].sx, g[i].sx + L) - .7}" y="${y2}" width="${Math.abs(L) + 1.4}" height="3.6" fill="var(--ink)"/>`); }
+      }
+    });
+    placed.forEach(n => {
+      out.push(`<line x1="${n.sx}" x2="${n.sx}" y1="${n.y0}" y2="${n.tip}" stroke="var(--ink)" stroke-width="1.4"/>`);
+      grow(n.tip);
+      if (n.open) { const oy = n.tip - 7; out.push(`<circle cx="${n.sx}" cy="${oy}" r="2.8" fill="none" stroke="var(--ink)" stroke-width="1.4"/>`); grow(oy - 4); }
+      if (nd(n) < 4 && !inGroup.has(n)) {
+        const f = (o) => n.dir < 0 ? `<path d="M${n.sx} ${n.tip + o} q8 6 5 15" fill="none" stroke="var(--ink)" stroke-width="2"/>` : `<path d="M${n.sx} ${n.tip - o} q8 -6 5 -15" fill="none" stroke="var(--ink)" stroke-width="2"/>`;
+        out.push(f(0)); if (nd(n) === 1) out.push(f(6));
+      }
+    });
+    // Tuplet numbers above each run of tup notes (one number per group of e.tup notes)
+    for (let i = 0; i < placed.length;) {
+      if (!placed[i].e.tup) { i++; continue; }
+      let j = i; while (j + 1 < placed.length && placed[j + 1].e.tup && placed[j + 1].b === placed[i].b && j - i + 1 < placed[i].e.tup) j++;
+      const ty = Math.min(...placed.slice(i, j + 1).map(n => Math.min(n.tip, n.y0))) - 6;
+      out.push(`<text x="${(placed[i].sx + placed[j].sx) / 2}" y="${ty}" text-anchor="middle" font-family="${NS}" font-style="italic" font-weight="600" font-size="13" fill="var(--ink)">${placed[i].e.tup}</text>`);
+      grow(ty - 12); i = j + 1;
+    }
+    placed.forEach((n, i) => { if (n.e.tie && placed[i + 1]) {
+      const a = n.x + 3, z = placed[i + 1].x - 3, y = n.dir < 0 ? Math.max(n.y0, yOf(4)) + 7 : Math.min(n.y0, yOf(4)) - 7, c = n.dir < 0 ? 8 : -8;
+      out.push(`<path d="M${a} ${y} Q${(a + z) / 2} ${y + c} ${z} ${y}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`); grow(y + c);
+    }});
+  });
+  const ly = lo - 5;
+  labels.forEach(l => out.push(`<text x="${l.x - 4}" y="${ly}" font-family="${NS}" font-weight="600" font-size="14" fill="var(--ink)">${esc(l.c)}</text>`));
+  if (labels.length) lo = ly - 13;
+  return `<svg viewBox="0 ${lo - 2} ${W} ${hi - lo + 6}" style="--w:${W}" role="img" aria-label="notation">${out.join("")}</svg>`;
+}
+
+/* ---- Guitar tab with rhythm stems, transposed for a capo ---- */
+// Event: { p, d (16ths), n: [[string, fret], ...] with string 0 = high e and frets as played with no capo, c: label, pm: palm-muted }
+const TUNING = [64, 59, 55, 50, 45, 40], BASS_TUNING = [43, 38, 33, 28];
+const SHAPE_NAMES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
+const ROOT = { C: 0, "C#": 1, Db: 1, D: 2, "D#": 3, Eb: 3, E: 4, F: 5, "F#": 6, Gb: 6, G: 7, "G#": 8, Ab: 8, A: 9, "A#": 10, Bb: 10, B: 11 };
+// Concert chord name -> the shape you play with this capo
+function shapeFor(chord, capo) {
+  if (!capo) return chord;
+  return chord.split("/").map(part => {
+    const m = part.match(/^([A-G][#b]?)(.*)$/); if (!m) return part;
+    return SHAPE_NAMES[(ROOT[m[1]] - capo + 120) % 12] + m[2];
+  }).join("/");
+}
+// Re-finger a note for the capo: keep the same string if possible, otherwise the nearest string that reaches it.
+function placeNote([s, f], capo, tun = TUNING) {
+  if (f >= capo) return [s, f - capo];
+  const pitch = tun[s] + f;
+  const opts = tun.map((t, i) => [i, pitch - t - capo]).filter(([, r]) => r >= 0 && r <= 14);
+  opts.sort((a, b) => Math.abs(a[0] - s) - Math.abs(b[0] - s) || a[1] - b[1]);
+  return opts[0] || [s, f];
+}
+// A tab may be { bw, bars } instead of bars: bw = bar width in units, for compact one-note-per-bar "lines".
+// Note flags: x = muted/dead (shows x), ns = no rhythm stem, trem = tremolo, tup = tuplet, dn = notated length.
+function tab(bars, capo, tun = TUNING) {
+  const bw = bars.bw; if (!Array.isArray(bars)) bars = bars.bars;
+  // A bar may be { sim: n } = one-bar repeat sign (same as the bar before), n = running count shown above it.
+  const sims = bars.map(b => Array.isArray(b) ? 0 : b.sim || 0); bars = bars.map(b => Array.isArray(b) ? b : []);
+  // Fast runs of two-digit frets (16ths on 11, 14 …) would collide at 12 units per 16th, so such figures get wider spacing.
+  const dense = !bw && bars.some(ev => ev.some(e => e.d <= 1 && (e.n || []).some(([, f]) => f >= 10)));
+  const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = dense ? 18 : 12, BW = bw || 16 * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
+  const X = (b, p) => HDR + b * BW + (bw ? 10 : 11) + p * SP, yl = s => s * LS, BOT = (NSTR - 1) * LS;
+  const out = [], notes = [];
+  for (let s = 0; s < NSTR; s++) out.push(`<line x1="0" x2="${W}" y1="${yl(s)}" y2="${yl(s)}" stroke="var(--muted)" stroke-width="1"/>`);
+  ["T", "A", "B"].forEach((ch, i) => out.push(`<text x="4" y="${BOT / 2 + (i - 1) * (NSTR === 4 ? 9 : 11) + 3.5}" font-family="${NS}" font-weight="600" font-size="${NSTR === 4 ? 9.5 : 11}" fill="var(--muted)">${ch}</text>`));
+  for (let b = 0; b <= bars.length; b++) { const x = HDR + b * BW; out.push(`<line x1="${x}" x2="${x}" y1="0" y2="${BOT}" stroke="var(--ink)" stroke-width="${b === bars.length ? 3 : 1.4}"/>`); }
+  let pmDone = false, lo = -4;
+  sims.forEach((n, b) => { if (!n) return; const x = HDR + b * BW + BW / 2;
+    out.push(`<text x="${x}" y="${BOT / 2 + 9}" text-anchor="middle" font-family="${MF}" font-size="30" fill="var(--ink)">𝄎</text>`);
+    if (n > 1) { out.push(`<text x="${x}" y="-8" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="12" fill="var(--muted)">${n}</text>`); lo = Math.min(lo, -22); } });
+  bars.forEach((ev, b) => ev.forEach(e => {
+    const x = X(b, e.p);
+    if (e.c) { out.push(`<text x="${x - 4}" y="-8" font-family="${NS}" font-weight="600" font-size="14" fill="var(--ink)">${esc(e.c)}</text>`); lo = -24; }
+    if (e.pm && !pmDone) { out.push(`<text x="${x - 4}" y="${e.c ? -26 : -8}" font-family="${NS}" font-style="italic" font-size="11" fill="var(--muted)">muted</text>`); pmDone = true; lo = Math.min(lo, e.c ? -40 : -22); }
+    if (e.r) return;
+    e.n.map(n => placeNote(n, capo, tun)).forEach(([s, f], k) => {
+      if (e.x) s = e.n[k][0];
+      const t = e.x ? "x" : e.tie ? `(${f})` : String(f), w = t.length * 7 + 3;   // tie = held over from the previous note: shown in brackets, not re-struck
+      out.push(`<rect x="${x - w / 2}" y="${yl(s) - 6}" width="${w}" height="12" fill="var(--tile)"/><text x="${x}" y="${yl(s) + 4.5}" text-anchor="middle" font-family="${NS}" font-weight="700" font-size="13" fill="var(--ink)">${t}</text>`);
+    });
+    if (!e.ns) notes.push({ x, b, e });
+  }));
+  // Rhythm stems under the tab. nd = notated length (dn overrides d, e.g. a quarter-note triplet has d 16/3 but is drawn as a quarter).
+  // trem: tremolo picking (3 slashes on the stem). tup: tuplet number drawn under its group.
+  const S0 = BOT + 5, S1 = BOT + 22, groups = {}, inG = new Set(), nd = n => n.e.dn ?? n.e.d;
+  let hiY = S1 + 6;
+  notes.forEach(n => { if (nd(n) < 4) (groups[n.b + ":" + Math.floor(n.e.p / 4 + 1e-6)] ??= []).push(n); });
+  notes.forEach(n => {
+    const long = nd(n) >= 8 && !n.e.trem;
+    out.push(`<line x1="${n.x}" x2="${n.x}" y1="${S0}" y2="${long ? S0 + 10 : S1}" stroke="var(--ink)" stroke-width="1.4"/>`);
+    if ([3, 6, 12].includes(nd(n))) out.push(`<circle cx="${n.x + 5}" cy="${S1 - 2}" r="1.6" fill="var(--ink)"/>`);
+    if (n.e.trem) for (let k = 0; k < 3; k++) out.push(`<line x1="${n.x - 4}" x2="${n.x + 4}" y1="${S0 + 6 + k * 4 + 2}" y2="${S0 + 6 + k * 4 - 1}" stroke="var(--ink)" stroke-width="1.8"/>`);
+  });
+  Object.values(groups).forEach(g => {
+    if (g.length < 2) return; g.forEach(n => inG.add(n));
+    out.push(`<rect x="${g[0].x - .7}" y="${S1 - 3.4}" width="${g.at(-1).x - g[0].x + 1.4}" height="3.4" fill="var(--ink)"/>`);
+    for (let i = 0; i < g.length; i++) {
+      if (nd(g[i]) !== 1) continue;
+      const nx = g[i + 1], pv = g[i - 1];
+      if (nx && nd(nx) === 1) out.push(`<rect x="${g[i].x - .7}" y="${S1 - 9}" width="${nx.x - g[i].x + 1.4}" height="3.4" fill="var(--ink)"/>`);
+      else if (!(pv && nd(pv) === 1)) { const L = nx ? 6 : -6; out.push(`<rect x="${Math.min(g[i].x, g[i].x + L) - .7}" y="${S1 - 9}" width="${Math.abs(L) + 1.4}" height="3.4" fill="var(--ink)"/>`); }
+    }
+  });
+  notes.forEach(n => { if (nd(n) < 4 && !inG.has(n)) {
+    out.push(`<path d="M${n.x} ${S1} q7 -5 5 -14" fill="none" stroke="var(--ink)" stroke-width="2"/>`);
+    if (nd(n) === 1) out.push(`<path d="M${n.x} ${S1 - 6} q7 -5 5 -14" fill="none" stroke="var(--ink)" stroke-width="2"/>`);
+  }});
+  // Rests: every gap in a bar (no note sounding) gets standard rest glyphs in the stem row, split at beats,
+  // so you can see whether a gap is silence and where off-beat notes land.
+  const restY = (S0 + S1) / 2, RS = 22, RG = { 16: ["𝄻", CAL.whole], 8: ["𝄼", CAL.half], 4: ["𝄽", CAL.quarter], 2: ["𝄾", CAL.eighth], 1: ["𝄿", CAL.sixteenth] };
+  bars.forEach((ev, b) => {
+    if (sims[b]) return;
+    const busy = new Array(16).fill(false);
+    ev.forEach(e => { if (e.r) return; for (let k = Math.floor(e.p); k < Math.min(16, Math.ceil(e.p + e.d)); k++) busy[k] = true; });
+    if (ev.some(e => !Number.isInteger(e.p))) return;   // tuplet bars: leave as is
+    for (let t = 0; t < 16;) {
+      if (busy[t]) { t++; continue; }
+      let end = t; while (end < 16 && !busy[end]) end++;
+      while (t < end) {
+        const r = [16, 8, 4, 2, 1].find(r => t % r === 0 && t + r <= end && !(r === 8 && t % 8 !== 0));
+        const [ch, cal] = RG[r], x = X(b, t) + (r >= 8 ? 6 : 0);
+        out.push(`<text x="${x - 4}" y="${restY + (r >= 8 ? 5 : 0) + cal * RS / 28}" font-family="${MF}" font-size="${RS}" fill="var(--ink)">${ch}</text>`);
+        t += r;
+      }
+    }
+  });
+  // Tuplet numbers: one per run of consecutive tup notes inside a bar
+  for (let i = 0; i < notes.length;) {
+    if (!notes[i].e.tup) { i++; continue; }
+    let j = i; while (j + 1 < notes.length && notes[j + 1].e.tup && notes[j + 1].b === notes[i].b && j - i + 1 < notes[i].e.tup) j++;
+    out.push(`<text x="${(notes[i].x + notes[j].x) / 2}" y="${S1 + 13}" text-anchor="middle" font-family="${NS}" font-style="italic" font-weight="600" font-size="12" fill="var(--ink)">${notes[i].e.tup}</text>`);
+    hiY = S1 + 17; i = j + 1;
+  }
+  return `<svg viewBox="0 ${lo - 2} ${W} ${hiY - lo + 2}" style="--w:${W}" role="img" aria-label="guitar tab">${out.join("")}</svg>`;
+}
+
+const STRINGS = ["high E", "B", "G", "D", "A", "low E"];
+// Views that read the page as a guitarist (capo control, chord shapes, "Sit out"). Default: the single "guitar" view.
+const isGtr = v => (SONG.guitars || ["guitar"]).includes(v);
+let curView = "band";
+const fretWords = (n, c) => { const [st, f] = placeNote(n, c); return `${STRINGS[st]} string, ${f === 0 ? "open" : "fret " + f}`; };
+let capo = SONG.capo || 0;
+try { const v = parseInt(localStorage.getItem("roadmap-capo"), 10); if (v >= 0 && v <= 9) capo = v; } catch (e) {}
+function bar(tok, view, playing, mk = { b: [], crash: false }) {
+  const cls = [], q = tok.endsWith("?") && view !== "drums" ? '<span class="q">?</span>' : "";
+  tok = tok.replace(/\?$/, "");
+  if (view !== "band" && !playing) cls.push("tacet");
+  if (mk.b.length) cls.push(mk.rh && mk.b.every(c => mk.rh.has(c)) ? "mk mkr" : "mk");
+  const deco = (mk.shown || mk.b).map(c => `<span class="bd${mk.rh && mk.rh.has(c) ? " rh" : ""}">${esc(c)}</span>`).join("")
+    + (mk.crash ? '<svg class="cr" viewBox="0 0 10 10" aria-label="crash"><path d="M1.5 1.5 8.5 8.5M1.5 8.5 8.5 1.5" stroke="var(--hit)" stroke-width="2.2" stroke-linecap="round"/></svg>' : "");
+  if (tok === "%") return `<div class="bar sim ${cls.join(" ")}">%${deco}</div>`;
+  if (tok === "NC") return `<div class="bar nc ${cls.join(" ")}">N.C.${deco}</div>`;
+  const walk = tok.endsWith("↑") && view === "band", t = tok.replace("↑", "");
+  const parts = t.split("|");
+  if (parts.length > 1) cls.push("split");
+  if (t.length >= 5) cls.push("long");
+  const shown = isGtr(view) ? parts.map(p => shapeFor(p, capo)) : parts;
+  return `<div class="bar ${cls.join(" ")}"><span class="sp">${shown.map(p => `<span>${esc(p)}</span>`).join("")}</span>${walk ? '<span class="w">↑</span>' : ""}${q}${deco}</div>`;
+}
+
+// One figure: staff notation, guitar tab (capo-aware, labels shown as shapes) or bass tab.
+const shapeLabel = c => c.split(" · ").map(x => shapeFor(x, capo)).join(" · ");
+function figure(x) {
+  if (x.nota) return score(SONG.notation[x.nota]);
+  if (x.tab) { const t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e));
+    return tab(t.bars ? { bw: t.bw, bars } : bars, capo, SONG.gtrTuning || TUNING); }   // gtrTuning: e.g. drop D [64,59,55,50,45,38]
+  if (x.btab) return tab(SONG.bassTabs[x.btab], 0, SONG.bassTuning || BASS_TUNING);
+  return "";
+}
+
+// Column spans for the 4-column (tablet/laptop) and 2-column (phone) grids: a tile that doesn't fit widens the one before it to close the gap.
+function spans(view, C) {
+  const w = SONG.form.map(s => Math.min(C, typeof s.span === "object" ? s.span[view] ?? s.span.all ?? 1 : s.span || 1));
+  let col = 0;
+  w.forEach((n, i) => { if (col + n > C) { w[i - 1] += C - col; col = 0; } col = (col + n) % C; });
+  if (col) w[w.length - 1] += C - col;
+  return w;
+}
+
+// Drums view: no chord boxes or numbered markers. Every bar is engraved in playing order, 4 per line, so the drummer
+// reads left to right. Each bar's pattern = SONG.drumBars[bar] if given (e.g. straight from Songsterr), else the marked
+// figure on that box, else the section's unmarked figure, else the header groove. Crash marks are written into the bar.
+// A bar identical to the one before becomes a one-bar repeat sign with a running count.
+function drumBarPlan() {
+  const plan = []; let m = 0;
+  const pick = (spec, idx) => spec && spec.grids ? spec.grids[idx % spec.grids.length] : null;
+  SONG.form.forEach((s, si) => {
+    const ex = (s.extra && s.extra.drums) || [];
+    const crash = new Set(ex.filter(x => x.mark === "crash").flatMap(x => x.at || []));
+    const unmarked = ex.find(x => x.nota && !x.at && !x.mark);
+    let box = 0;
+    s.blocks.forEach(b => {
+      const toks = b.rows.flatMap(r => r.split(" ")), rep = b.rep || 1, b0 = box;
+      for (let r = 0; r < rep; r++) toks.forEach((_, k) => {
+        const bx = b0 + k + 1, mi = m++;
+        let g = SONG.drumBars && SONG.drumBars[mi];
+        if (!g) {
+          const fx = ex.find(x => x.nota && x.at && x.at.includes(bx));
+          if (fx) { let run = 0; while (fx.at.includes(bx - run - 1) && bx - run - 1 > b0) run++; g = pick(SONG.notation[fx.nota], run); }
+          else g = pick(unmarked && SONG.notation[unmarked.nota], k) || pick(SONG.notation[SONG.header.drums.nota], k);
+        }
+        g = { ...(g || {}) };
+        if (crash.has(bx)) g.CR = "x" + (g.CR || "................").slice(1);
+        const plays = SONG.plays.drums[mi] === "1";
+        plan.push({ si, g: plays ? g : { rest: true }, plays });
+      });
+      box += toks.length;
+    });
+  });
+  return plan;
+}
+function drumTile(s, i, bars) {
+  const PER = 4, rows = [];
+  // 1-bar repeats first; then 2-bar grooves (bars k-1,k equal to k-3,k-2) become a two-bar repeat sign, kept inside a line.
+  const keys = bars.map(({ g }) => JSON.stringify(g)), gs = [];
+  let run = 1;
+  keys.forEach((key, k) => {
+    if (k > 0 && key === keys[k - 1] && !bars[k].g.rest) { gs.push({ sim: ++run }); return; }
+    run = 1; gs.push(bars[k].g);
+  });
+  for (let k = 3; k < gs.length; k++) {
+    if (k % 2 !== 1 || gs[k].sim || gs[k - 1].sim || bars[k].g.rest) continue;
+    if (keys[k] === keys[k - 2] && keys[k - 1] === keys[k - 3] && keys[k] !== keys[k - 1]) {
+      gs[k - 1] = { sim2: 1 }; gs[k] = { sim2: 2, label: `${k}–${k + 1}` };
+    }
+  }
+  for (let k = 0; k < gs.length; k += PER) {
+    const chunk = gs.slice(k, k + PER);
+    rows.push(`<div class="drow" style="--nb:${chunk.length}">${score({ clef: "perc", grids: chunk })}</div>`);
+  }
+  const anyPlay = bars.some(b => b.plays);
+  const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
+  return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${bars.length} bars</span></div>
+    <div class="cue">${esc(s.cue)}</div>
+    ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
+    <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + bars.length + " bars"))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+  </div>`;
+}
+
+// Bass inline view (SONG.bassBars = one tab bar per chart bar, e.g. straight from Songsterr or a video transcript):
+// used when the part changes nearly every bar, so markers would be a puzzle. Every bar is tabbed in playing order,
+// 4 per line, with the chord written over the bar where it changes. A bar identical to the one before = repeat sign.
+// Any view can be inline: SONG.inlineBars = { gtr2: [...] } (guitar tab, re-fingered for the capo); SONG.bassBars = the bass view.
+const inlineBars = v => (SONG.inlineBars && SONG.inlineBars[v]) || (v === "bass" && SONG.bassBars) || null;
+function bassBarPlan(view = "bass") {
+  const plan = []; let m = 0; const IB = inlineBars(view);
+  SONG.form.forEach((s, si) => {
+    let last = "", box0 = 0;
+    s.blocks.forEach(b => {
+      const toks = b.rows.flatMap(r => r.split(" ")), rep = b.rep || 1;
+      for (let r = 0; r < rep; r++) toks.forEach((tok, k) => {
+        const mi = m++, box = box0 + k + 1, t = (s.show?.[view]?.[box] || tok).replace(/[?↑]/g, "");
+        const ev = (IB[mi] || []).map(e => ({ ...e })), parts = t === "%" ? [] : t.split("|");
+        parts.forEach((c, j) => {
+          if (c === last || c === "NC") { last = c; return; }
+          last = c; if (isGtr(view)) c = shapeFor(c, capo);
+          const p = j * 16 / parts.length, e = ev.find(e => e.p === p);
+          if (e) e.c = c; else ev.push({ p, d: 0, r: true, c });
+        });
+        plan.push({ si, ev: ev.sort((a, b) => a.p - b.p), plays: SONG.plays[view][mi] === "1" && ev.some(e => !e.r) });
+      });
+      box0 += toks.length;
+    });
+  });
+  return plan;
+}
+function bassTile(s, i, bars, view = "bass") {
+  const PER = 4, rows = [], gtr = isGtr(view), tun = gtr ? SONG.gtrTuning || TUNING : SONG.bassTuning || BASS_TUNING, out = [];
+  let run = 1, cur = "";
+  bars.forEach((b, k) => {
+    // every printed line names the chord it starts on, even if the change happened in an earlier (folded) bar
+    const lab = b.ev.find(e => e.c); if (lab) cur = lab.c;
+    else if (k % PER === 0 && cur) b = { ...b, ev: [{ p: 0, d: 0, r: true, c: cur }, ...b.ev] };
+    const same = k > 0 && k % PER !== 0 && b.plays && !b.ev.some(e => e.c) && JSON.stringify(b.ev) === JSON.stringify(bars[k - 1].ev);
+    run = same ? run + 1 : 1; out.push(same ? { sim: run } : b.ev);
+  });
+  // Identical consecutive lines collapse to one line with ×N (Brandon: prefer ×N for repeats)
+  const lines = [];
+  for (let k = 0; k < out.length; k += PER) {
+    const chunk = out.slice(k, k + PER), key = JSON.stringify(chunk), prev = lines.at(-1);
+    const rest = chunk.every(b => Array.isArray(b) && b.every(e => e.r));   // nothing played: fold into a "Rest · N bars" line
+    if (rest && prev && prev.rest) prev.bars += chunk.length;
+    else if (rest) lines.push({ rest, bars: chunk.length, key: "rest" });
+    else if (prev && prev.key === key && chunk.length === PER) prev.n++; else lines.push({ key, chunk, n: 1 });
+  }
+  // A repeating group of lines (e.g. an F line then a Dm line, twice) collapses to one group with ×N, like chord rows
+  const K = [...Array(lines.length).keys()].map(k => k + 1).find(k => k < lines.length && lines.length % k === 0 && k > 1
+    && lines.every((l, i) => !l.rest && l.n === 1 && l.chunk.length === PER && l.key === lines[i % k].key));
+  const line = l => l.rest ? `<div class="trest">Rest · ${l.bars} bars</div>` : `<div class="trow">${tab(l.chunk, gtr ? capo : 0, tun)}${l.n > 1 ? `<span class="rep">×${l.n}</span>` : ""}</div>`;
+  if (K) rows.push(`<div class="block tgroup"><div class="rows">${lines.slice(0, K).map(line).join("")}</div><div class="rep">×${lines.length / K}</div></div>`);
+  else lines.forEach(l => rows.push(line(l)));
+  const anyPlay = bars.some(b => b.plays);
+  const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
+  return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${bars.length} bars</span></div>
+    <div class="cue">${esc(s.cue)}</div>
+    ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
+    <div class="ft"><span class="tag">${esc(s.tag[view] || (anyPlay ? "" : (gtr ? "Sit out · " : "Tacet · ") + bars.length + " bars"))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+  </div>`;
+}
+
+var render = function (view) {
+  curView = view;
+  let m = 0; // running measure index (0-based)
+  const s4 = spans(view, 4), s2 = spans(view, 2);
+  const dplan = view === "drums" ? drumBarPlan() : null, bplan = inlineBars(view) ? bassBarPlan(view) : null;
+  const tiles = SONG.form.map((s, i) => {
+    if (dplan) return drumTile(s, i, dplan.filter(b => b.si === i));
+    if (bplan) return bassTile(s, i, bplan.filter(b => b.si === i), view);
+    const extras = ((s.extra && s.extra[view]) || []).filter(x => !x.hide);
+    // Number the figures that have markers, and collect each box's markers
+    let auto = 0; const marks = {};
+    extras.forEach(x => {
+      if (x.mark) { (x.at || []).forEach(k => (marks[k] ??= { b: [], crash: false }).crash = true); return; }
+      x._b = x.b || (x.at ? String(++auto) : "");
+      // rhythm-only figure (slash notation) = muted marker; anything with notes to learn (tab, pitched staff, drum fill) = yellow
+      x._rh = !!(x.nota && SONG.notation[x.nota] && SONG.notation[x.nota].clef === "slash");
+      if (x.at) x.at.forEach(k => { const m = (marks[k] ??= { b: [], crash: false, rh: new Set() }); m.rh ??= new Set(); m.b.push(x._b); if (x._rh) m.rh.add(x._b); });
+    });
+    let total = 0, anyPlay = false, box = 0;
+    const blocks = s.blocks.map(b0 => {
+      // Auto-collapse: identical rows become one row with ×N (Brandon: save space), unless this view's player does
+      // something different on one of the passes (different play/tacet, marker, crash or box override) — then stay unrolled.
+      let b = b0, skip = 0;
+      // period K: the rows are P copies of their first K rows (e.g. a 2-row, 8-bar loop written out twice)
+      const K = b0.rep || b0.label ? 0 : [...Array(b0.rows.length).keys()].map(k => k + 1).find(k => k < b0.rows.length && b0.rows.length % k === 0 && b0.rows.every((r, i) => r === b0.rows[i % k]));
+      if (K) {
+        const n1 = b0.rows.slice(0, K).join(" ").split(" ").length, P = b0.rows.length / K, ok = [...Array(P).keys()].every(r => [...Array(n1).keys()].every(k => {
+          const a = box + k + 1, c = box + r * n1 + k + 1, ma = m + k, mc = m + r * n1 + k;
+          const pl = view === "band" || SONG.plays[view][ma] === SONG.plays[view][mc];
+          const mk = JSON.stringify(marks[a] ? [marks[a].b, marks[a].crash] : null) === JSON.stringify(marks[c] ? [marks[c].b, marks[c].crash] : null);
+          return pl && mk && (s.show?.[view]?.[a] || "") === (s.show?.[view]?.[c] || "");
+        }));
+        if (ok) { b = { rows: b0.rows.slice(0, K), rep: P }; skip = n1 * (P - 1); }
+      }
+      const toks = b.rows.map(r => r.split(" ")), n = toks.flat().length, rep = b.rep || 1, start = m;
+      m += n * rep; total += n * rep;
+      let k = 0;
+      const rows = toks.map(t => `<div class="row" style="--n:${b.label ? 4 : t.length}">${t.map((tok, j) => {
+        let on = false;
+        for (let r = 0; r < rep; r++) on ||= view === "band" || SONG.plays[view][start + r * n + k] === "1";
+        anyPlay ||= on; k++; box++;
+        // A run of boxes with the same marker shows the disc once (on the first box of the run in this row); the underline continues.
+        const mk = marks[box], pv = j > 0 ? marks[box - 1] : null;
+        return bar(s.show?.[view]?.[box] || tok, view, on, mk && { ...mk, shown: mk.b.filter(c => !(pv && pv.b.includes(c))) });
+      }).join("")}</div>`).join("");
+      box += skip;
+      const repHTML = b.rep ? "×" + b.rep : b.label ? `<span class="lb">${esc(b.label)}</span>` : "";
+      return `<div class="block"><div class="rows">${rows}</div><div class="rep${repHTML ? "" : " none"}">${repHTML}</div></div>`;
+    });
+    const extraHTML = extras.filter(x => !x.mark).map(x => `<div class="nota">${x._b ? `<span class="bd${x._rh ? " rh" : ""}">${esc(x._b)}</span>` : ""}${figure(x)}</div>`);
+    const tag = s.tag[view] || (view === "band" || anyPlay ? (view === "band" ? s.tag.band || "" : "") : isGtr(view) ? "Sit out" : "Tacet");
+    const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
+    return `<div class="tile t-${s.type}${view !== "band" && !anyPlay ? " out" : ""}" style="--s4:${s4[i]};--s2:${s2[i]}">
+      <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${total} bars</span></div>
+      <div class="cue">${esc(s.cue)}</div>
+      <div class="chart">${blocks.join("")}${extraHTML.length ? `<div class="figs">${extraHTML.join("")}</div>` : ""}</div>
+      <div class="ft"><span class="tag">${esc(tag)}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+    </div>`;
+  });
+  document.getElementById("board").innerHTML = tiles.join("");
+
+
+
+  document.getElementById("keyName").textContent = isGtr(view) ? shapeFor(SONG.key, capo) + (capo ? " shapes" : "") : SONG.key;
+  const cc = SONG.chordCheck, nm = t => esc(t).replace(/\{([^}]+)\}/g, (_, c) => `<b>${esc(isGtr(view) ? shapeFor(c, capo) : c)}</b>`);
+  const chk = document.getElementById("chk");
+  chk.classList.toggle("ok", !cc.diffs.length);
+  chk.innerHTML = (cc.diffs.length ? `⚠ ${cc.diffs.length} chord ${cc.diffs.length > 1 ? "differences" : "difference"}` : "✓ Chords match UG")
+    + `<div class="pop"><p>Chords are checked against the top-rated Ultimate Guitar chart (${esc(cc.ug)}). The chart uses UG's chords. Marked with <span style="color:var(--hit);font-weight:800">?</span> on the bars.</p>`
+    + (cc.note ? `<p>${esc(cc.note)}</p>` : "") + cc.diffs.map(d => `<div class="d"><div class="wh">${esc(d.where)}</div><div>UG: ${nm(d.ug)}</div><div class="s">Songsterr: ${nm(d.ss)}</div></div>`).join("") + `</div>`;
+  const h = SONG.header[view];
+  document.getElementById("hdrExtra").innerHTML = (h.capo ? `<span class="capo">Capo <button type="button" id="capoDown" aria-label="Capo down">−</button><b>${capo || "off"}</b><button type="button" id="capoUp" aria-label="Capo up">+</button></span>` : "")
+    + (h.tune ? `<span class="tune">${esc(h.tune)}</span>` : "") + (view === "drums" || inlineBars(view) ? "" : `${esc(h.label)} ${figure(h)}`);
+  document.querySelectorAll("#views button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === view)));
+  const label = SONG.views.find(v => v[0] === view)[1];
+  document.getElementById("notesTitle").textContent = view === "band" ? "Rehearsal notes" : `${label} notes`;
+  document.getElementById("notesList").innerHTML = SONG.notes.filter(([v]) => v === view || v === "all").map(([, t]) => `<li>${typeof t === "function" ? t(capo) : t}</li>`).join("");
+};
+
+document.getElementById("views").innerHTML = SONG.views.map(([v, l]) => `<button type="button" id="view-${v}" data-v="${v}" aria-pressed="false">${l}</button>`).join("");
+document.getElementById("views").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  try { localStorage.setItem("roadmap-view", b.dataset.v); } catch (err) {}
+  history.replaceState(null, "", "#" + b.dataset.v);
+  render(b.dataset.v);
+});
+document.getElementById("hdrExtra").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  capo = Math.max(0, Math.min(9, capo + (b.id === "capoUp" ? 1 : -1)));
+  try { localStorage.setItem("roadmap-capo", String(capo)); } catch (err) {}
+  render(curView);
+});
+let start = location.hash.slice(1);
+if (!SONG.views.some(v => v[0] === start)) { try { start = localStorage.getItem("roadmap-view") || "band"; } catch (err) { start = "band"; } }
+if (!SONG.views.some(v => v[0] === start)) start = "band";
+render(start);
+
+// Never truncate: let cues and tags wrap to 2 lines, then shrink until they fit.
+function fitText() {
+  document.querySelectorAll(".tag, .cue").forEach(el => {
+    el.style.fontSize = "";
+    let fs = parseFloat(getComputedStyle(el).fontSize), n = 0;
+    while (el.scrollHeight > fs * 1.1 * 2 + 2 && n++ < 25) { fs *= 0.93; el.style.fontSize = fs + "px"; }
+  });
+}
+const _render = render;
+render = v => { _render(v); fitText(); };
+fitText();
+document.fonts?.ready.then(fitText);
+let _rz; addEventListener("resize", () => { clearTimeout(_rz); _rz = setTimeout(fitText, 120); });
+
+async function keepAwake() { try { await navigator.wakeLock?.request("screen"); } catch (e) {} }
+keepAwake();
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") keepAwake(); });
+</script>
+
+</body></html>
