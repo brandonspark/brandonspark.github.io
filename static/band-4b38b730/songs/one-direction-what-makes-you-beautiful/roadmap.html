@@ -1963,7 +1963,9 @@ function vfDraw(ctx, st, b) {
     const bb = n.getBoundingBox(), up = n.getModifiers().some(m => m.getCategory() === "Articulation" || m.getCategory() === "GraceNoteGroup") ? 16 : 3;
     lo = Math.min(lo, bb.getY() - up); hi = Math.max(hi, bb.getY() + bb.getH() + 3);
   }));
-  if (b.tuplets.length) lo -= 26;   // tuplet number (and bracket, over rests) sits above the stems
+  // tuplet numbers (and brackets, over rests) sit beyond the stems: above for the hands, below for the feet
+  if (b.tuplets.some(t => t.location !== window.Vex.Flow.Tuplet.LOCATION_BOTTOM)) lo -= 26;
+  if (b.tuplets.some(t => t.location === window.Vex.Flow.Tuplet.LOCATION_BOTTOM)) hi += 26;
   const y = st.getYForLine(4) + 46, done = new Set();
   b.voices.forEach(v => v.getTickables().forEach(n => {
     if (!n._dyn) return; const x = Math.round(n.getAbsoluteX()); if (done.has(x)) return; done.add(x);
