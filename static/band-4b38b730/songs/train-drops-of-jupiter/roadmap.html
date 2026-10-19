@@ -34,6 +34,23 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
 .bar .q { position: absolute; top: .05em; right: .2em; font-size: .42em; color: var(--hit); font-weight: 800; }
 .hdr .extra { display: flex; align-items: center; gap: 8px; font-size: clamp(13px, 1.4vw, 16px); font-weight: 700; color: var(--muted); text-transform: uppercase; }
 .hdr .extra svg { width: min(calc(var(--w) * 1.45px), 56vw); height: auto; display: block; text-transform: none; }
+/* Tempo flash (Brandon): tap the bpm to flash the beat, so whoever counts the song in starts at the right speed.
+   The button shows the count (beat 1 orange) and a strip along the top of the screen flashes with it. */
+.tempo { font: inherit; color: var(--ink); background: transparent; border: 2px solid var(--line); border-radius: 8px; padding: 4px 10px 4px 8px;
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer; line-height: 1; transition: background-color 60ms; }
+.tempo span { color: var(--muted); font-weight: 500; }
+.tempo .dot { width: .72em; height: .72em; border-radius: 50%; background: var(--faint); flex: none; }
+.tempo .cnt { min-width: 1.1ch; text-align: center; font-size: .8em; color: var(--muted); }
+.tempo:focus-visible { outline: 2px solid var(--hit); }
+.tempo[aria-pressed="true"] { border-color: var(--ink); }
+.tempo[aria-pressed="true"] .cnt { color: var(--ink); font-size: 1em; }
+.tempo.on { background: color-mix(in srgb, var(--ink) 22%, transparent); }
+.tempo.on .dot { background: var(--ink); box-shadow: 0 0 14px var(--ink); }
+.tempo.one { background: color-mix(in srgb, var(--hit) 38%, transparent); }
+.tempo.one .dot { background: var(--hit); box-shadow: 0 0 16px var(--hit); }
+.tempo-strip { position: fixed; left: 0; right: 0; top: 0; height: 14px; z-index: 60; pointer-events: none; opacity: 0; background: var(--ink); }
+.tempo-strip.on { opacity: 1; }
+.tempo-strip.one { background: var(--hit); }
 .capo { display: inline-flex; align-items: center; gap: 8px; font-size: clamp(18px, 2.2vw, 26px); color: var(--ink); text-transform: none; }
 .capo b { min-width: 1.6em; text-align: center; font-size: 1.2em; }
 .tune { font-size: clamp(18px, 2.2vw, 26px); color: #111; background: var(--fig); border-radius: 6px; padding: 4px 10px; text-transform: uppercase; font-weight: 800; }
@@ -1943,6 +1960,36 @@ render = v => { _render(v); fitText(); };
 fitText();
 document.fonts?.ready.then(fitText);
 let _rz; addEventListener("resize", () => { clearTimeout(_rz); _rz = setTimeout(fitText, 120); });
+
+// Tempo flash (Brandon): the bpm in the header is a button. Tap it and the beat flashes (count 1-2-3-4, beat 1 orange) on
+// the button and along the top of the screen until tapped again; 6/8 flashes the two dotted-quarter beats. Timing comes
+// from the clock (performance.now), so it never drifts.
+(function tempoFlash() {
+  const div = [...document.querySelectorAll(".facts > div")].find(d => /^\s*[\d.]+\s*bpm\s*$/.test(d.textContent));
+  if (!div) return;
+  const bpm = parseFloat(div.textContent), per = Math.max(1, Math.round(BAR / BEAT)), ms = 60000 / bpm;
+  if (!(bpm >= 30 && bpm <= 300)) return;
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.className = "tempo"; btn.setAttribute("aria-pressed", "false");
+  btn.title = "Flash the tempo"; btn.setAttribute("aria-label", `Flash the tempo: ${bpm} beats per minute`);
+  btn.innerHTML = `<i class="dot"></i><b class="cnt">▶</b>${div.innerHTML}`;
+  div.replaceWith(btn);
+  const strip = document.createElement("div"); strip.className = "tempo-strip"; document.body.appendChild(strip);
+  const cnt = btn.querySelector(".cnt");
+  let t0 = 0, raf = 0, shown = "";
+  const show = (on, one) => { const k = on + "" + one; if (k === shown) return; shown = k;
+    btn.classList.toggle("on", on && !one); btn.classList.toggle("one", on && one); strip.classList.toggle("on", on); strip.classList.toggle("one", on && one); };
+  const tick = now => {
+    const t = now - t0, b = Math.floor(t / ms), on = t - b * ms < Math.min(140, ms * .3);
+    cnt.textContent = String(b % per + 1); show(on, b % per === 0);
+    raf = requestAnimationFrame(tick);
+  };
+  btn.addEventListener("click", () => {
+    const run = btn.getAttribute("aria-pressed") !== "true";
+    btn.setAttribute("aria-pressed", String(run)); cancelAnimationFrame(raf); show(false, false);
+    if (run) { t0 = performance.now(); raf = requestAnimationFrame(tick); } else cnt.textContent = "▶";
+  });
+})();
 
 async function keepAwake() { try { await navigator.wakeLock?.request("screen"); } catch (e) {} }
 keepAwake();
