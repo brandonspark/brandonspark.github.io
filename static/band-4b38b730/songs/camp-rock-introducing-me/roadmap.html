@@ -1843,7 +1843,7 @@ function score(spec) {
       if (e.r) { out.push(rest(x, e.d, 0)); return; }
       let heads;
       if (e.drum) heads = e.drum.map(h => ({ st: DRUM[h.k].st, x: DRUM[h.k].x, open: h.open }));
-      else if (e.n) heads = e.n.map(pn => ({ st: stepOf(pn), acc: spec.clef === "slash" ? "" : accOf(pn, b) }));
+      else if (e.n && e.n.length) heads = e.n.map(pn => ({ st: stepOf(pn), acc: spec.clef === "slash" ? "" : accOf(pn, b) }));
       else heads = [e.x ? { st: 4, x: true } : { st: 4, slash: true }];   // slash x = muted strum
       const sts = heads.map(h => h.st);
       const dir = v.dir || (heads[0].slash || spec.clef === "slash" ? -1 : sts.reduce((a, c) => a + c, 0) / sts.length >= 4 ? 1 : -1); // 1 = stem down, -1 = stem up
@@ -1862,11 +1862,11 @@ function score(spec) {
       // accidental signs left of the heads; in a chord they step further left so they don't collide
       heads.filter(h => h.acc).sort((a, b2) => b2.st - a.st).forEach((h, i) =>
         out.push(G(h.acc, x - 14 - (i % 2) * 8, yOf(h.st) + (h.acc === "♭" ? CAL.flat : h.acc === "♮" ? CAL.natural : CAL.sharp), 24)));
-      if (D < 16) {
+      {   // whole notes are placed too (no stem), so a tie can start from one
         const sx = dir < 0 ? x + 4 : x - 4;
         const yEdge = dir < 0 ? Math.min(...sts.map(yOf)) : Math.max(...sts.map(yOf));
         const yFar = dir < 0 ? Math.max(...sts.map(yOf)) : Math.min(...sts.map(yOf));
-        placed.push({ x, sx, b, e, dir, sts, slash: !!heads[0].slash, open: heads.some(h => h.open), y0: yFar, tip: yEdge + dir * 24 });
+        placed.push({ x, sx, b, e, dir, sts, slash: !!heads[0].slash, open: heads.some(h => h.open), y0: yFar, tip: yEdge + dir * 24, whole: D >= 16 });
       }
     }));
     // Beam groups: notes shorter than a quarter inside one beat
@@ -1896,6 +1896,7 @@ function score(spec) {
       }
     });
     placed.forEach(n => {
+      if (n.whole) return;
       out.push(`<line x1="${n.sx}" x2="${n.sx}" y1="${n.y0}" y2="${n.tip}" stroke="var(--ink)" stroke-width="1.4"/>`);
       grow(n.tip);
       if (n.open) { const oy = n.tip - 7; out.push(`<circle cx="${n.sx}" cy="${oy}" r="2.8" fill="none" stroke="var(--ink)" stroke-width="1.4"/>`); grow(oy - 4); }
@@ -1944,12 +1945,20 @@ function shapeFor(chord, capo) {
     const k = (ROOT[n[1]] - capo + 120) % 12; return "/" + (sp ? SHARP_SPELL[k] : SHAPE_NAMES[k]) + n[2]; }).join("");
 }
 // Re-finger a note for the capo: keep the same string if possible, otherwise the nearest string that reaches it.
-function placeNote([s, f], capo, tun = TUNING) {
-  if (f >= capo) return [s, f - capo];
+function placeNote([s, f], capo, tun = TUNING, used) {   // used: strings already taken by other notes of the same chord
+  if (f >= capo && !(used && used.has(s))) return [s, f - capo];
   const pitch = tun[s] + f;
-  const opts = tun.map((t, i) => [i, pitch - t - capo]).filter(([, r]) => r >= 0 && r <= 14);
-  opts.sort((a, b) => Math.abs(a[0] - s) - Math.abs(b[0] - s) || a[1] - b[1]);
-  return opts[0] || [s, f];
+  const at = p => tun.map((t, i) => [i, p - t - capo]).filter(([i, r]) => r >= 0 && r <= 14 && !(used && used.has(i)))
+    .sort((a, b) => Math.abs(a[0] - s) - Math.abs(b[0] - s) || a[1] - b[1]);
+  // below the capo on every string (a low note under a high capo): play it an octave up rather than show a wrong fret
+  return at(pitch)[0] || at(pitch + 12)[0] || [s, Math.max(f - capo, 0)];
+}
+// A chord's notes re-fingered together, so two notes never land on one string.
+function placeChord(ns, capo, tun) {
+  const used = new Set(), out = [];
+  ns.map((n, k) => [n, k]).sort((a, b) => (a[0][1] >= capo) - (b[0][1] >= capo) || a[0][0] - b[0][0])   // notes that must move go first
+    .forEach(([n, k]) => { const p = placeNote(n, capo, tun, used); used.add(p[0]); out[k] = p; });
+  return out;
 }
 // A tab may be { bw, bars } instead of bars: bw = bar width in units, for compact one-note-per-bar "lines".
 // Note flags: x = muted/dead (shows x), ns = no rhythm stem, trem = tremolo, tup = tuplet, dn = notated length.
@@ -1958,7 +1967,11 @@ function tab(bars, capo, tun = TUNING) {
   // A bar may be { sim: n } = one-bar repeat sign (same as the bar before), n = running count shown above it.
   const sims = bars.map(b => Array.isArray(b) ? 0 : b.sim || 0); bars = bars.map(b => Array.isArray(b) ? b : []);
   // Fast runs of two-digit frets (16ths on 11, 14 …) would collide at 12 units per 16th, so such figures get wider spacing.
-  const dense = !bw && bars.some(ev => ev.some(e => e.d <= 1 && (e.n || []).some(([, f]) => f >= 10)));
+  // dense rows get wider 16ths: two notes a 16th (or less) apart where either shows a two-digit fret or a held-note
+  // bracket, or any 32nd, would otherwise print as one number ("911")
+  const wide = e => e && !e.r && ((e.n || []).some(([, f]) => f >= 10) || e.tie || e.tieN);
+  const dense = !bw && bars.some(ev => { const s = ev.filter(e => !e.r).sort((a, b) => a.p - b.p);
+    return s.some((e, i) => e.d <= 0.5 || (i && e.p - s[i - 1].p <= 1.01 && (wide(e) || wide(s[i - 1])))); });
   const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = dense ? 18 : 12, BW = bw || BAR * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
   const X = (b, p) => HDR + b * BW + (bw ? 10 : 11) + p * SP, yl = s => s * LS, BOT = (NSTR - 1) * LS;
   const out = [], notes = [];
@@ -1971,16 +1984,17 @@ function tab(bars, capo, tun = TUNING) {
     if (n > 1) { out.push(`<text x="${x}" y="-8" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="12" fill="var(--muted)">${n}</text>`); lo = Math.min(lo, -22); } });
   bars.forEach((ev, b) => ev.forEach(e => {
     const x = X(b, e.p);
-    if (e.c) { out.push(`<text x="${x - 4}" y="-8" font-family="${NS}" font-weight="600" font-size="14" fill="var(--ink)">${esc(e.c)}</text>`); lo = -24; }
+    if (e.c) { out.push(`<text x="${x - 4}" y="-8" font-family="${NS}" font-weight="600" font-size="14" fill="var(--ink)">${esc(e.c)}</text>`); lo = Math.min(lo, -24); }   // min: never crop a "muted" label drawn above an earlier chord
     if (e.pm && !pmDone) { out.push(`<text x="${x - 4}" y="${e.c ? -26 : -8}" font-family="${NS}" font-style="italic" font-size="11" fill="var(--muted)">muted</text>`); pmDone = true; lo = Math.min(lo, e.c ? -40 : -22); }
     if (e.r) return;
-    e.n.map(n => placeNote(n, capo, tun)).forEach(([s, f], k) => {
-      if (e.x) s = e.n[k][0];
+    placeChord(e.n, capo, tun).forEach(([s, f], k) => {
+      const mute = e.x || (e.xN && e.xN.includes(k));   // xN: muted strings inside a fretted chord
+      if (mute) s = e.n[k][0];
       const tie = e.tie || (e.tieN && e.tieN.includes(k));   // tieN: indexes of the notes held over while the others are struck
       // tie = held over from the previous note: shown in brackets, not re-struck. The brackets are small and tight so a
       // held two-digit fret doesn't run into its neighbours in 16th runs.
-      const d = e.x ? "x" : String(f), w = d.length * 7.2 + (tie && !e.x ? 7 : 0) + 3;
-      const t = tie && !e.x ? `<tspan font-size="9.5" font-weight="600">(</tspan>${d}<tspan font-size="9.5" font-weight="600">)</tspan>` : d;
+      const d = mute ? "x" : String(f), w = d.length * 7.2 + (tie && !mute ? 7 : 0) + 3;
+      const t = tie && !mute ? `<tspan font-size="9.5" font-weight="600">(</tspan>${d}<tspan font-size="9.5" font-weight="600">)</tspan>` : d;
       out.push(`<rect x="${x - w / 2}" y="${yl(s) - 6}" width="${w}" height="12" fill="var(--tile)"/><text x="${x}" y="${yl(s) + 4.5}" text-anchor="middle" font-family="${NS}" font-weight="700" font-size="13" letter-spacing="${tie ? -0.6 : 0}" fill="var(--ink)">${t}</text>`);
     });
     if (!e.ns) notes.push({ x, b, e });
@@ -2047,8 +2061,12 @@ const STRINGS = ["high E", "B", "G", "D", "A", "low E"];
 const isGtr = v => (SONG.guitars || ["guitar"]).includes(v);
 let curView = "band";
 const fretWords = (n, c) => { const [st, f] = placeNote(n, c); return `${STRINGS[st]} string, ${f === 0 ? "open" : "fret " + f}`; };
-let capo = SONG.capo || 0;
-try { const v = parseInt(localStorage.getItem("roadmap-capo"), 10); if (v >= 0 && v <= 9) capo = v; } catch (e) {}
+// Capo: per song and per guitar view (SONG.capo = 4, or { gtr1: 1, gtr2: 0 } when the guitars differ). A player's change
+// is remembered for this song and view only (it used to be one setting for every song on the site).
+const CAPO_KEY = v => "roadmap-capo:" + (document.title || "") + ":" + v;
+const capoDefault = v => SONG.capo && typeof SONG.capo === "object" ? (SONG.capo[v] ?? 0) : (SONG.capo || 0);
+const capoFor = v => { try { const x = parseInt(localStorage.getItem(CAPO_KEY(v)), 10); if (x >= 0 && x <= 9) return x; } catch (e) {} return capoDefault(v); };
+let capo = capoDefault((SONG.guitars || ["guitar"])[0]);
 function bar(tok, view, playing, mk = { b: [], crash: false }) {
   const cls = [], q = tok.endsWith("?") && view !== "drums" ? '<span class="q">?</span>' : "";
   tok = tok.replace(/\?$/, "");
@@ -2056,8 +2074,8 @@ function bar(tok, view, playing, mk = { b: [], crash: false }) {
   if (mk.b.length) cls.push(mk.rh && mk.b.every(c => mk.rh.has(c)) ? "mk mkr" : "mk");
   const deco = (mk.shown || mk.b).map(c => `<span class="bd${mk.rh && mk.rh.has(c) ? " rh" : ""}">${esc(c)}</span>`).join("")
     + (mk.crash ? '<svg class="cr" viewBox="0 0 10 10" aria-label="crash"><path d="M1.5 1.5 8.5 8.5M1.5 8.5 8.5 1.5" stroke="var(--hit)" stroke-width="2.2" stroke-linecap="round"/></svg>' : "");
-  if (tok === "%") return `<div class="bar sim ${cls.join(" ")}">%${deco}</div>`;
-  if (tok === "NC") return `<div class="bar nc ${cls.join(" ")}">N.C.${deco}</div>`;
+  if (tok === "%") return `<div class="bar sim ${cls.join(" ")}">%${q}${deco}</div>`;
+  if (tok === "NC") return `<div class="bar nc ${cls.join(" ")}">N.C.${q}${deco}</div>`;
   const walk = tok.endsWith("↑") && view === "band", t = tok.replace("↑", "");
   const parts = t.split("|");
   if (parts.length > 1) cls.push("split");
@@ -2077,7 +2095,7 @@ function figure(x) {
     return score(n);
   }
   if (x.tab) { const t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e));
-    return tab(t.bars ? { bw: t.bw, bars } : bars, capo, SONG.gtrTuning || TUNING); }   // gtrTuning: e.g. drop D [64,59,55,50,45,38]
+    return tab(t.bars ? { bw: t.bw, bars } : bars, capo, (SONG.tunings && SONG.tunings[curView]) || SONG.gtrTuning || TUNING); }   // gtrTuning: e.g. drop D [64,59,55,50,45,38]; tunings: { gtr2: [...] } per view
   if (x.btab) return tab(SONG.bassTabs[x.btab], 0, SONG.bassTuning || BASS_TUNING);
   return "";
 }
@@ -2131,7 +2149,7 @@ function drumBarPlan() {
 // events written by drum_bars.py) or from older 16-step grids ({ HH: "x.x.…", SN: …, BD: … }).
 let dBAR = BAR, dBEAT = BEAT;   // meter of the bar being engraved (SONG.meters can change it per bar)
 const DK = {   // piece -> [VexFlow key (percussion clef positions), label for the drum key]
-  CR: ["a/5/x2", "Crash"], CB: ["b/5/t2", "Cowbell"], TB: ["b/5/x2", "Tambourine"], HH: ["g/5/x2", "Hi-hat"],
+  CR: ["a/5/x2", "Crash"], SK: ["c/6/x3", "Sticks"], CB: ["b/5/t2", "Cowbell"], TB: ["b/5/x2", "Tambourine"], HH: ["g/5/x2", "Hi-hat"],
   HO: ["g/5/x2", "Open hi-hat"], HX: ["g/5/x2", "Half-open"], RD: ["f/5/x2", "Ride"], RB: ["f/5/d2", "Ride bell"],
   R1: ["e/5", "Tom 1"], R2: ["d/5", "Tom 2"], SN: ["c/5", "Snare"], RS: ["c/5", "Rimshot"], XS: ["c/5/x2", "Cross-stick"],
   CL: ["c/5/x3", "Clap"], R3: ["b/4", "Tom 3"], F1: ["a/4", "Floor tom"], F2: ["g/4", "Low floor"], BD: ["f/4", "Kick"],
@@ -2375,7 +2393,7 @@ function drumKey() {
   };
   (SONG.drumBars || []).forEach(add);
   Object.values(SONG.notation || {}).forEach(n => n.clef === "perc" && n.grids.forEach(add));
-  const order = ["CR", "CB", "TB", "HH", "HO", "HX", "RD", "RB", "R1", "T1", "T2", "R2", "T3", "T4", "SN", "RS", "XS", "CL", "R3", "F1", "T5", "T6", "F2", "BD", "HF"];
+  const order = ["SK", "CR", "CB", "TB", "HH", "HO", "HX", "RD", "RB", "R1", "T1", "T2", "R2", "T3", "T4", "SN", "RS", "XS", "CL", "R3", "F1", "T5", "T6", "F2", "BD", "HF"];
   const seen = new Set(), list = order.filter(k => used.has(k) && !seen.has(DK[k][1]) && seen.add(DK[k][1]));
   if (!list.length || !VFok()) return "";
   const V = window.Vex.Flow, div = document.createElement("div"), step = 84, W = 56 + list.length * step, HT = 136;
@@ -2498,9 +2516,10 @@ function bassBarPlan(view = "bass") {
         const mi = m++, box = box0 + k + 1, t = (s.show?.[view]?.[box] || tok).replace(/[?↑]/g, "");
         const ev = (IB[mi] || []).map(e => ({ ...e })), parts = t === "%" ? [] : t.split("|");
         parts.forEach((c, j) => {
-          if (c === last || c === "NC") { last = c; return; }
+          if (c === last) return;
+          if (c === "NC") { last = c; const p = j * BAR / parts.length; if (!ev.some(e => e.p === p && e.c)) ev.push({ p, d: 0, r: true, c: "N.C." }); return; }   // name the stop, so a line starting there doesn't carry the old chord
           last = c; if (isGtr(view)) c = shapeFor(c, capo);
-          const p = j * BAR / parts.length, e = ev.find(e => e.p === p);
+          const p = Math.round(j * BAR / parts.length), e = ev.find(e => e.p === p);   // on a whole 16th (a 3-way split would land between)
           if (e) e.c = c; else ev.push({ p, d: 0, r: true, c });
         });
         plan.push({ si, ev: ev.sort((a, b) => a.p - b.p), plays: SONG.plays[view][mi] === "1" && ev.some(e => !e.r) });
@@ -2511,7 +2530,7 @@ function bassBarPlan(view = "bass") {
   return plan;
 }
 function bassTile(s, i, bars, view = "bass") {
-  const PER = 4, rows = [], gtr = isGtr(view), tun = gtr ? SONG.gtrTuning || TUNING : SONG.bassTuning || BASS_TUNING, out = [];
+  const PER = 4, rows = [], gtr = isGtr(view), tun = (SONG.tunings && SONG.tunings[view]) || (gtr ? SONG.gtrTuning || TUNING : SONG.bassTuning || BASS_TUNING), out = [];
   let run = 1, cur = "";
   bars.forEach((b, k) => {
     // every printed line names the chord it starts on, even if the change happened in an earlier (folded) bar
@@ -2547,6 +2566,7 @@ function bassTile(s, i, bars, view = "bass") {
 
 var render = function (view) {
   curView = view;
+  if (isGtr(view)) capo = capoFor(view);
   let m = 0; // running measure index (0-based)
   const s4 = spans(view, 4), s2 = spans(view, 2);
   const dplan = view === "drums" ? drumBarPlan() : null, bplan = inlineBars(view) ? bassBarPlan(view) : null;
@@ -2615,7 +2635,7 @@ var render = function (view) {
   chk.classList.toggle("ok", !cc.diffs.length);
   chk.innerHTML = (cc.diffs.length ? `⚠ ${cc.diffs.length} chord ${cc.diffs.length > 1 ? "differences" : "difference"}` : "✓ Chords match UG")
     + `<div class="pop"><p>Chords are checked against the top-rated Ultimate Guitar chart (${esc(cc.ug)}). The chart uses UG's chords. Marked with <span style="color:var(--hit);font-weight:800">?</span> on the bars.</p>`
-    + (cc.note ? `<p>${esc(cc.note)}</p>` : "") + cc.diffs.map(d => `<div class="d"><div class="wh">${esc(d.where)}</div><div>UG: ${nm(d.ug)}</div><div class="s">Songsterr: ${nm(d.ss)}</div></div>`).join("") + `</div>`;
+    + (cc.note ? `<p>${nm(cc.note)}</p>` : "") + cc.diffs.map(d => `<div class="d"><div class="wh">${nm(d.where)}</div><div>UG: ${nm(d.ug)}</div><div class="s">Songsterr: ${nm(d.ss)}</div></div>`).join("") + `</div>`;
   const h = SONG.header[view];
   document.getElementById("hdrExtra").innerHTML = (h.capo ? `<span class="capo">Capo <button type="button" id="capoDown" aria-label="Capo down">−</button><b>${capo || "off"}</b><button type="button" id="capoUp" aria-label="Capo up">+</button></span>` : "")
     + (h.tune ? `<span class="tune">${esc(h.tune)}</span>` : "") + (h.badge ? `<span class="tune">${esc(h.badge)}</span>` : "") + (view === "drums" ? (h.style ? `<span class="dstyle">${esc(h.style)}</span>` : "") + drumKey() : inlineBars(view) ? "" : `${esc(h.label)} ${figure(h)}`);
@@ -2635,7 +2655,7 @@ document.getElementById("views").addEventListener("click", e => {
 document.getElementById("hdrExtra").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   capo = Math.max(0, Math.min(9, capo + (b.id === "capoUp" ? 1 : -1)));
-  try { localStorage.setItem("roadmap-capo", String(capo)); } catch (err) {}
+  try { localStorage.setItem(CAPO_KEY(curView), String(capo)); } catch (err) {}
   render(curView);
 });
 let start = location.hash.slice(1);
@@ -2663,16 +2683,22 @@ let _rz; addEventListener("resize", () => { clearTimeout(_rz); _rz = setTimeout(
 (function tempoFlash() {
   const div = [...document.querySelectorAll(".facts > div")].find(d => /^\s*[\d.]+\s*bpm\s*$/.test(d.textContent));
   if (!div) return;
-  const bpm = parseFloat(div.textContent), per = Math.max(1, Math.round(BAR / BEAT)), ms = 60000 / bpm;
-  if (!(bpm >= 30 && bpm <= 300)) return;
+  const bpm0 = parseFloat(div.textContent), per = Math.max(1, Math.round(BAR / BEAT));
+  // SONG.tempos (optional) = [[75, "Intro"], [196, "March"], …] for songs that change tempo: each tap moves to the next
+  // tempo, and a tap after the last one stops. Otherwise the header bpm is the only tempo.
+  const list = (SONG.tempos && SONG.tempos.length ? SONG.tempos : [[bpm0]]).map(t => Array.isArray(t) ? { bpm: +t[0], label: t[1] || "" } : { bpm: +t, label: "" })
+    .filter(t => t.bpm >= 30 && t.bpm <= 300);
+  if (!list.length) return;
   const btn = document.createElement("button");
   btn.type = "button"; btn.className = "tempo"; btn.setAttribute("aria-pressed", "false");
-  btn.title = "Flash the tempo"; btn.setAttribute("aria-label", `Flash the tempo: ${bpm} beats per minute`);
-  btn.innerHTML = `<i class="dot"></i><b class="cnt">▶</b>${div.innerHTML}`;
+  btn.title = list.length > 1 ? "Flash the tempo (tap again for the next section's tempo)" : "Flash the tempo";
+  btn.setAttribute("aria-label", `Flash the tempo: ${list[0].bpm} beats per minute`);
+  const rest = div.innerHTML;
+  btn.innerHTML = `<i class="dot"></i><b class="cnt">▶</b><span class="tv">${rest}</span>`;
   div.replaceWith(btn);
   const strip = document.createElement("div"); strip.className = "tempo-strip"; document.body.appendChild(strip);
-  const cnt = btn.querySelector(".cnt");
-  let t0 = 0, raf = 0, shown = "";
+  const cnt = btn.querySelector(".cnt"), tv = btn.querySelector(".tv");
+  let t0 = 0, raf = 0, shown = "", idx = -1, ms = 60000 / list[0].bpm;
   const show = (on, one) => { const k = on + "" + one; if (k === shown) return; shown = k;
     btn.classList.toggle("on", on && !one); btn.classList.toggle("one", on && one); strip.classList.toggle("on", on); strip.classList.toggle("one", on && one); };
   const tick = now => {
@@ -2681,9 +2707,14 @@ let _rz; addEventListener("resize", () => { clearTimeout(_rz); _rz = setTimeout(
     raf = requestAnimationFrame(tick);
   };
   btn.addEventListener("click", () => {
-    const run = btn.getAttribute("aria-pressed") !== "true";
+    idx = idx + 1 < list.length ? idx + 1 : -1;
+    const run = idx >= 0;
     btn.setAttribute("aria-pressed", String(run)); cancelAnimationFrame(raf); show(false, false);
-    if (run) { t0 = performance.now(); raf = requestAnimationFrame(tick); } else cnt.textContent = "▶";
+    if (run) {
+      const t = list[idx]; ms = 60000 / t.bpm;
+      tv.innerHTML = list.length > 1 ? `${t.bpm} <span>bpm${t.label ? " · " + esc(t.label) : ""}</span>` : rest;
+      t0 = performance.now(); raf = requestAnimationFrame(tick);
+    } else { cnt.textContent = "▶"; tv.innerHTML = rest; }
   });
 })();
 
