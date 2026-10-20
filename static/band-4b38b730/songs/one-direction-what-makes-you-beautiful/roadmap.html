@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a><title>What Makes You Beautiful Roadmap</title>
+<html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a>
+<title>What Makes You Beautiful Roadmap</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,6 +90,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
 .bar .sp { display: flex; gap: calc(1 * var(--u)); justify-content: space-around; width: 100%; }
 .bar.long { font-size: calc(6 * var(--u)); }
 .bar.split .sp { font-size: .72em; }
+.bar.split.short .sp { font-size: .86em; }
 .bar.split .sp span + span { border-left: 1px dashed var(--faint); padding-left: calc(1 * var(--u)); }
 .bar.sim { color: var(--faint); font-weight: 600; }
 .bar.nc { color: var(--muted); font-size: calc(6.5 * var(--u)); }
@@ -1464,7 +1466,7 @@ const INK = "var(--ink)";
 const NS = "Noto Serif, Georgia, Times New Roman, serif", MF = "Noto Music, Bravura, Apple Symbols, serif";
 const G = (ch, x, y, size = 28, extra = "") => `<text x="${x}" y="${y}" font-family="${MF}" font-size="${size}" fill="var(--ink)"${extra}>${ch}</text>`;
 // Baseline offsets measured from Noto Music glyph bounds (rests are centered on the middle line at 500/1000 em).
-const CAL = { treble: 7, bass: 11.2, sharp: 3.4, whole: 7.3, half: 6.8, quarter: 14, eighth: 14, sixteenth: 14 };
+const CAL = { treble: 7, bass: 11.2, sharp: 3.4, flat: 1.6, natural: 3.4, whole: 7.3, half: 6.8, quarter: 14, eighth: 14, sixteenth: 14 };
 // Meter: bar length and beat-group length in 16ths. 4/4 = 16 / 4 (default); 6/8 = SONG.barLen 12, SONG.beatLen 6; 3/4 = 12 / 4.
 const BAR = SONG.barLen || 16, BEAT = SONG.beatLen || 4;
 const nbars = n => n + (n === 1 ? " bar" : " bars");
@@ -1477,9 +1479,11 @@ function score(spec) {
   };
   const DRUM = { HH: { st: 9, x: true }, CR: { st: 10, x: true }, RD: { st: 8, x: true }, SN: { st: 5 }, BD: { st: 1 },
     T1: { st: 8 }, T2: { st: 7 }, T3: { st: 7 }, T4: { st: 6 }, T5: { st: 3 }, T6: { st: 3 } }; // T1 = highest tom … T6 = floor tom
-  const ks = spec.key || 0;
-  const SHARPS = spec.clef === "bass" ? [6, 3, 7, 4, 1] : [8, 5, 9, 6, 3];
-  const HDR = spec.clef === "perc" ? 16 : spec.clef === "slash" ? 4 : 25 + ks * 8.5 + 6;
+  const ks = spec.key || 0, nks = Math.abs(ks);   // key: +N sharps, -N flats
+  const SHARPS = spec.clef === "bass" ? [6, 3, 7, 4, 1, 5, 2] : [8, 5, 9, 6, 3, 7, 4];
+  const FLATS = spec.clef === "bass" ? [2, 5, 1, 4, 0, 3, -1] : [4, 7, 3, 6, 2, 5, 1];
+  const keyAcc = {}; (ks > 0 ? "FCGDAEB" : "BEADGCF").slice(0, nks).split("").forEach(l => keyAcc[l] = ks > 0 ? "#" : "b");
+  const HDR = spec.clef === "perc" ? 16 : spec.clef === "slash" ? 4 : 25 + nks * 8.5 + 6;
   const nb = spec.bars ? spec.bars.length : spec.grids.length, W = HDR + nb * BW + 4;
   const X = (b, p) => HDR + b * BW + 11 + p * 12;
   const out = [], top = [], labels = [];
@@ -1511,7 +1515,8 @@ function score(spec) {
   if (spec.clef === "treble") out.push(G("𝄞", 1, yOf(4) + CAL.treble));
   if (spec.clef === "bass") out.push(G("𝄢", 1, yOf(4) + CAL.bass));
   if (spec.clef === "perc") out.push(`<rect x="4" y="${yOf(6)}" width="3" height="${S * 2}" fill="var(--ink)"/><rect x="10" y="${yOf(6)}" width="3" height="${S * 2}" fill="var(--ink)"/>`);
-  for (let i = 0; i < ks; i++) out.push(G("♯", 25 + i * 8.5, yOf(SHARPS[i]) + CAL.sharp, 26));
+  for (let i = 0; i < nks; i++) { const st = ks > 0 ? SHARPS[i] : FLATS[i]; out.push(ks > 0 ? G("♯", 25 + i * 8.5, yOf(st) + CAL.sharp, 26) : G("♭", 25 + i * 8.5, yOf(st) + CAL.flat, 26)); grow(yOf(st) - 11); grow(yOf(st) + 9); }
+  if (spec.clef === "treble") { grow(yOf(8) - 9); grow(yOf(0) + 9); }   // the clef reaches above and below the staff
   for (let b = 0; b <= nb; b++) { const x = HDR + b * BW; out.push(`<line x1="${x}" x2="${x}" y1="${yOf(8)}" y2="${yOf(0)}" stroke="var(--ink)" stroke-width="${b === nb ? 3 : 1.4}"/>`); }
   // Inline drum rows: { sim: n } = same as the previous bar (one-bar repeat sign, with a running count above);
   // { rest: true } = drums sit out this bar (whole rest).
@@ -1543,6 +1548,16 @@ function score(spec) {
   };
   voices.forEach(v => {
     const placed = [];
+    // Accidentals: a written sharp/flat/natural that differs from the key signature (or from an earlier one in the same
+    // bar, for that letter and octave) gets its sign; it lasts until the barline. Pitches are spelled literally ("Bb3").
+    let accBar = -1, accState = {};
+    const accOf = (pn, b) => {
+      if (b !== accBar) { accBar = b; accState = {}; }
+      const m = pn.match(/^([A-G])([#b]?)(-?\d+)/); if (!m) return "";
+      const k = m[1] + m[3], cur = k in accState ? accState[k] : (keyAcc[m[1]] || "");
+      if (m[2] === cur) return "";
+      accState[k] = m[2]; return m[2] === "#" ? "♯" : m[2] === "b" ? "♭" : "♮";
+    };
     v.bars.forEach((ev, b) => (ev || []).forEach(e => {
       const x = X(b, e.p), D = e.dn ?? e.d; // D = notated length (dn overrides d, e.g. triplets)
       if (e.c) labels.push({ x, c: e.c });
@@ -1550,7 +1565,7 @@ function score(spec) {
       if (e.r) { out.push(rest(x, e.d, 0)); return; }
       let heads;
       if (e.drum) heads = e.drum.map(h => ({ st: DRUM[h.k].st, x: DRUM[h.k].x, open: h.open }));
-      else if (e.n) heads = e.n.map(pn => ({ st: stepOf(pn) }));
+      else if (e.n) heads = e.n.map(pn => ({ st: stepOf(pn), acc: spec.clef === "slash" ? "" : accOf(pn, b) }));
       else heads = [e.x ? { st: 4, x: true } : { st: 4, slash: true }];   // slash x = muted strum
       const sts = heads.map(h => h.st);
       const dir = v.dir || (heads[0].slash || spec.clef === "slash" ? -1 : sts.reduce((a, c) => a + c, 0) / sts.length >= 4 ? 1 : -1); // 1 = stem down, -1 = stem up
@@ -1566,6 +1581,9 @@ function score(spec) {
         else out.push(`<ellipse cx="${x}" cy="${y}" rx="4.3" ry="3" transform="rotate(-20 ${x} ${y})" fill="${D >= 8 ? "none" : "var(--ink)"}" stroke="var(--ink)" stroke-width="${D >= 8 ? 1.5 : 0}"/>`);
         if ([3, 6, 12].includes(D)) out.push(`<circle cx="${x + 8}" cy="${y - (h.st % 2 === 0 ? S / 2 : 0)}" r="1.6" fill="var(--ink)"/>`);
       } });
+      // accidental signs left of the heads; in a chord they step further left so they don't collide
+      heads.filter(h => h.acc).sort((a, b2) => b2.st - a.st).forEach((h, i) =>
+        out.push(G(h.acc, x - 14 - (i % 2) * 8, yOf(h.st) + (h.acc === "♭" ? CAL.flat : h.acc === "♮" ? CAL.natural : CAL.sharp), 24)));
       if (D < 16) {
         const sx = dir < 0 ? x + 4 : x - 4;
         const yEdge = dir < 0 ? Math.min(...sts.map(yOf)) : Math.max(...sts.map(yOf));
@@ -1633,12 +1651,19 @@ const TUNING = [64, 59, 55, 50, 45, 40], BASS_TUNING = [43, 38, 33, 28];
 const SHAPE_NAMES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
 const ROOT = { C: 0, "C#": 1, Db: 1, D: 2, "D#": 3, Eb: 3, E: 4, F: 5, "F#": 6, Gb: 6, G: 7, "G#": 8, Ab: 8, A: 9, "A#": 10, Bb: 10, B: 11 };
 // Concert chord name -> the shape you play with this capo
+// Shape names are spelled the way guitarists read them: G#m (not Abm), and a slash bass follows its chord's key
+// (Bm/G#, E/G#, but Cm/Bb, F/Eb).
+const SHARP_SPELL = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 function shapeFor(chord, capo) {
   if (!capo) return chord;
-  return chord.split("/").map(part => {
-    const m = part.match(/^([A-G][#b]?)(.*)$/); if (!m) return part;
-    return SHAPE_NAMES[(ROOT[m[1]] - capo + 120) % 12] + m[2];
-  }).join("/");
+  const [main, ...bass] = chord.split("/");
+  const m = main.match(/^([A-G][#b]?)(.*)$/); if (!m) return chord;
+  const r = (ROOT[m[1]] - capo + 120) % 12, minor = /^m(?!aj)/.test(m[2]);
+  let root = SHAPE_NAMES[r];
+  if (minor && root === "Ab") root = "G#";
+  const sp = (minor ? ["E", "B", "F#", "C#", "G#", "A", "D"] : ["G", "D", "A", "E", "B", "F#", "C#"]).includes(root);   // sharp-side chord
+  return root + m[2] + bass.map(b => { const n = b.match(/^([A-G][#b]?)(.*)$/); if (!n) return "/" + b;
+    const k = (ROOT[n[1]] - capo + 120) % 12; return "/" + (sp ? SHARP_SPELL[k] : SHAPE_NAMES[k]) + n[2]; }).join("");
 }
 // Re-finger a note for the capo: keep the same string if possible, otherwise the nearest string that reaches it.
 function placeNote([s, f], capo, tun = TUNING) {
@@ -1673,8 +1698,12 @@ function tab(bars, capo, tun = TUNING) {
     if (e.r) return;
     e.n.map(n => placeNote(n, capo, tun)).forEach(([s, f], k) => {
       if (e.x) s = e.n[k][0];
-      const t = e.x ? "x" : e.tie ? `(${f})` : String(f), w = t.length * 7 + 3;   // tie = held over from the previous note: shown in brackets, not re-struck
-      out.push(`<rect x="${x - w / 2}" y="${yl(s) - 6}" width="${w}" height="12" fill="var(--tile)"/><text x="${x}" y="${yl(s) + 4.5}" text-anchor="middle" font-family="${NS}" font-weight="700" font-size="13" fill="var(--ink)">${t}</text>`);
+      const tie = e.tie || (e.tieN && e.tieN.includes(k));   // tieN: indexes of the notes held over while the others are struck
+      // tie = held over from the previous note: shown in brackets, not re-struck. The brackets are small and tight so a
+      // held two-digit fret doesn't run into its neighbours in 16th runs.
+      const d = e.x ? "x" : String(f), w = d.length * 7.2 + (tie && !e.x ? 7 : 0) + 3;
+      const t = tie && !e.x ? `<tspan font-size="9.5" font-weight="600">(</tspan>${d}<tspan font-size="9.5" font-weight="600">)</tspan>` : d;
+      out.push(`<rect x="${x - w / 2}" y="${yl(s) - 6}" width="${w}" height="12" fill="var(--tile)"/><text x="${x}" y="${yl(s) + 4.5}" text-anchor="middle" font-family="${NS}" font-weight="700" font-size="13" letter-spacing="${tie ? -0.6 : 0}" fill="var(--ink)">${t}</text>`);
     });
     if (!e.ns) notes.push({ x, b, e });
   }));
@@ -1754,15 +1783,21 @@ function bar(tok, view, playing, mk = { b: [], crash: false }) {
   const walk = tok.endsWith("↑") && view === "band", t = tok.replace("↑", "");
   const parts = t.split("|");
   if (parts.length > 1) cls.push("split");
-  if (t.length >= 5) cls.push("long");
-  const shown = isGtr(view) ? parts.map(p => shapeFor(p, capo)) : parts;
+  const shown = isGtr(view) ? parts.map(p => shapeFor(p, capo)) : parts;   // sizes go by what's displayed (capo shapes)
+  // long names shrink; a split box is already smaller, so it only shrinks further when one of its chords is long ("Eb|Bb" stays)
+  if (parts.length > 1 ? Math.max(...shown.map(p => p.length)) >= 5 : shown[0].length >= 5) cls.push("long");
+  if (parts.length === 2 && shown.every(p => p.length <= 3)) cls.push("short");   // two short chords: room to be bigger
   return `<div class="bar ${cls.join(" ")}"><span class="sp">${shown.map(p => `<span>${esc(p)}</span>`).join("")}</span>${walk ? '<span class="w">↑</span>' : ""}${q}${deco}</div>`;
 }
 
 // One figure: staff notation, guitar tab (capo-aware, labels shown as shapes) or bass tab.
 const shapeLabel = c => c.split(" · ").map(x => shapeFor(x, capo)).join(" · ");
 function figure(x) {
-  if (x.nota) return score(SONG.notation[x.nota]);
+  if (x.nota) {   // in a guitar view, chord names over slash figures follow the capo (shapes), like the boxes
+    const n = SONG.notation[x.nota];
+    if (n && n.clef === "slash" && isGtr(curView) && capo && n.bars) return score({ ...n, bars: n.bars.map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e)) });
+    return score(n);
+  }
   if (x.tab) { const t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e));
     return tab(t.bars ? { bw: t.bw, bars } : bars, capo, SONG.gtrTuning || TUNING); }   // gtrTuning: e.g. drop D [64,59,55,50,45,38]
   if (x.btab) return tab(SONG.bassTabs[x.btab], 0, SONG.bassTuning || BASS_TUNING);
@@ -2202,7 +2237,7 @@ function bassTile(s, i, bars, view = "bass") {
   let run = 1, cur = "";
   bars.forEach((b, k) => {
     // every printed line names the chord it starts on, even if the change happened in an earlier (folded) bar
-    const lab = b.ev.find(e => e.c); if (lab) cur = lab.c;
+    const labs = b.ev.filter(e => e.c); if (labs.length) cur = labs.at(-1).c;   // a split bar (C|Dm) leaves its LAST chord in force
     else if (k % PER === 0 && cur) b = { ...b, ev: [{ p: 0, d: 0, r: true, c: cur }, ...b.ev] };
     const same = k > 0 && k % PER !== 0 && b.plays && !b.ev.some(e => e.c) && JSON.stringify(b.ev) === JSON.stringify(bars[k - 1].ev);
     run = same ? run + 1 : 1; out.push(same ? { sim: run } : b.ev);
