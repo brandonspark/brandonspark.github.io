@@ -2452,11 +2452,12 @@ function tab(bars, capo, tun = TUNING) {
     if (e.r) return;
     e.n.map(n => placeNote(n, capo, tun)).forEach(([s, f], k) => {
       if (e.x) s = e.n[k][0];
+      const tie = e.tie || (e.tieN && e.tieN.includes(k));   // tieN: indexes of the notes held over while the others are struck
       // tie = held over from the previous note: shown in brackets, not re-struck. The brackets are small and tight so a
       // held two-digit fret doesn't run into its neighbours in 16th runs.
-      const d = e.x ? "x" : String(f), w = d.length * 7.2 + (e.tie && !e.x ? 7 : 0) + 3;
-      const t = e.tie && !e.x ? `<tspan font-size="9.5" font-weight="600">(</tspan>${d}<tspan font-size="9.5" font-weight="600">)</tspan>` : d;
-      out.push(`<rect x="${x - w / 2}" y="${yl(s) - 6}" width="${w}" height="12" fill="var(--tile)"/><text x="${x}" y="${yl(s) + 4.5}" text-anchor="middle" font-family="${NS}" font-weight="700" font-size="13" letter-spacing="${e.tie ? -0.6 : 0}" fill="var(--ink)">${t}</text>`);
+      const d = e.x ? "x" : String(f), w = d.length * 7.2 + (tie && !e.x ? 7 : 0) + 3;
+      const t = tie && !e.x ? `<tspan font-size="9.5" font-weight="600">(</tspan>${d}<tspan font-size="9.5" font-weight="600">)</tspan>` : d;
+      out.push(`<rect x="${x - w / 2}" y="${yl(s) - 6}" width="${w}" height="12" fill="var(--tile)"/><text x="${x}" y="${yl(s) + 4.5}" text-anchor="middle" font-family="${NS}" font-weight="700" font-size="13" letter-spacing="${tie ? -0.6 : 0}" fill="var(--ink)">${t}</text>`);
     });
     if (!e.ns) notes.push({ x, b, e });
   }));
