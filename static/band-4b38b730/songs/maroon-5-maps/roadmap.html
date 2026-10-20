@@ -125,6 +125,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
   font: 800 calc(6.5 * var(--u))/1 var(--display); }
 .bar .bd { position: absolute; top: calc(.8 * var(--u)); left: calc(.8 * var(--u)); font-size: calc(4.6 * var(--u)); }
 .bar .bd + .bd { left: calc(7.5 * var(--u)); }
+.bar:has(> .bd) .sp { padding-top: calc(4.2 * var(--u)); }   /* the disc sits top-left; the chord name moves below it */
 .bar.mk { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--fig); }
 .bar.mk.mkr { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--rh); }
 .bd.rh { background: var(--rh); }
@@ -2300,7 +2301,8 @@ function tab(bars, capo, tun = TUNING) {
   const wide = e => e && !e.r && ((e.n || []).some(([, f]) => f >= 10) || e.tie || e.tieN);
   const dense = !bw && bars.some(ev => { const s = ev.filter(e => !e.r).sort((a, b) => a.p - b.p);
     return s.some((e, i) => e.d <= 0.5 || (i && e.p - s[i - 1].p <= 1.01 && (wide(e) || wide(s[i - 1])))); });
-  const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = dense ? 18 : 12, BW = bw || BAR * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
+  const has32 = !bw && bars.some(ev => ev.some(e => !e.r && e.d <= 0.5));   // 32nd runs need even more room per 16th
+  const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = has32 ? 26 : dense ? 18 : 12, BW = bw || BAR * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
   const X = (b, p) => HDR + b * BW + (bw ? 10 : 11) + p * SP, yl = s => s * LS, BOT = (NSTR - 1) * LS;
   const out = [], notes = [];
   for (let s = 0; s < NSTR; s++) out.push(`<line x1="0" x2="${W}" y1="${yl(s)}" y2="${yl(s)}" stroke="var(--muted)" stroke-width="1"/>`);
@@ -2411,7 +2413,7 @@ function bar(tok, view, playing, mk = { b: [], crash: false }) {
   // long names shrink; a split box is already smaller, so it only shrinks further when one of its chords is long ("Eb|Bb" stays)
   if (parts.length > 1 ? Math.max(...shown.map(p => p.length)) >= 5 : shown[0].length >= 5) cls.push("long");
   if (parts.length === 2 && shown.every(p => p.length <= 3)) cls.push("short");   // two short chords: room to be bigger
-  return `<div class="bar ${cls.join(" ")}"><span class="sp">${shown.map(p => `<span>${esc(p)}</span>`).join("")}</span>${walk ? '<span class="w">↑</span>' : ""}${q}${deco}</div>`;
+  return `<div class="bar ${cls.join(" ")}"><span class="sp">${shown.map(p => `<span>${p === "NC" ? "N.C." : esc(p)}</span>`).join("")}</span>${walk ? '<span class="w">↑</span>' : ""}${q}${deco}</div>`;
 }
 
 // One figure: staff notation, guitar tab (capo-aware, labels shown as shapes) or bass tab.
@@ -2422,8 +2424,8 @@ function figure(x) {
     if (n && n.clef === "slash" && isGtr(curView) && capo && n.bars) return score({ ...n, bars: n.bars.map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e)) });
     return score(n);
   }
-  if (x.tab) { const t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e));
-    return tab(t.bars ? { bw: t.bw, bars } : bars, capo, (SONG.tunings && SONG.tunings[curView]) || SONG.gtrTuning || TUNING); }   // gtrTuning: e.g. drop D [64,59,55,50,45,38]; tunings: { gtr2: [...] } per view
+  if (x.tab) { const g = isGtr(curView), t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c && g ? { ...e, c: shapeLabel(e.c) } : e));
+    return tab(t.bars ? { bw: t.bw, bars } : bars, g ? capo : 0, (SONG.tunings && SONG.tunings[curView]) || SONG.gtrTuning || TUNING); }   // other views (Band) show the no-capo fingering   // gtrTuning: e.g. drop D [64,59,55,50,45,38]; tunings: { gtr2: [...] } per view
   if (x.btab) return tab(SONG.bassTabs[x.btab], 0, SONG.bassTuning || BASS_TUNING);
   return "";
 }
@@ -2801,7 +2803,7 @@ function drumTile(s, i, bars) {
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
     <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
-    <div class="cue">${esc(s.cue)}</div>
+    <div class="cue">${esc(s.cue || "")}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
     <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
@@ -2823,7 +2825,7 @@ function drumTileLegacy(s, i, bars) {
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
     <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
-    <div class="cue">${esc(s.cue)}</div>
+    <div class="cue">${esc(s.cue || "")}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
     <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
@@ -2886,7 +2888,7 @@ function bassTile(s, i, bars, view = "bass") {
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
     <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
-    <div class="cue">${esc(s.cue)}</div>
+    <div class="cue">${esc(s.cue || "")}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
     <div class="ft"><span class="tag">${esc(s.tag[view] || (anyPlay ? "" : (gtr ? "Sit out · " : "Tacet · ") + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
@@ -2913,6 +2915,8 @@ var render = function (view) {
       if (x.at) x.at.forEach(k => { const m = (marks[k] ??= { b: [], crash: false, rh: new Set() }); m.rh ??= new Set(); m.b.push(x._b); if (x._rh) m.rh.add(x._b); });
     });
     let total = 0, anyPlay = false, box = 0;
+    // a short row (2 bars) keeps the tile's usual box size instead of stretching: it uses the most common row length
+    const lens = s.blocks.flatMap(b => b.rows.map(r => r.split(" ").length)), rowMax = [...new Set(lens)].sort((a, b) => lens.filter(x => x === b).length - lens.filter(x => x === a).length || b - a)[0];
     const blocks = s.blocks.map(b0 => {
       // Auto-collapse: identical rows become one row with ×N (Brandon: save space), unless this view's player does
       // something different on one of the passes (different play/tacet, marker, crash or box override) — then stay unrolled.
@@ -2931,7 +2935,7 @@ var render = function (view) {
       const toks = b.rows.map(r => r.split(" ")), n = toks.flat().length, rep = b.rep || 1, start = m;
       m += n * rep; total += n * rep;
       let k = 0;
-      const rows = toks.map(t => `<div class="row" style="--n:${b.label ? 4 : t.length}">${t.map((tok, j) => {
+      const rows = toks.map(t => `<div class="row" style="--n:${b.label ? 4 : Math.max(t.length, rowMax)}">${t.map((tok, j) => {
         let on = false;
         for (let r = 0; r < rep; r++) on ||= view === "band" || SONG.plays[view][start + r * n + k] === "1";
         anyPlay ||= on; k++; box++;
@@ -2948,7 +2952,7 @@ var render = function (view) {
     const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
     return `<div class="tile t-${s.type}${view !== "band" && !anyPlay ? " out" : ""}" style="--s4:${s4[i]};--s2:${s2[i]}">
       <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(total)}</span></div>
-      <div class="cue">${esc(s.cue)}</div>
+      <div class="cue">${esc(s.cue || "")}</div>
       <div class="chart">${blocks.join("")}${extraHTML.length ? `<div class="figs">${extraHTML.join("")}</div>` : ""}</div>
       <div class="ft"><span class="tag">${esc(tag)}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
     </div>`;

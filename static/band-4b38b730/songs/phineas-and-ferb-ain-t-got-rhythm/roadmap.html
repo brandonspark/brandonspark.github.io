@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a><title>Payphone Roadmap</title>
+<html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a><title>Ain't Got Rhythm Roadmap</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -125,6 +125,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
   font: 800 calc(6.5 * var(--u))/1 var(--display); }
 .bar .bd { position: absolute; top: calc(.8 * var(--u)); left: calc(.8 * var(--u)); font-size: calc(4.6 * var(--u)); }
 .bar .bd + .bd { left: calc(7.5 * var(--u)); }
+.bar:has(> .bd) .sp { padding-top: calc(4.2 * var(--u)); }   /* the disc sits top-left; the chord name moves below it */
 .bar.mk { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--fig); }
 .bar.mk.mkr { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--rh); }
 .bd.rh { background: var(--rh); }
@@ -148,8 +149,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
 
 <div class="stage">
   <div class="hdr">
-    <h1>Payphone</h1>
-    <div class="facts"><div><span>Key</span> <span id="keyName" style="color:var(--ink);font-weight:700">E</span></div><div>110 <span>bpm</span></div><div>106 <span>bars</span></div><div class="chk" id="chk" tabindex="0"></div></div>
+    <h1>Ain't Got Rhythm</h1>
+    <div class="facts"><div><span>Key</span> <span id="keyName" style="color:var(--ink);font-weight:700">E</span></div><div>96 <span>bpm</span></div><div>52 <span>bars</span></div><div class="chk" id="chk" tabindex="0"></div></div>
     <div class="extra" id="hdrExtra"></div>
     <div class="views" id="views" role="group" aria-label="Instrument"></div>
   </div>
@@ -161,8 +162,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
     <h2 id="notesTitle">Rehearsal notes</h2>
     <ul id="notesList"></ul>
   </section>
-  <p>Bar-by-bar parts come from the full-band <a href="https://www.songsterr.com/a/wsa/song-s91201" target="_blank" rel="noopener">Songsterr transcription “Maroon 5 – Payphone”</a> (14 tracks, 110 measures at 110 bpm, no repeats; revision by Nyke). Measure 1 is the vocal pickup and measures 107–110 are empty, so the chart has 106 bars. Gtr 1 is the lead guitar's arpeggio riff (in the rap, the “Bridge Guitar” track), Gtr 2 the rhythm guitar's single-note 8ths, Keys the piano (choruses) and the rap synth, Bass the bass track, and Drums the kit track bar for bar (the second drum track, the acoustic guitar placeholder, the strings and the FX layers are left off).
-    Chord names come from the top-rated <a href="https://tabs.ultimate-guitar.com/tab/maroon-5/payphone-chords-1149303" target="_blank" rel="noopener">Ultimate Guitar chords ver. 4</a> (4.88★, 848 votes, capo 4), checked against the most-voted <a href="https://tabs.ultimate-guitar.com/tab/maroon-5/payphone-chords-1148461" target="_blank" rel="noopener">ver. 3</a> (4.85★, 1,114 votes, capo 4), which has the same chords with add9 / m7 / sus4 colours.</p>
+  <p>Bar-by-bar parts come from the <a href="https://www.songsterr.com/a/wsa/song-s3512303" target="_blank" rel="noopener">Songsterr transcription “Ain't Got Rhythm”</a> (songId 3512303, revision 4604007; listed under Bowling for Soup, but made from the official Phineas &amp; Sherman sing-along audio; <b>AI-generated</b>, not checked by a person: 52 bars, no repeats, bars 5 and 36 in 2/4, 95 bpm). Gtr = its rhythm guitar, Bass = its bass, Drums = every bar of its drum track; the play/tacet shading comes from each track. The tempo, 96 bpm, was measured from the official audio, where the band's last hit lands at 2:05, on bar 52.
+    Chord names come from the top-rated <a href="https://tabs.ultimate-guitar.com/tab/misc-cartoons/phineas-and-ferb-aint-got-rhythm-chords-1037528" target="_blank" rel="noopener">Ultimate Guitar chords ver. 1</a> (4.88★, 104 votes, no capo), the only UG guitar chart of this song. Its “He's got rhythm” outro isn't on the recording and isn't charted.</p>
 </div>
 
 <script src="../../vendor/vexflow-bravura-4.2.5.js"></script>
@@ -170,27 +171,15 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); }
 /* ============ SONG MODEL (single source of truth) ============ */
 const SONG = {
  "key": "E",
- "capo": 4,
- "guitars": [
-  "gtr1",
-  "gtr2"
- ],
+ "capo": 0,
  "views": [
   [
    "band",
    "Band"
   ],
   [
-   "keys",
-   "Keys"
-  ],
-  [
-   "gtr1",
-   "Gtr 1"
-  ],
-  [
-   "gtr2",
-   "Gtr 2"
+   "guitar",
+   "Gtr"
   ],
   [
    "bass",
@@ -202,14 +191,12 @@ const SONG = {
   ]
  ],
  "plays": {
-  "keys": "0000000000000000000000000111111111111111100000000000000001111111111111111111111111111111111111111111111110",
-  "gtr1": "0111111111111111111111111111111111111111111111111111111111111111111111111000011111111111111111111111111110",
-  "gtr2": "0000011100000000011111111111111111111111100000000111111111111111111111111000000000000000011111111111111110",
-  "bass": "0000011110000111111111111111111111111111111111111111111111111111111111111111111111111110111111111111111110",
-  "drums": "0000000001111111111111111111111111111111111111111111111111111111111111111111111111111110111111111111111110"
+  "guitar": "0000000000000011111111111111111111111111111111111111",
+  "bass": "0000001111111111111111111111111111111111111111111111",
+  "drums": "1111111111111111111111111111111111111111111111111111"
  },
  "notation": {
-  "EIGHTHS": {
+  "GR1": {
    "clef": "slash",
    "bars": [
     [
@@ -248,14 +235,18 @@ const SONG = {
     ]
    ]
   },
-  "STOP_F": {
+  "GR2": {
    "clef": "slash",
    "bars": [
     [
      {
       "p": 0,
-      "d": 8,
-      "c": "F#"
+      "d": 4
+     },
+     {
+      "p": 4,
+      "d": 4,
+      "r": true
      },
      {
       "p": 8,
@@ -265,14 +256,13 @@ const SONG = {
     ]
    ]
   },
-  "STOP_PC": {
+  "GR3": {
    "clef": "slash",
    "bars": [
     [
      {
       "p": 0,
-      "d": 2,
-      "c": "F#"
+      "d": 2
      },
      {
       "p": 2,
@@ -280,70 +270,511 @@ const SONG = {
      },
      {
       "p": 4,
-      "d": 2
-     },
-     {
-      "p": 6,
-      "d": 2
-     },
-     {
-      "p": 8,
-      "d": 8,
-      "r": true
-     }
-    ]
-   ]
-  },
-  "RAP_RHY": {
-   "clef": "slash",
-   "bars": [
-    [
-     {
-      "p": 0,
       "d": 3
      },
      {
-      "p": 3,
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1
+     },
+     {
+      "p": 9,
+      "d": 1
+     },
+     {
+      "p": 10,
       "d": 2
      },
      {
-      "p": 5,
-      "d": 1,
-      "r": true
-     },
-     {
-      "p": 6,
-      "d": 8,
-      "tie": true
+      "p": 12,
+      "d": 2
      },
      {
       "p": 14,
-      "d": 2
+      "d": 1
+     },
+     {
+      "p": 15,
+      "d": 1
      }
     ]
    ]
   },
-  "RAP_STOP": {
+  "GR4": {
    "clef": "slash",
    "bars": [
     [
      {
       "p": 0,
-      "d": 3,
-      "c": "F#"
+      "d": 4,
+      "r": true
      },
      {
-      "p": 3,
-      "d": 2
+      "p": 4,
+      "d": 1
      },
      {
       "p": 5,
+      "d": 1
+     },
+     {
+      "p": 6,
       "d": 1,
       "r": true
      },
      {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "r": true
+     },
+     {
+      "p": 9,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 10,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 11,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 12,
+      "d": 1
+     },
+     {
+      "p": 13,
+      "d": 1
+     },
+     {
+      "p": 14,
+      "d": 1
+     },
+     {
+      "p": 15,
+      "d": 1
+     }
+    ]
+   ]
+  },
+  "GR5": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 1
+     },
+     {
+      "p": 5,
+      "d": 1
+     },
+     {
       "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 9,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 10,
       "d": 2
+     },
+     {
+      "p": 12,
+      "d": 4
+     }
+    ]
+   ]
+  },
+  "GR6": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 1
+     },
+     {
+      "p": 5,
+      "d": 1
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 9,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 10,
+      "d": 2
+     },
+     {
+      "p": 12,
+      "d": 2
+     },
+     {
+      "p": 14,
+      "d": 2
+     }
+    ]
+   ]
+  },
+  "GR9": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 1,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 2,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 3,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 4,
+      "d": 1
+     },
+     {
+      "p": 5,
+      "d": 2
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 9,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 10,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 11,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 12,
+      "d": 4
+     }
+    ]
+   ]
+  },
+  "GR10": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 1,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 2,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 3,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 4,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 5,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 6,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 9,
+      "d": 1
+     },
+     {
+      "p": 10,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 11,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 12,
+      "d": 4
+     }
+    ]
+   ]
+  },
+  "GR11": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 1,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 2,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 3,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 4,
+      "d": 1
+     },
+     {
+      "p": 5,
+      "d": 2
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1
+     },
+     {
+      "p": 9,
+      "d": 2
+     },
+     {
+      "p": 11,
+      "d": 1
+     },
+     {
+      "p": 12,
+      "d": 1
+     },
+     {
+      "p": 13,
+      "d": 1
+     },
+     {
+      "p": 14,
+      "d": 1
+     },
+     {
+      "p": 15,
+      "d": 1
+     }
+    ]
+   ]
+  },
+  "GR12": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 1,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 2,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 3,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 4,
+      "d": 1
+     },
+     {
+      "p": 5,
+      "d": 1
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 9,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 10,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 11,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 12,
+      "d": 1
+     },
+     {
+      "p": 13,
+      "d": 1
+     },
+     {
+      "p": 14,
+      "d": 1
+     },
+     {
+      "p": 15,
+      "d": 1
+     }
+    ]
+   ]
+  },
+  "HIT24": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 2
+     },
+     {
+      "p": 2,
+      "d": 2,
+      "r": true
+     }
+    ]
+   ]
+  },
+  "HIT8": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 2
+     },
+     {
+      "p": 2,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 4,
+      "r": true
      },
      {
       "p": 8,
@@ -353,381 +784,74 @@ const SONG = {
     ]
    ]
   },
-  "KICK_BUILD": {
-   "clef": "perc",
-   "grids": [
-    {
-     "BD": "..........xxxxxx"
-    }
-   ]
-  },
-  "SN_ROLL": {
-   "clef": "perc",
-   "grids": [
-    {
-     "SN": "xxxxxxxxxxxxxxxx"
-    }
-   ]
-  },
-  "K_RIFF": {
-   "clef": "treble",
-   "key": 4,
+  "RIFF": {
+   "clef": "slash",
    "bars": [
     [
      {
       "p": 0,
-      "d": 2,
-      "n": [
-       "E3"
-      ],
-      "c": "E"
+      "d": 2
      },
      {
       "p": 2,
-      "d": 2,
-      "n": [
-       "B3",
-       "B4"
-      ]
+      "d": 2
      },
      {
       "p": 4,
-      "d": 2,
-      "n": [
-       "E4",
-       "E5"
-      ]
-     },
-     {
-      "p": 6,
-      "d": 4,
-      "n": [
-       "B4",
-       "B5"
-      ]
-     },
-     {
-      "p": 10,
-      "d": 4,
-      "n": [
-       "F#4",
-       "F#5"
-      ]
-     },
-     {
-      "p": 14,
       "d": 2,
       "r": true
-     }
-    ],
-    [
-     {
-      "p": 0,
-      "d": 2,
-      "n": [
-       "B3"
-      ],
-      "c": "B"
-     },
-     {
-      "p": 2,
-      "d": 2,
-      "n": [
-       "F#3",
-       "F#4"
-      ]
-     },
-     {
-      "p": 4,
-      "d": 2,
-      "n": [
-       "B3",
-       "B4"
-      ]
      },
      {
       "p": 6,
-      "d": 4,
-      "n": [
-       "B4",
-       "B5"
-      ]
-     },
-     {
-      "p": 10,
-      "d": 4,
-      "n": [
-       "F#4",
-       "F#5"
-      ]
-     },
-     {
-      "p": 14,
-      "d": 2,
+      "d": 1,
       "r": true
-     }
-    ],
-    [
-     {
-      "p": 0,
-      "d": 2,
-      "n": [
-       "G#3"
-      ],
-      "c": "G#m"
      },
      {
-      "p": 2,
-      "d": 2,
-      "n": [
-       "B3",
-       "B4"
-      ]
-     },
-     {
-      "p": 4,
-      "d": 2,
-      "n": [
-       "D#4",
-       "D#5"
-      ]
-     },
-     {
-      "p": 6,
-      "d": 4,
-      "n": [
-       "B4",
-       "B5"
-      ]
-     },
-     {
-      "p": 10,
-      "d": 4,
-      "n": [
-       "F#4",
-       "F#5"
-      ]
-     },
-     {
-      "p": 14,
-      "d": 2,
-      "r": true
-     }
-    ],
-    [
-     {
-      "p": 0,
-      "d": 2,
-      "n": [
-       "F#3"
-      ],
-      "c": "F#"
-     },
-     {
-      "p": 2,
-      "d": 2,
-      "n": [
-       "C#4",
-       "C#5"
-      ]
-     },
-     {
-      "p": 4,
-      "d": 2,
-      "n": [
-       "F#4",
-       "F#5"
-      ]
-     },
-     {
-      "p": 6,
-      "d": 4,
-      "n": [
-       "B4",
-       "B5"
-      ]
-     },
-     {
-      "p": 10,
-      "d": 4,
-      "n": [
-       "A#4",
-       "A#5"
-      ]
-     },
-     {
-      "p": 14,
-      "d": 2,
-      "n": [
-       "B4",
-       "B5"
-      ]
-     }
-    ]
-   ]
-  },
-  "K_SYN": {
-   "clef": "treble",
-   "key": 4,
-   "bars": [
-    [
-     {
-      "p": 0,
-      "d": 2,
-      "n": [
-       "B3"
-      ]
-     },
-     {
-      "p": 2,
-      "d": 2,
-      "n": [
-       "F#4"
-      ]
-     },
-     {
-      "p": 4,
-      "d": 2,
-      "n": [
-       "F#4"
-      ]
-     },
-     {
-      "p": 6,
-      "d": 2,
-      "n": [
-       "B4"
-      ]
+      "p": 7,
+      "d": 1
      },
      {
       "p": 8,
-      "d": 2,
-      "n": [
-       "B4"
-      ]
+      "d": 2
      },
      {
       "p": 10,
-      "d": 2,
-      "n": [
-       "F#4"
-      ]
+      "d": 2
      },
      {
       "p": 12,
       "d": 2,
-      "n": [
-       "F#4"
-      ]
+      "r": true
      },
      {
       "p": 14,
-      "d": 2,
-      "n": [
-       "F#4"
-      ]
+      "d": 2
      }
     ]
    ]
   },
-  "K_SYN_F": {
-   "clef": "treble",
-   "key": 4,
+  "LAST": {
+   "clef": "slash",
    "bars": [
     [
      {
       "p": 0,
-      "d": 2,
-      "n": [
-       "B3"
-      ],
-      "c": "F#"
+      "d": 1,
+      "c": "G→E"
+     },
+     {
+      "p": 1,
+      "d": 1
      },
      {
       "p": 2,
       "d": 2,
-      "n": [
-       "F#4"
-      ]
+      "r": true
      },
      {
       "p": 4,
-      "d": 2,
-      "n": [
-       "F#4"
-      ]
-     },
-     {
-      "p": 6,
-      "d": 2,
-      "n": [
-       "B4"
-      ]
-     },
-     {
-      "p": 8,
-      "d": 2,
-      "n": [
-       "B4"
-      ]
-     },
-     {
-      "p": 10,
-      "d": 2,
-      "n": [
-       "A#4"
-      ]
-     },
-     {
-      "p": 12,
-      "d": 2,
-      "n": [
-       "A#4"
-      ]
-     },
-     {
-      "p": 14,
-      "d": 2,
-      "n": [
-       "B4"
-      ]
-     }
-    ]
-   ]
-  },
-  "K_SYN_STOP": {
-   "clef": "treble",
-   "key": 4,
-   "bars": [
-    [
-     {
-      "p": 0,
-      "d": 2,
-      "n": [
-       "B3"
-      ],
-      "c": "F#"
-     },
-     {
-      "p": 2,
-      "d": 2,
-      "n": [
-       "F#4"
-      ]
-     },
-     {
-      "p": 4,
-      "d": 2,
-      "n": [
-       "F#4"
-      ]
-     },
-     {
-      "p": 6,
-      "d": 2,
-      "n": [
-       "B4"
-      ]
+      "d": 4,
+      "r": true
      },
      {
       "p": 8,
@@ -738,20 +862,26 @@ const SONG = {
    ]
   }
  },
-  drumBars: [[],[],[],[],[],[],[],[],[],[{"p":0.0,"n":"SN.A BD","dyn":"f"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"}],[{"p":0.0,"n":"CR SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"CR SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":10.0,"n":"BD"},{"p":11.0,"n":"BD"},{"p":12.0,"n":"BD"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"},{"p":15.0,"n":"SN.g"}],[{"p":0.0,"n":"SN.A BD"},{"p":2.0,"n":"SN.g"},{"p":4.0,"n":"SN.A BD"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"SN.g BD"},{"p":9.0,"n":"SN.g"},{"p":12.0,"n":"SN.A BD"},{"p":14.0,"n":"SN.g"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"}],[{"p":0.0,"n":"CR SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"CR SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":2.0,"n":"CL"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":7.0,"n":"CL"},{"p":9.0,"n":"BD"},{"p":10.0,"n":"CL"},{"p":12.0,"n":"CL SN"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":2.0,"n":"CL"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":7.0,"n":"CL"},{"p":9.0,"n":"BD"},{"p":10.0,"n":"CL"},{"p":12.0,"n":"CL SN"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[{"p":0.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CL"},{"p":6.0,"n":"BD"},{"p":12.0,"n":"CL"}],[],[{"p":0.0,"n":"SN"},{"p":1.0,"n":"SN"},{"p":2.0,"n":"SN"},{"p":3.0,"n":"SN"},{"p":4.0,"n":"SN"},{"p":5.0,"n":"SN"},{"p":6.0,"n":"SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"SN"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"SN"},{"p":13.0,"n":"SN"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"CR SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"CR SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"}],[{"p":0.0,"n":"SN BD"},{"p":4.0,"n":"SN BD"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"SN BD"},{"p":9.0,"n":"SN"},{"p":12.0,"n":"SN CL BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[]],
+  meters: {"4": "2/4", "35": "2/4"},
+  drumBars: [[{"p":0.0,"n":"HH BD","dyn":"f"},{"p":2.0,"n":"HH BD"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HO BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HO"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HO BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HO"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HO BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HO"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH BD"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH BD"},{"p":6.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH BD"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH BD"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HO BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HO"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HO BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HO"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HO BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HO"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HO BD"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HO"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HO SN"},{"p":6.0,"n":"HH BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH"},{"p":12.0,"n":"HO SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HO SN"},{"p":6.0,"n":"HH BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH"},{"p":12.0,"n":"HO SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HO SN"},{"p":6.0,"n":"HH BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH"},{"p":12.0,"n":"HO SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HO SN"},{"p":6.0,"n":"HH BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH"},{"p":12.0,"n":"HO SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH"}],[{"p":0.0,"n":"F1 BD"}],[{"p":0.0,"n":"BD"},{"p":2.0,"n":"BD"},{"p":4.0,"n":"SN"},{"p":6.0,"n":"BD"},{"p":8.0,"n":"BD"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"SN"},{"p":14.0,"n":"SN BD"}],[{"p":0.0,"n":"BD"},{"p":2.0,"n":"BD"},{"p":4.0,"n":"SN"},{"p":6.0,"n":"SN BD"},{"p":8.0,"n":"BD"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"SN"},{"p":14.0,"n":"SN BD"}],[{"p":0.0,"n":"BD"},{"p":2.0,"n":"BD"},{"p":4.0,"n":"SN"},{"p":6.0,"n":"SN BD"},{"p":8.0,"n":"BD"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"SN"},{"p":14.0,"n":"SN BD"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"HH"},{"p":14.0,"n":"HH SN"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"HH"},{"p":14.0,"n":"HH SN"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"HH"},{"p":14.0,"n":"HH SN"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"HH"},{"p":14.0,"n":"HH SN"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"SN"},{"p":12.0,"n":"R1"},{"p":13.0,"n":"R1"},{"p":14.0,"n":"F1"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HO"}],[{"p":0.0,"n":"HH BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HO"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HO"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH BD"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH BD"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"HH BD"},{"p":10.0,"n":"HH BD"},{"p":12.0,"n":"HH SN"},{"p":14.0,"n":"HH BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR SN"},{"p":2.0,"n":"R1"},{"p":4.0,"n":"R1"},{"p":6.0,"n":"F1"},{"p":7.0,"n":"SN"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"BD"},{"p":11.0,"n":"BD"},{"p":12.0,"n":"SN"},{"p":14.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"}]],
+  bassBars: [[], [], [], [], [], [], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 3]]}, {"p": 2, "d": 2, "n": [[3, 3]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 3]]}, {"p": 10, "d": 2, "n": [[3, 3]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 3]]}, {"p": 8, "d": 2, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 5]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[2, 7]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 3]]}, {"p": 2, "d": 2, "n": [[3, 3]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 1, "n": [[3, 3]]}, {"p": 9, "d": 1, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 3]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 3]]}, {"p": 8, "d": 2, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 1, "n": [[3, 0]]}, {"p": 9, "d": 1, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 12, "d": 4, "n": [[3, 12]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 1, "n": [[3, 5]]}, {"p": 9, "d": 1, "n": [[3, 3]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 1, "n": [[3, 0]]}, {"p": 9, "d": 1, "n": [[1, 2]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 12, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 1, "n": [[3, 5]]}, {"p": 9, "d": 1, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 12, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 5]]}], [{"p": 0, "d": 2, "n": [[2, 2]]}, {"p": 2, "d": 2, "n": [[2, 2]]}, {"p": 4, "d": 2, "n": [[2, 2]]}, {"p": 6, "d": 2, "n": [[2, 2]]}, {"p": 8, "d": 2, "n": [[2, 2]]}, {"p": 10, "d": 2, "n": [[2, 2]]}, {"p": 12, "d": 2, "n": [[2, 2]]}, {"p": 14, "d": 2, "n": [[2, 2]]}], [{"p": 0, "d": 2, "n": [[2, 2]]}, {"p": 12, "d": 4, "n": [[3, 12]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 1]]}], [{"p": 0, "d": 2, "n": [[3, 3]]}, {"p": 2, "d": 2, "n": [[3, 3]]}, {"p": 7, "d": 1, "n": [[3, 3]]}, {"p": 8, "d": 2, "n": [[3, 3]]}, {"p": 10, "d": 2, "n": [[3, 3]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 2, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 3]]}, {"p": 2, "d": 2, "n": [[3, 3]]}, {"p": 7, "d": 1, "n": [[3, 3]]}, {"p": 8, "d": 2, "n": [[3, 3]]}, {"p": 10, "d": 2, "n": [[3, 3]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 2, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 5]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 3]]}, {"p": 2, "d": 2, "n": [[3, 3]]}, {"p": 7, "d": 1, "n": [[3, 3]]}, {"p": 8, "d": 2, "n": [[3, 3]]}, {"p": 10, "d": 2, "n": [[3, 3]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 2, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 5]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 1, "n": [[3, 5]]}, {"p": 9, "d": 1, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 12, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 6, "d": 1, "n": [[2, 5]]}, {"p": 7, "d": 1, "n": [[2, 7]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 12, "d": 2, "n": [[3, 7]]}, {"p": 14, "d": 2, "n": [[3, 6]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 1, "n": [[3, 5]]}, {"p": 9, "d": 1, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 12, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[2, 2]]}, {"p": 2, "d": 2, "n": [[2, 2]]}, {"p": 4, "d": 2, "n": [[2, 2]]}, {"p": 6, "d": 2, "n": [[2, 2]]}, {"p": 8, "d": 2, "n": [[2, 2]]}, {"p": 10, "d": 2, "n": [[2, 2]]}, {"p": 12, "d": 2, "n": [[2, 2]]}, {"p": 14, "d": 2, "n": [[2, 2]]}], [{"p": 0, "d": 2, "n": [[2, 2]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 3]]}, {"p": 2, "d": 2, "n": [[3, 3]]}, {"p": 7, "d": 1, "n": [[3, 3]]}, {"p": 8, "d": 2, "n": [[3, 3]]}, {"p": 10, "d": 2, "n": [[3, 3]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 2, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 5]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 4, "d": 2, "n": [[3, 4]]}, {"p": 6, "d": 1, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 1, "n": [[3, 5]], "tie": true}, {"p": 9, "d": 1, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 6]]}, {"p": 12, "d": 2, "n": [[3, 7]]}, {"p": 14, "d": 2, "n": [[2, 5]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 14, "d": 2, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 3]]}, {"p": 2, "d": 2, "n": [[3, 3]]}, {"p": 7, "d": 1, "n": [[3, 3]]}, {"p": 8, "d": 2, "n": [[3, 3]]}, {"p": 10, "d": 2, "n": [[3, 3]]}, {"p": 14, "d": 2, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 5]]}, {"p": 2, "d": 2, "n": [[3, 5]]}, {"p": 7, "d": 1, "n": [[3, 5]]}, {"p": 8, "d": 2, "n": [[3, 5]]}, {"p": 10, "d": 2, "n": [[3, 5]]}, {"p": 14, "d": 2, "n": [[3, 5]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 6, "d": 2, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[1, 2]]}, {"p": 10, "d": 2, "n": [[1, 2]]}, {"p": 12, "d": 1, "n": [[1, 2]]}, {"p": 13, "d": 1, "n": [[1, 0]]}, {"p": 14, "d": 1, "n": [[2, 2]]}, {"p": 15, "d": 1, "n": [[3, 3]]}], [{"p": 0, "d": 2, "n": [[3, 0]]}, {"p": 2, "d": 2, "n": [[3, 0]]}, {"p": 4, "d": 3, "n": [[1, 2]]}, {"p": 7, "d": 1, "n": [[3, 0]]}, {"p": 8, "d": 2, "n": [[3, 0]]}, {"p": 10, "d": 2, "n": [[3, 0]]}, {"p": 12, "d": 3, "n": [[1, 2]]}, {"p": 15, "d": 1, "n": [[3, 0]]}], [{"p": 0, "d": 2, "n": [[3, 3]]}, {"p": 2, "d": 2, "n": [[3, 3]]}, {"p": 4, "d": 3, "n": [[1, 5]]}, {"p": 7, "d": 1, "n": [[3, 3]]}, {"p": 8, "d": 2, "n": [[3, 3]]}, {"p": 10, "d": 2, "n": [[3, 3]]}, {"p": 12, "d": 4, "n": [[1, 5]]}], [{"p": 0, "d": 2, "n": [[2, 0]]}, {"p": 2, "d": 2, "n": [[2, 0]]}, {"p": 4, "d": 3, "n": [[0, 2]]}, {"p": 7, "d": 1, "n": [[2, 0]]}, {"p": 8, "d": 2, "n": [[2, 0]]}, {"p": 10, "d": 2, "n": [[2, 0]]}, {"p": 12, "d": 2, "n": [[0, 2]]}, {"p": 14, "d": 2, "n": [[2, 0]]}], [{"p": 0, "d": 2, "n": [[2, 2]]}, {"p": 2, "d": 2, "n": [[2, 2]]}, {"p": 4, "d": 2, "n": [[2, 2]]}, {"p": 6, "d": 2, "n": [[2, 2]]}, {"p": 8, "d": 2, "n": [[2, 2]]}, {"p": 10, "d": 2, "n": [[2, 2]]}, {"p": 12, "d": 2, "n": [[2, 2]]}, {"p": 14, "d": 2, "n": [[2, 2]]}], [{"p": 0, "d": 2, "n": [[2, 2]]}, {"p": 2, "d": 2, "n": [[2, 2]]}, {"p": 4, "d": 2, "n": [[2, 2]]}, {"p": 6, "d": 2, "n": [[2, 2]]}, {"p": 8, "d": 2, "n": [[2, 2]]}, {"p": 10, "d": 2, "n": [[2, 2]]}, {"p": 12, "d": 2, "n": [[2, 2]]}, {"p": 14, "d": 2, "n": [[2, 2]]}], [{"p": 0, "d": 2, "n": [[2, 2]]}, {"p": 2, "d": 2, "n": [[2, 2]]}, {"p": 4, "d": 2, "n": [[2, 2]]}, {"p": 6, "d": 2, "n": [[2, 2]]}, {"p": 8, "d": 2, "n": [[2, 2]]}, {"p": 10, "d": 2, "n": [[2, 2]]}, {"p": 12, "d": 2, "n": [[2, 2]]}, {"p": 14, "d": 2, "n": [[2, 2]]}], [{"p": 0, "d": 2, "n": [[2, 2]]}], [{"p": 0, "d": 1, "n": [[3, 3]]}, {"p": 1, "d": 1, "n": [[3, 0]]}]],
  "tabs": {
-  "RIFF": [
+  "G1": [
    [
     {
      "p": 0,
      "d": 2,
      "n": [
+      [
+       3,
+       2
+      ],
       [
        4,
-       7
+       0
       ]
      ],
-     "c": "E"
+     "c": "A"
     },
     {
      "p": 2,
@@ -759,82 +889,11 @@ const SONG = {
      "n": [
       [
        3,
-       9
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       2,
-       9
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
-      ]
-     ],
-     "tie": true
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 4,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "tie": true
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       5,
-       7
-      ]
-     ],
-     "c": "B"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
+       2
+      ],
       [
        4,
-       9
+       0
       ]
      ]
     },
@@ -844,209 +903,133 @@ const SONG = {
      "n": [
       [
        3,
-       9
+       2
+      ],
+      [
+       4,
+       0
       ]
      ]
     },
     {
      "p": 6,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
-      ]
-     ],
-     "tie": true
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 4,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "tie": true
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
+     "d": 1,
      "n": [
       [
        3,
-       6
-      ]
-     ],
-     "c": "G#m"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
+       2
+      ],
       [
-       2,
-       4
+       4,
+       0
       ]
      ]
     },
     {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
-      ]
-     ],
-     "tie": true
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 4,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "tie": true
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
+     "p": 7,
+     "d": 1,
      "n": [
       [
        3,
-       4
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
+       2
+      ],
       [
-       2,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
+       4,
+       0
       ]
      ]
     },
     {
      "p": 8,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       0,
-       7
+       3,
+       2
+      ],
+      [
+       4,
+       0
       ]
-     ],
-     "tie": true
+     ]
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ]
+     ]
     },
     {
      "p": 10,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       0,
-       6
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 11,
+     "d": 1,
+     "n": [
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
       ]
      ]
     },
     {
      "p": 12,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       0,
-       6
+       3,
+       2
+      ],
+      [
+       4,
+       0
       ]
-     ],
-     "tie": true
+     ]
+    },
+    {
+     "p": 13,
+     "d": 1,
+     "n": [
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ]
+     ]
     },
     {
      "p": 14,
      "d": 2,
      "n": [
       [
-       0,
-       7
+       5,
+       3
       ]
      ]
     }
@@ -1056,574 +1039,309 @@ const SONG = {
    [
     {
      "p": 0,
-     "d": 2,
+     "d": 4,
      "n": [
       [
-       1,
-       5
+       5,
+       0
       ]
      ],
      "c": "E"
     },
     {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
      "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ],
-     "c": "B"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ],
-     "c": "G#m"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    }
-   ]
-  ],
-  "L_STOP9": [
-   [
-    {
-     "p": 0,
-     "d": 8,
+     "d": 1,
      "n": [
       [
        4,
-       9
+       2
       ]
-     ],
-     "c": "F#"
-    }
-   ]
-  ],
-  "L_STOP25": [
-   [
+     ]
+    },
     {
-     "p": 0,
-     "d": 2,
+     "p": 5,
+     "d": 1,
+     "n": [
+      [
+       4,
+       4
+      ]
+     ]
+    },
+    {
+     "p": 6,
+     "d": 1,
      "n": [
       [
        3,
-       4
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
+       2
       ]
      ]
     },
     {
-     "p": 4,
-     "d": 2,
+     "p": 7,
+     "d": 1,
      "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
       [
        2,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
-      ]
-     ]
-    }
-   ]
-  ],
-  "L_STOP57": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       2,
-       6
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       2,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
-      ]
-     ]
-    }
-   ]
-  ],
-  "L_CHF": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       0,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       0,
-       7
+       1
       ]
      ]
     },
     {
      "p": 8,
-     "d": 2,
+     "d": 1,
      "n": [
       [
        0,
-       7
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       1
       ]
      ],
      "tie": true
     },
     {
-     "p": 10,
+     "p": 9,
      "d": 2,
      "n": [
       [
        0,
-       6
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       1
+      ]
+     ]
+    },
+    {
+     "p": 11,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       1
       ]
      ]
     },
     {
      "p": 12,
-     "d": 2,
+     "d": 1,
      "n": [
       [
        0,
-       6
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       1
       ]
      ],
      "tie": true
+    },
+    {
+     "p": 13,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       1
+      ]
+     ]
     },
     {
      "p": 14,
      "d": 2,
      "n": [
       [
-       0,
-       7
+       5,
+       3
       ]
      ]
     }
    ]
   ],
-  "X_STOP": [
+  "G3": [
    [
     {
      "p": 0,
-     "d": 2,
+     "d": 4,
+     "n": [
+      [
+       4,
+       0
+      ]
+     ],
+     "c": "A"
+    },
+    {
+     "p": 4,
+     "d": 1,
+     "n": [
+      [
+       3,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 5,
+     "d": 1,
      "n": [
       [
        3,
        4
       ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       2,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
      ]
     },
     {
      "p": 6,
+     "d": 1,
+     "n": [
+      [
+       2,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 1,
+     "n": [
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "tie": true
+    },
+    {
+     "p": 9,
      "d": 2,
      "n": [
       [
-       0,
-       7
+       1,
+       2
+      ],
+      [
+       2,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 11,
+     "d": 1,
+     "n": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 1,
+     "n": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "tie": true
+    },
+    {
+     "p": 13,
+     "d": 1,
+     "n": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 14,
+     "d": 2,
+     "n": [
+      [
+       4,
+       0
       ]
      ]
     }
    ]
   ],
-  "X_B16": [
+  "G7": [
    [
     {
      "p": 0,
@@ -1631,679 +1349,69 @@ const SONG = {
      "n": [
       [
        5,
-       7
+       0
       ]
      ],
-     "c": "B"
+     "c": "E"
     },
     {
      "p": 2,
-     "d": 1,
+     "d": 2,
      "n": [
       [
-       4,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 3,
-     "d": 1,
-     "n": [
-      [
-       3,
-       4
+       5,
+       0
       ]
      ]
     },
     {
      "p": 4,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       4,
+       0,
+       6
+      ],
+      [
+       1,
+       6
+      ],
+      [
+       2,
        6
       ]
      ]
     },
     {
-     "p": 6,
-     "d": 2,
+     "p": 5,
+     "d": 1,
      "n": [
       [
        0,
        7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
       ]
      ]
     },
     {
-     "p": 8,
-     "d": 2,
+     "p": 7,
+     "d": 1,
      "n": [
       [
        0,
        7
-      ]
-     ],
-     "tie": true
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
+      ],
       [
        1,
        7
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 4,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "tie": true
-    }
-   ]
-  ],
-  "G2_IN6": [
-   [
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ],
-     "c": "E"
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       1,
-       5
-      ]
-     ]
-    }
-   ]
-  ],
-  "G2_LASTQ": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ],
-     "c": "G#m"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 4,
-     "n": [
-      [
-       1,
-       4
-      ]
-     ]
-    }
-   ]
-  ],
-  "G2_STOP": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    }
-   ]
-  ],
-  "G2_HOLD": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 8,
-     "n": [
-      [
-       1,
-       7
-      ]
-     ],
-     "tie": true
-    }
-   ]
-  ]
- },
- "bassTabs": {
-  "BLOOP": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ],
-     "c": "E"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ],
-     "c": "B"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ],
-     "c": "G#m"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    }
-   ],
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_IN6": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       2,
-       7
-      ]
-     ],
-     "c": "E"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
+      ],
       [
        2,
        7
@@ -2311,9 +1419,17 @@ const SONG = {
      ]
     },
     {
-     "p": 4,
-     "d": 2,
+     "p": 9,
+     "d": 1,
      "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
       [
        2,
        7
@@ -2321,244 +1437,163 @@ const SONG = {
      ]
     },
     {
-     "p": 6,
-     "d": 2,
+     "p": 11,
+     "d": 1,
      "n": [
       [
-       2,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
+       0,
+       0
+      ],
       [
-       2,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       2,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       2,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
+       1,
+       0
+      ],
       [
        2,
        0
       ]
-     ]
-    }
-   ]
-  ],
-  "B_IN7": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       2,
-       2
-      ]
      ],
-     "c": "B"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       2,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       2,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       2,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       2,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       2,
-       2
-      ]
-     ]
+     "x": true
     },
     {
      "p": 12,
-     "d": 2,
+     "d": 1,
      "n": [
       [
+       0,
+       6
+      ],
+      [
+       1,
+       6
+      ],
+      [
        2,
-       2
+       6
+      ]
+     ]
+    },
+    {
+     "p": 13,
+     "d": 1,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
       ]
      ]
     },
     {
      "p": 14,
-     "d": 2,
+     "d": 1,
      "n": [
       [
+       0,
+       0
+      ],
+      [
        1,
-       4
+       0
+      ],
+      [
+       2,
+       0
       ]
-     ]
+     ],
+     "x": true
+    },
+    {
+     "p": 15,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true
     }
    ]
   ],
-  "B_IN8": [
+  "G8": [
    [
     {
      "p": 0,
      "d": 2,
      "n": [
       [
-       1,
-       6
+       5,
+       3
       ]
      ],
-     "c": "G#m"
+     "c": "G"
     },
     {
      "p": 2,
      "d": 2,
      "n": [
       [
-       1,
-       6
+       5,
+       3
       ]
      ]
     },
     {
      "p": 4,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       1,
-       6
+       2,
+       3
+      ],
+      [
+       3,
+       3
       ]
      ]
     },
     {
-     "p": 6,
-     "d": 2,
+     "p": 5,
+     "d": 1,
      "n": [
       [
-       1,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
+       2,
+       4
+      ],
       [
-       1,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       1,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       1,
-       6
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_IN9": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       1,
+       3,
        4
       ]
-     ],
-     "c": "F#"
+     ]
     },
     {
-     "p": 2,
-     "d": 2,
+     "p": 7,
+     "d": 1,
      "n": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
       [
        2,
        4
@@ -2566,85 +1601,64 @@ const SONG = {
      ]
     },
     {
-     "p": 4,
-     "d": 4,
+     "p": 9,
+     "d": 1,
      "n": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
       [
        2,
        4
       ]
+     ]
+    },
+    {
+     "p": 11,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
      ],
-     "tie": true
-    }
-   ]
-  ],
-  "B_V1G": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ],
-     "c": "G#m"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ]
+     "x": true
     },
     {
      "p": 12,
-     "d": 2,
+     "d": 1,
      "n": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "p": 13,
+     "d": 1,
+     "n": [
+      [
+       2,
+       4
+      ],
       [
        3,
        4
@@ -2653,612 +1667,135 @@ const SONG = {
     },
     {
      "p": 14,
+     "d": 1,
+     "n": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       4
+      ]
+     ]
+    },
+    {
+     "p": 15,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true
+    }
+   ]
+  ],
+  "G9": [
+   [
+    {
+     "p": 0,
      "d": 2,
      "n": [
       [
-       3,
+       4,
+       0
+      ]
+     ],
+     "c": "A"
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       4,
        0
       ]
      ]
-    }
-   ]
-  ],
-  "B_STOP25": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
     },
     {
      "p": 4,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       3,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       3,
-       2
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_V2E": [
-   [
-    {
-     "p": 0,
-     "d": 16,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ],
-     "c": "E"
-    }
-   ]
-  ],
-  "B_V2G": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       16
-      ]
-     ],
-     "c": "G#m"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       16
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       16
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       16
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       16
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       3,
-       16
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       3,
-       16
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       3,
-       16
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_V2F": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_V2END": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       19
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       19
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       3,
-       19
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       3,
-       19
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       3,
-       19
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_STOP57": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       14
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_OE": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ],
-     "c": "E"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       2,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
+       0,
+       5
+      ],
       [
        1,
-       14
+       5
       ]
      ]
     },
     {
-     "p": 14,
-     "d": 2,
+     "p": 5,
+     "d": 1,
      "n": [
       [
-       2,
-       14
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_OB": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
+       0,
        7
-      ]
-     ],
-     "c": "B"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       2,
-       9
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
+      ],
       [
        1,
-       9
+       7
       ]
      ]
     },
     {
-     "p": 14,
-     "d": 2,
+     "p": 7,
+     "d": 1,
      "n": [
       [
-       2,
-       9
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_OG": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
+       0,
+       5
+      ],
       [
-       3,
-       4
-      ]
-     ],
-     "c": "G#m"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
+       1,
+       5
       ]
      ]
     },
     {
-     "p": 4,
-     "d": 2,
+     "p": 9,
+     "d": 1,
      "n": [
       [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
+       0,
+       5
+      ],
       [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
+       1,
+       5
       ]
      ]
     },
     {
      "p": 10,
-     "d": 2,
+     "d": 1,
+     "n": [
+      [
+       2,
+       4
+      ]
+     ]
+    },
+    {
+     "p": 11,
+     "d": 1,
      "n": [
       [
        2,
@@ -3268,385 +1805,317 @@ const SONG = {
     },
     {
      "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
+     "d": 1,
      "n": [
       [
        2,
-       6
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_3E": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ],
-     "c": "E"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       2,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       2,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       12
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       2,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       14
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       2,
-       14
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_3B": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ],
-     "c": "B"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       2,
-       9
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       9
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       2,
-       9
-      ]
-     ]
-    },
-    {
-     "p": 8,
-     "d": 2,
-     "n": [
-      [
-       3,
-       7
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       2,
-       9
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
-      [
-       1,
-       9
-      ]
-     ]
-    },
-    {
-     "p": 14,
-     "d": 2,
-     "n": [
-      [
-       2,
-       9
-      ]
-     ]
-    }
-   ]
-  ],
-  "B_3G": [
-   [
-    {
-     "p": 0,
-     "d": 2,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ],
-     "c": "G#m"
-    },
-    {
-     "p": 2,
-     "d": 2,
-     "n": [
-      [
-       2,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 4,
-     "d": 2,
-     "n": [
-      [
-       1,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 6,
-     "d": 2,
-     "n": [
-      [
-       1,
        6
       ]
      ],
      "tie": true
     },
     {
-     "p": 8,
-     "d": 2,
+     "p": 13,
+     "d": 1,
      "n": [
       [
-       3,
-       4
-      ]
-     ]
-    },
-    {
-     "p": 10,
-     "d": 2,
-     "n": [
-      [
-       2,
-       6
-      ]
-     ]
-    },
-    {
-     "p": 12,
-     "d": 2,
-     "n": [
+       0,
+       5
+      ],
       [
        1,
-       6
+       5
       ]
      ]
     },
     {
      "p": 14,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       3,
-       4
+       0,
+       5
+      ],
+      [
+       1,
+       5
+      ]
+     ]
+    },
+    {
+     "p": 15,
+     "d": 1,
+     "n": [
+      [
+       0,
+       5
+      ],
+      [
+       1,
+       5
       ]
      ]
     }
    ]
   ],
-  "B_3F": [
+  "G10": [
    [
     {
      "p": 0,
      "d": 2,
      "n": [
       [
-       3,
-       2
+       5,
+       0
       ]
      ],
-     "c": "F#"
+     "c": "E"
     },
     {
      "p": 2,
      "d": 2,
      "n": [
       [
-       2,
-       4
+       5,
+       0
       ]
      ]
     },
     {
      "p": 4,
-     "d": 2,
+     "d": 1,
      "n": [
       [
+       0,
+       6
+      ],
+      [
        1,
-       4
+       6
+      ],
+      [
+       2,
+       6
       ]
      ]
     },
     {
-     "p": 6,
-     "d": 2,
+     "p": 5,
+     "d": 1,
      "n": [
       [
+       0,
+       7
+      ],
+      [
        1,
-       4
+       7
+      ],
+      [
+       2,
+       7
       ]
-     ],
-     "tie": true
+     ]
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
+      ]
+     ]
     },
     {
      "p": 8,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       3,
-       2
+       0,
+       9
+      ],
+      [
+       1,
+       9
+      ],
+      [
+       2,
+       9
+      ]
+     ]
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       0,
+       9
+      ],
+      [
+       1,
+       9
+      ],
+      [
+       2,
+       9
       ]
      ]
     },
     {
      "p": 10,
-     "d": 2,
+     "d": 1,
      "n": [
       [
+       0,
+       8
+      ],
+      [
+       1,
+       8
+      ],
+      [
        2,
-       4
+       8
+      ]
+     ]
+    },
+    {
+     "p": 11,
+     "d": 1,
+     "n": [
+      [
+       0,
+       8
+      ],
+      [
+       1,
+       8
+      ],
+      [
+       2,
+       8
       ]
      ]
     },
     {
      "p": 12,
-     "d": 2,
+     "d": 1,
      "n": [
       [
+       0,
+       7
+      ],
+      [
        1,
-       4
+       7
+      ],
+      [
+       2,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 13,
+     "d": 1,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
       ]
      ]
     },
     {
      "p": 14,
-     "d": 2,
+     "d": 1,
      "n": [
       [
-       3,
-       2
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 15,
+     "d": 1,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
       ]
      ]
     }
    ]
   ],
-  "B_RSTOP": [
+  "G14": [
    [
     {
      "p": 0,
+     "d": 2,
+     "n": [
+      [
+       4,
+       0
+      ]
+     ],
+     "c": "A"
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       4,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 4,
      "d": 3,
      "n": [
       [
-       3,
+       1,
        2
-      ]
-     ],
-     "c": "F#"
-    },
-    {
-     "p": 3,
-     "d": 2,
-     "n": [
+      ],
+      [
+       2,
+       2
+      ],
       [
        3,
        2
@@ -3654,37 +2123,76 @@ const SONG = {
      ]
     },
     {
-     "p": 6,
-     "d": 2,
+     "p": 7,
+     "d": 1,
      "n": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       2
+      ],
       [
        3,
        2
       ]
      ]
-    }
-   ]
-  ],
-  "B_R11": [
-   [
-    {
-     "p": 0,
-     "d": 6,
-     "n": [
-      [
-       3,
-       4
-      ]
-     ],
-     "c": "G#m"
     },
     {
-     "p": 6,
-     "d": 8,
+     "p": 8,
+     "d": 1,
      "n": [
       [
+       4,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       2
+      ],
+      [
        3,
-       4
+       2
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       4,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 2,
+     "n": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       2
       ]
      ]
     },
@@ -3693,43 +2201,1229 @@ const SONG = {
      "d": 2,
      "n": [
       [
+       5,
+       3
+      ]
+     ]
+    }
+   ]
+  ],
+  "G15": [
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       5,
+       0
+      ]
+     ],
+     "c": "E"
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       5,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 3,
+     "n": [
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       1
+      ],
+      [
        3,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       3,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 1,
+     "n": [
+      [
+       5,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       3,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       5,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 2,
+     "n": [
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       3,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 14,
+     "d": 2,
+     "n": [
+      [
+       5,
+       3
+      ]
+     ]
+    }
+   ]
+  ],
+  "G17": [
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       5,
+       0
+      ]
+     ],
+     "c": "E"
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       5,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 3,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       4,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       4,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       4,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 4,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       2,
+       7
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       4,
+       7
+      ]
+     ]
+    }
+   ]
+  ],
+  "G18": [
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       5,
+       3
+      ]
+     ],
+     "c": "G"
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       5,
+       3
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 3,
+     "n": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       2,
        4
+      ],
+      [
+       3,
+       5
+      ],
+      [
+       4,
+       5
+      ]
+     ]
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       4
+      ],
+      [
+       3,
+       5
+      ],
+      [
+       4,
+       5
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       4
+      ],
+      [
+       3,
+       5
+      ],
+      [
+       4,
+       5
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 4,
+     "n": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       4
+      ],
+      [
+       3,
+       5
+      ],
+      [
+       4,
+       5
+      ]
+     ]
+    }
+   ]
+  ],
+  "G19": [
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       4,
+       0
+      ]
+     ],
+     "c": "A"
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       4,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 3,
+     "n": [
+      [
+       0,
+       5
+      ],
+      [
+       1,
+       5
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       3,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       0,
+       5
+      ],
+      [
+       1,
+       5
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       3,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       0,
+       5
+      ],
+      [
+       1,
+       5
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       3,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 4,
+     "n": [
+      [
+       0,
+       5
+      ],
+      [
+       1,
+       5
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       3,
+       7
+      ]
+     ]
+    }
+   ]
+  ],
+  "G40": [
+   [
+    {
+     "p": 0,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true,
+     "c": "E"
+    },
+    {
+     "p": 1,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 2,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 3,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 4,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 5,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 6,
+     "d": 1,
+     "n": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "x": true
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       0,
+       12
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       13
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    },
+    {
+     "p": 8,
+     "d": 1,
+     "n": [
+      [
+       0,
+       12
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       13
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       0,
+       12
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       13
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    },
+    {
+     "p": 10,
+     "d": 1,
+     "n": [
+      [
+       0,
+       10
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       11
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    },
+    {
+     "p": 11,
+     "d": 1,
+     "n": [
+      [
+       0,
+       10
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       11
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    },
+    {
+     "p": 12,
+     "d": 1,
+     "n": [
+      [
+       0,
+       9
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       9
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    },
+    {
+     "p": 13,
+     "d": 1,
+     "n": [
+      [
+       0,
+       9
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       9
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    },
+    {
+     "p": 14,
+     "d": 1,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       7
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    },
+    {
+     "p": 15,
+     "d": 1,
+     "n": [
+      [
+       0,
+       7
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       7
+      ]
+     ],
+     "xN": [
+      1
+     ]
+    }
+   ]
+  ],
+  "G48": [
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       2,
+       8
+      ]
+     ],
+     "c": "B"
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       0,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 4,
+     "n": [
+      [
+       0,
+       7
+      ]
+     ],
+     "tie": true
+    },
+    {
+     "p": 8,
+     "d": 2,
+     "n": [
+      [
+       2,
+       9
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       0,
+       9
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 4,
+     "n": [
+      [
+       0,
+       9
+      ]
+     ],
+     "tie": true
+    }
+   ],
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       2,
+       11
+      ]
+     ]
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       0,
+       11
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 4,
+     "n": [
+      [
+       0,
+       11
+      ]
+     ],
+     "tie": true
+    },
+    {
+     "p": 8,
+     "d": 2,
+     "n": [
+      [
+       2,
+       13
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       0,
+       12
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 4,
+     "n": [
+      [
+       0,
+       12
+      ]
+     ],
+     "tie": true
+    }
+   ],
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       2,
+       14
+      ]
+     ]
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       0,
+       14
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 4,
+     "n": [
+      [
+       0,
+       14
+      ]
+     ],
+     "tie": true
+    },
+    {
+     "p": 8,
+     "d": 2,
+     "n": [
+      [
+       2,
+       16
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       0,
+       16
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 4,
+     "n": [
+      [
+       0,
+       16
       ]
      ],
      "tie": true
     }
    ]
   ],
-  "B_R16": [
+  "G51": [
    [
     {
-     "p": 14,
-     "d": 2,
+     "p": 0,
+     "d": 4,
      "n": [
       [
-       3,
-       0
+       0,
+       16
       ]
      ],
-     "c": "F#"
+     "tie": true
+    }
+   ],
+   [
+    {
+     "p": 0,
+     "d": 4,
+     "n": [
+      [
+       2,
+       9
+      ]
+     ],
+     "c": "E"
     }
    ]
   ]
  },
  "chordCheck": {
-  "ug": "UG Chords ver. 4 · 4.88★ · 848 votes · capo 4",
-  "note": "Ver. 4 is the top-rated chart (plain C G Em D shapes, capo 4 = E B G#m F#). The most-voted ver. 3 (4.85★, 1,114 votes, capo 4) has the same chord in every bar, written Cadd9 G Em7 Dsus4 (Eadd9 B G#m7 F#sus4), which is what the riff spells out. Both match Songsterr everywhere except the two spots below. Ver. 4's N.C. on “Man, f— that s—” (rap bar 1) is where the guitars drop out; Songsterr's bass keeps E there.",
+  "ug": "UG Chords ver. 1 · 4.88★ · 104 votes · no capo",
+  "note": "Songsterr's only full-band transcription is AI-generated. Its bass plays UG's roots bar for bar all song (E G A E verses and choruses, A E A B pre-choruses), and the guitar's E7 and E9 voicings in places are just colours of UG's E. The two ? spots are where the AI guitar plays something else over the bass: check them by ear. UG's “He's got rhythm” outro (B A ×4, then E) isn't on the official recording, which ends on “Because I ain't got rhythm!”, so it isn't charted.",
   "diffs": [
    {
-    "where": "Verse 2 · bar 8",
-    "ug": "{F#} for the whole bar",
-    "ss": "the bass moves to B on the & of 2 (the guitar riff stays on {F#})"
+    "where": "Verse 3 bar 1 (and every E bar of verses 3–4, chorus 3 and the ending)",
+    "ug": "{E}",
+    "ss": "the guitar chops a high {Bm} triad, slid up from {Bbm}, over the bass's E: an {E9sus} sound with no G#"
    },
    {
-    "where": "Ending (after chorus 3)",
-    "ug": "a last {E} for “Now I'm at a payphone…”",
-    "ss": "the band stops after the last {F#}; the vocal holds “sick” alone for one bar, no last line"
+    "where": "Ending bars 2–3",
+    "ug": "{G} → {A}",
+    "ss": "the guitar chops {G} then {Am} triads over the G, and {Am} → {Bm} triads over the A (C natural, not C#)"
    }
   ]
  },
@@ -3738,714 +3432,504 @@ const SONG = {
    "nm": "Intro",
    "type": "intro",
    "e": 1,
-   "cue": "“I'm at a payphone trying to call home…”",
+   "cue": "(drums alone)",
    "blocks": [
+    {
+     "rows": [
+      "NC NC NC NC"
+     ]
+    },
     {
      "rows": [
       "NC"
      ],
-     "label": "PICKUP"
+     "label": "2/4"
     },
     {
      "rows": [
-      "E B G#m F#",
-      "E B G#m F#"
-     ]
+      "NC"
+     ],
+     "label": "4/4"
     }
    ],
-   "extra": {
-    "band": [
-     {
-      "nota": "STOP_F",
-      "at": [
-       9
-      ]
-     }
-    ],
-    "gtr1": [
-     {
-      "tab": "L_STOP9",
-      "at": [
-       9
-      ]
-     }
-    ],
-    "gtr2": [
-     {
-      "tab": "G2_IN6",
-      "at": [
-       6
-      ]
-     }
-    ],
-    "bass": [
-     {
-      "btab": "B_IN6",
-      "at": [
-       6
-      ]
-     },
-     {
-      "btab": "B_IN7",
-      "at": [
-       7
-      ]
-     },
-     {
-      "btab": "B_IN8",
-      "at": [
-       8
-      ]
-     },
-     {
-      "btab": "B_IN9",
-      "at": [
-       9
-      ]
-     }
-    ]
-   },
    "tag": {
-    "band": "Riff and vocal",
-    "gtr1": "Riff alone"
+    "band": "Drums alone",
+    "drums": "Bar 5 is 2/4"
    }
   },
   {
    "nm": "Verse 1",
    "type": "verse",
    "e": 2,
-   "cue": "“Yeah, I, I know it's hard to remember…”",
+   "cue": "“You keep sayin' that you don't have rhythm…”",
    "blocks": [
     {
      "rows": [
-      "E B G#m F#",
-      "E B G#m F#"
+      "E G A E"
      ]
     }
    ],
-   "extra": {
-    "bass": [
-     {
-      "btab": "B_V1G",
-      "at": [
-       7
-      ]
-     }
-    ]
-   },
    "tag": {
-    "band": "Drums in, bass bar 5"
-   }
-  },
-  {
-   "nm": "Pre-Chorus 1",
-   "type": "bridge",
-   "e": 3,
-   "cue": "“I've wasted my nights…”",
-   "blocks": [
-    {
-     "rows": [
-      "E B G#m F#",
-      "E B G#m F#"
-     ]
-    }
-   ],
-   "extra": {
-    "band": [
-     {
-      "nota": "STOP_PC",
-      "at": [
-       8
-      ]
-     }
-    ],
-    "gtr1": [
-     {
-      "tab": "L_STOP25",
-      "at": [
-       8
-      ]
-     }
-    ],
-    "gtr2": [
-     {
-      "tab": "G2_LASTQ",
-      "at": [
-       7
-      ]
-     },
-     {
-      "tab": "G2_STOP",
-      "at": [
-       8
-      ]
-     }
-    ],
-    "bass": [
-     {
-      "btab": "B_STOP25",
-      "at": [
-       8
-      ]
-     }
-    ]
-   },
-   "tag": {
-    "band": "Gtr 2 in · stop"
-   }
-  },
-  {
-   "nm": "Chorus 1",
-   "type": "chorus",
-   "e": 4,
-   "cue": "“I'm at a payphone trying to call home…”",
-   "span": {
-    "keys": 4,
-    "all": 2
-   },
-   "blocks": [
-    {
-     "rows": [
-      "E B G#m F#",
-      "E B G#m F#",
-      "E B G#m F#",
-      "E B G#m F#"
-     ]
-    }
-   ],
-   "extra": {
-    "keys": [
-     {
-      "nota": "K_RIFF"
-     }
-    ],
-    "gtr1": [
-     {
-      "tab": "L_CHF",
-      "at": [
-       4,
-       8,
-       12,
-       16
-      ]
-     }
-    ]
-   },
-   "tag": {
-    "band": "Full band + piano",
-    "keys": "Piano riff"
+    "band": "Bass riff + drums",
+    "drums": "Open hat, no snare"
    }
   },
   {
    "nm": "Verse 2",
    "type": "verse",
    "e": 2,
-   "cue": "“You turned your back on tomorrow…”",
+   "cue": "“I have no idea what you're talking about…”",
    "blocks": [
     {
      "rows": [
-      "E B G#m F#",
-      "E B G#m F#?"
+      "E G A E"
      ]
     }
    ],
+   "tag": {
+    "band": "Bass riff + drums",
+    "drums": "Snare from bar 2"
+   }
+  },
+  {
+   "nm": "Pre-Chorus 1",
+   "type": "bridge",
+   "e": 3,
+   "cue": "“Look, I got a sweet deal going on here…”",
+   "blocks": [
+    {
+     "rows": [
+      "A E A B"
+     ]
+    },
+    {
+     "rows": [
+      "B"
+     ],
+     "label": "STOP"
+    }
+   ],
+   "tag": {
+    "band": "Gtr in · stop (“Ssh!”)",
+    "drums": "Hit on 1 (“Ssh!”)"
+   },
    "extra": {
     "band": [
      {
-      "nota": "KICK_BUILD",
+      "nota": "GR2",
       "at": [
-       1
+       5
       ]
      }
     ],
-    "bass": [
+    "guitar": [
      {
-      "btab": "B_V2E",
+      "tab": "G1",
       "at": [
        1
       ]
      },
      {
-      "btab": "B_V2G",
+      "tab": "G2",
       "at": [
-       3,
-       7
+       2
       ]
      },
      {
-      "btab": "B_V2F",
+      "tab": "G3",
+      "at": [
+       3
+      ]
+     },
+     {
+      "nota": "GR1",
       "at": [
        4
       ]
      },
      {
-      "btab": "B_V2END",
+      "nota": "GR2",
       "at": [
-       8
+       5
       ]
      }
     ]
    },
+   "span": {
+    "guitar": 2
+   }
+  },
+  {
+   "nm": "Chorus 1",
+   "type": "chorus",
+   "e": 4,
+   "cue": "“Besides, I ain't got rhythm…”",
+   "blocks": [
+    {
+     "rows": [
+      "E G A E"
+     ]
+    }
+   ],
    "tag": {
-    "band": "Drop · kick build"
+    "band": "Full band"
+   }
+  },
+  {
+   "nm": "Verse 3",
+   "type": "verse",
+   "e": 3,
+   "cue": "“You're kidding me, right?…”",
+   "blocks": [
+    {
+     "rows": [
+      "E? G A E"
+     ]
+    }
+   ],
+   "tag": {
+    "band": "Gtr chops",
+    "drums": "Backbeat"
+   },
+   "extra": {
+    "guitar": [
+     {
+      "tab": "G7",
+      "at": [
+       1
+      ]
+     },
+     {
+      "tab": "G8",
+      "at": [
+       2
+      ]
+     },
+     {
+      "tab": "G9",
+      "at": [
+       3
+      ]
+     },
+     {
+      "tab": "G10",
+      "at": [
+       4
+      ]
+     }
+    ]
+   },
+   "span": {
+    "guitar": 2
+   }
+  },
+  {
+   "nm": "Verse 4",
+   "type": "verse",
+   "e": 3,
+   "cue": "“I think perhaps that you're not listening…”",
+   "blocks": [
+    {
+     "rows": [
+      "E G A E"
+     ]
+    }
+   ],
+   "tag": {
+    "band": "Gtr chops",
+    "drums": "Backbeat"
+   },
+   "extra": {
+    "guitar": [
+     {
+      "nota": "GR4"
+     },
+     {
+      "nota": "GR5",
+      "at": [
+       2
+      ]
+     },
+     {
+      "nota": "GR6",
+      "at": [
+       3
+      ]
+     }
+    ]
+   },
+   "span": {
+    "guitar": 2
    }
   },
   {
    "nm": "Pre-Chorus 2",
    "type": "bridge",
    "e": 3,
-   "cue": "“I've wasted my nights…”",
+   "cue": "“I don't need my face on T-shirts…”",
    "blocks": [
     {
      "rows": [
-      "E B G#m F#",
-      "E B G#m F#"
+      "A E A B"
      ]
+    },
+    {
+     "rows": [
+      "B"
+     ],
+     "label": "2/4"
     }
    ],
+   "tag": {
+    "band": "Stop · 2/4 bar",
+    "drums": "Hit · 2/4 bar"
+   },
    "extra": {
     "band": [
      {
-      "nota": "STOP_PC",
+      "nota": "HIT24",
       "at": [
-       8
+       5
       ]
      }
     ],
-    "gtr1": [
+    "guitar": [
      {
-      "tab": "L_STOP57",
-      "at": [
-       8
-      ]
-     }
-    ],
-    "gtr2": [
+      "tab": "G14"
+     },
      {
-      "tab": "G2_LASTQ",
+      "tab": "G15",
       "at": [
-       7
+       2
       ]
      },
      {
-      "tab": "G2_STOP",
-      "at": [
-       8
-      ]
-     }
-    ],
-    "bass": [
-     {
-      "btab": "B_V2G",
-      "at": [
-       3,
-       7
-      ]
-     },
-     {
-      "btab": "B_V2F",
+      "nota": "GR1",
       "at": [
        4
       ]
      },
      {
-      "btab": "B_STOP57",
+      "nota": "HIT24",
       "at": [
-       8
+       5
       ]
      }
     ]
    },
-   "tag": {
-    "band": "Stop at the end"
+   "span": {
+    "guitar": 2
    }
   },
   {
    "nm": "Chorus 2",
    "type": "chorus",
    "e": 4,
-   "cue": "“I'm at a payphone trying to call home…”",
+   "cue": "“Besides, I ain't got rhythm…”",
+   "blocks": [
+    {
+     "rows": [
+      "E G A E"
+     ]
+    }
+   ],
+   "tag": {
+    "band": "Full band",
+    "drums": "No hi-hat, bars 1–3"
+   },
+   "extra": {
+    "guitar": [
+     {
+      "tab": "G17",
+      "at": [
+       1
+      ]
+     },
+     {
+      "tab": "G18",
+      "at": [
+       2
+      ]
+     },
+     {
+      "tab": "G19",
+      "at": [
+       3
+      ]
+     },
+     {
+      "tab": "G40",
+      "at": [
+       4
+      ]
+     }
+    ]
+   },
    "span": {
-    "keys": 4,
-    "all": 2
-   },
-   "blocks": [
-    {
-     "rows": [
-      "E B G#m F#",
-      "E B G#m F#",
-      "E B G#m F#",
-      "E B G#m F#"
-     ]
-    }
-   ],
-   "extra": {
-    "keys": [
-     {
-      "nota": "K_RIFF"
-     }
-    ],
-    "gtr1": [
-     {
-      "tab": "L_CHF",
-      "at": [
-       4,
-       8,
-       12,
-       16
-      ]
-     }
-    ],
-    "gtr2": [
-     {
-      "tab": "G2_LASTQ",
-      "at": [
-       7,
-       15
-      ]
-     },
-     {
-      "tab": "G2_HOLD",
-      "at": [
-       8
-      ]
-     }
-    ],
-    "bass": [
-     {
-      "btab": "B_OE",
-      "at": [
-       9,
-       13
-      ]
-     },
-     {
-      "btab": "B_OB",
-      "at": [
-       10
-      ]
-     },
-     {
-      "btab": "B_OG",
-      "at": [
-       11
-      ]
-     }
-    ]
-   },
-   "tag": {
-    "band": "Full band + piano",
-    "keys": "Piano riff"
-   }
-  },
-  {
-   "nm": "Rap",
-   "type": "solo",
-   "e": 3,
-   "cue": "Wiz: “Man, f— that s—…”",
-   "span": 2,
-   "blocks": [
-    {
-     "rows": [
-      "E B G#m F#",
-      "E B G#m F#",
-      "E B G#m F#",
-      "E B G#m F#"
-     ]
-    }
-   ],
-   "extra": {
-    "band": [
-     {
-      "nota": "RAP_RHY"
-     },
-     {
-      "nota": "RAP_STOP",
-      "at": [
-       8
-      ]
-     },
-     {
-      "nota": "SN_ROLL",
-      "at": [
-       16
-      ]
-     }
-    ],
-    "keys": [
-     {
-      "nota": "K_SYN"
-     },
-     {
-      "nota": "K_SYN_F",
-      "at": [
-       4,
-       12,
-       16
-      ]
-     },
-     {
-      "nota": "K_SYN_STOP",
-      "at": [
-       8
-      ]
-     }
-    ],
-    "gtr1": [
-     {
-      "tab": "X_STOP",
-      "at": [
-       8
-      ]
-     },
-     {
-      "tab": "X_B16",
-      "at": [
-       14
-      ]
-     }
-    ],
-    "bass": [
-     {
-      "nota": "RAP_RHY"
-     },
-     {
-      "btab": "B_RSTOP",
-      "at": [
-       8
-      ]
-     },
-     {
-      "btab": "B_R11",
-      "at": [
-       11
-      ]
-     },
-     {
-      "btab": "B_R16",
-      "at": [
-       16
-      ]
-     }
-    ]
-   },
-   "tag": {
-    "band": "Hip-hop groove, gtr bar 5",
-    "keys": "Synth line",
-    "gtr1": "Riff from bar 5",
-    "bass": "Hip-hop rhythm"
+    "guitar": 2
    }
   },
   {
    "nm": "Chorus 3",
    "type": "chorus",
    "e": 5,
-   "cue": "“I'm at a payphone trying to call home…”",
-   "span": {
-    "keys": 4,
-    "all": 2
-   },
+   "cue": "“I ain't got rhythm (sounds like rhythm to me)…”",
    "blocks": [
     {
      "rows": [
-      "E B G#m F#",
-      "E B G#m F#",
-      "E B G#m F#",
-      "E B G#m F#"
+      "E G A E"
      ]
-    },
-    {
-     "rows": [
-      "NC?"
-     ],
-     "label": "END"
     }
    ],
+   "tag": {
+    "band": "Vox answers",
+    "drums": "Fill in bar 4"
+   },
    "extra": {
-    "keys": [
+    "guitar": [
      {
-      "nota": "K_RIFF"
-     }
-    ],
-    "gtr1": [
-     {
-      "tab": "L_CHF",
+      "nota": "GR9",
       "at": [
-       4,
-       8,
-       12,
-       16
-      ]
-     }
-    ],
-    "gtr2": [
-     {
-      "tab": "G2_LASTQ",
-      "at": [
-       7,
-       15
+       1
       ]
      },
      {
-      "tab": "G2_HOLD",
+      "nota": "GR10",
+      "at": [
+       2
+      ]
+     },
+     {
+      "nota": "GR11",
+      "at": [
+       3
+      ]
+     },
+     {
+      "nota": "GR12",
+      "at": [
+       4
+      ]
+     }
+    ]
+   },
+   "span": {
+    "guitar": 2
+   }
+  },
+  {
+   "nm": "Ending",
+   "type": "chorus",
+   "e": 5,
+   "cue": "“…brand new generation… Because I ain't got rhythm!”",
+   "blocks": [
+    {
+     "rows": [
+      "E G? A B",
+      "B B B E"
+     ]
+    }
+   ],
+   "tag": {
+    "band": "Hit, fill, last hit"
+   },
+   "extra": {
+    "band": [
+     {
+      "nota": "HIT8",
+      "at": [
+       7
+      ]
+     },
+     {
+      "nota": "LAST",
       "at": [
        8
       ]
      }
     ],
-    "bass": [
+    "guitar": [
      {
-      "btab": "B_3E",
+      "nota": "GR12"
+     },
+     {
+      "tab": "G48",
       "at": [
-       9
+       4,
+       5,
+       6
       ]
      },
      {
-      "btab": "B_3B",
+      "tab": "G51",
       "at": [
-       10
-      ]
-     },
-     {
-      "btab": "B_3G",
-      "at": [
-       11
-      ]
-     },
-     {
-      "btab": "B_3F",
-      "at": [
-       12
+       7,
+       8
       ]
      }
     ]
    },
-   "tag": {
-    "band": "Biggest · vox ends alone",
-    "keys": "Piano riff"
+   "span": {
+    "band": 2,
+    "guitar": 4
    }
   }
  ],
  "header": {
   "band": {
-   "label": "Default · straight 8ths",
-   "nota": "EIGHTHS"
+   "label": "Bass riff rhythm",
+   "nota": "RIFF"
   },
-  "keys": {
-   "label": "Default · piano riff",
-   "nota": "K_RIFF"
-  },
-  "gtr1": {
+  "guitar": {
    "capo": true,
-   "label": "Default · the riff",
-   "tab": "RIFF"
-  },
-  "gtr2": {
-   "capo": true,
-   "label": "Default · 8ths",
-   "tab": "G2"
+   "label": "Default · chorus strum",
+   "nota": "GR3"
   },
   "bass": {
-   "label": "Default",
-   "btab": "BLOOP"
+   "label": ""
   },
   "drums": {
-   "style": "Four-on-the-floor pop · half-time rap",
-   "label": ""
+   "style": "Funky rock backbeat",
+   "label": "",
+   "badge": "AI transcription · unverified"
   }
  },
  "notes": [
   [
    "all",
-   "<b>How to read this</b>: a yellow number on a box means play figure N in that bar (same number next to the figure). The figure at the top is the default for every bar with nothing marked; a 4-bar top figure goes with the E–B–G#m–F# loop, one bar per chord. Grey-blue marks are rhythm only, on the chord in the box."
+   "<b>How to read this</b>: a mark on a box means play that figure there (the same mark is next to the figure). Grey-blue marks are rhythm only, on the chord in the box; yellow ones have notes to learn. The figure at the top is the default for any bar with nothing marked; a figure without a mark inside a tile is that section's default. Orange ? = UG and Songsterr differ (see the header). The Bass and Drums views write out every bar."
+  ],
+  [
+   "all",
+   "<b>Source caveat</b>: the only full-band Songsterr transcription of this song is <b>AI-generated</b> (Jan 2026, made from the official sing-along audio and not checked by a person). Its 52 bars line up with the record: at 96 bpm its bar 52 falls on the band's last hit at 2:05, and the bass notes in its G and A bars are the record's. Treat the guitar and drum details as a good guess and check them against the record."
   ],
   [
    "band",
-   "<b>One loop all song</b>: E–B–G#m–F#, one chord per bar, in every section (the rap too)."
+   "<b>Form</b>: drums alone for 6 bars (the 5th is a 2/4 bar), then the bass riff with the drums for verses 1 and 2. The guitar comes in at pre-chorus 1. Every section is one 4-bar line: E G A E for the verses and choruses, A E A B for the pre-choruses. <b>Stops</b>: everyone hits B on 1 at the end of pre-chorus 1 (“Ssh!”, a full bar) and pre-chorus 2 (a 2/4 bar, labelled), then the chorus pickup."
   ],
   [
    "band",
-   "<b>Bar 1 is the count-in</b>: the vocal pickup “I'm at a” is on beats 3–4, and the riff starts on the next bar. Gtr 1's riff and the vocal are alone for 4 bars; bass and Gtr 2 come in at intro bar 6, and everyone stops after beat 2 of bar 9. Drums come in at verse 1, bass at its bar 5."
+   "<b>Ending</b>: after chorus 3 the last chorus line goes to B for 3 bars (“a brand new generation”). Everyone hits B on 1 of the 7th bar while the drums fill, then the last hit: bass G → E in two quick 16ths, crash, done. UG's “He's got rhythm” outro isn't on the record."
   ],
   [
    "band",
-   "<b>Stops</b>: the band stops on beat 3 of the last pre-chorus bar (figure), before each chorus. Verse 2 opens with a drop: the bass holds E, the drums are out until a kick build on the & of 3."
+   "<b>No keys</b>: the Songsterr transcription has guitar, bass, drums and a vocal line only, so there's no Keys view. If the keys play, double the guitar's chords from pre-chorus 1 on."
   ],
   [
-   "band",
-   "<b>Rap</b>: the guitars drop out, the bass and kick play the hip-hop rhythm (figure) under claps on 2 and 4, and Gtr 1 comes back with the riff at bar 5. Stop on beat 3 of bar 8; bass and drums are out in bar 15, then a 16th snare roll into the last chorus."
+   "guitar",
+   c => `<b>Capo ${c || "off"}</b>: every chord and tab on this page is what you play with ${c ? "the capo on fret " + c : "no capo"}. UG and Songsterr both play it with no capo (open E, G, A and B shapes). Change it at the top.`
   ],
   [
-   "band",
-   "<b>Ending</b>: the band stops after the last F# of chorus 3, and the vocal holds “sick” alone (UG adds a last E for “Now I'm at a payphone…”: see the chord check)."
-  ],
-  [
-   "keys",
-   "<b>Piano in the choruses</b>: the riff in octaves (top figure), the same 4 bars all chorus. The right hand plays the octaves; the left hand plays the first note of each bar an octave lower as well (E2, B2, G#2, F#2)."
-  ],
-  [
-   "keys",
-   "<b>Rap</b>: the record's synth plays an 8th-note B–F#–B line over every chord (figures). In chorus 3 it keeps going under the piano; play the piano there."
-  ],
-  [
-   "keys",
-   "<b>Left off</b>: the string pad (held chords in the choruses), the bottle-string FX and the rap's other synth layers."
-  ],
-  [
-   "gtr1",
-   c => `<b>Capo ${c || "off"}</b>: every chord and tab on this page is what you play with ${c ? "the capo on fret " + c : "no capo"} (UG: capo 4; Songsterr plays it with no capo). Change it at the top.`
-  ],
-  [
-   "gtr1",
-   c => `<b>The riff</b> (top figure): a one-bar arpeggio per chord, 8ths, the top note held across beat 3. It runs almost all song: sit out only the count-in bar and the first 4 bars of the rap. The chorus ${shapeFor("F#", c)} bar is different (figure), and the intro and pre-choruses end with stops (figures).`
-  ],
-  [
-   "gtr1",
-   c => `<b>Rap</b>: from bar 5 the record has the riff on an atmospheric guitar (Songsterr's “Bridge Guitar” track), with a stop in bar 8 and a 16th variation in bar 14. In its bars 6, 9 and 15 one note changes (the 3rd note on ${shapeFor("B", c)}, the 1st note on ${shapeFor("E", c)}, the 1st note an octave lower on ${shapeFor("G#m", c)}), and pre-chorus 2 bar 4 swaps notes 2 and 3: play the standard riff there.`
-  ],
-  [
-   "gtr1",
-   c => `<b>Left off</b>: Songsterr's acoustic guitar track (one ${shapeFor("B", c)} barre chord held in every bar from verse 2: a placeholder, not a part) and the FX guitar (single-note hits in pre-chorus 2).`
-  ],
-  [
-   "gtr2",
-   c => `<b>Capo ${c || "off"}</b>: every chord and tab on this page is what you play with ${c ? "the capo on fret " + c : "no capo"} (UG: capo 4; Songsterr plays it with no capo). Change it at the top.`
-  ],
-  [
-   "gtr2",
-   c => `<b>Default</b> (top figure): 8ths on one note: under ${shapeFor("E", c)} play ${fretWords([1, 5], c)}; under ${shapeFor("B", c)} and ${shapeFor("G#m", c)}, ${fretWords([1, 4], c)}; under ${shapeFor("F#", c)}, ${fretWords([1, 7], c)}.`
-  ],
-  [
-   "gtr2",
-   c => `<b>Sit out</b> verse 1, verse 2 and the rap. Play intro bars 6–8 (starting on beat 2), the pre-choruses and every chorus. The ${shapeFor("G#m", c)} bar before each stop ends on a quarter note, and chorus bar 8 holds its last note (figures).`
+   "guitar",
+   "<b>Sit out</b> the intro and verses 1–2 (bass and drums only). Every figure is Songsterr's AI guitar, bar by bar. <b>Pre-choruses</b>: root notes with chord stabs and little walk-ups (tabbed), B in 8ths, then the stop. <b>Chorus 1</b>: the strum at the top on open chords. <b>Verses 3–4</b>: funk chops, high triads slid in from a fret below, with muted scratches (x). <b>Chorus 2</b>: root, then a big E9 / G / A chord with scratches, and a slide down in 6ths in bar 4. <b>Chorus 3 and the ending</b>: muted 16ths with chord stabs, then a climb in 6ths up the B major scale over the B bars."
   ],
   [
    "bass",
-   "<b>Default</b> (top figure): root 8ths walking down the loop: E at the 12th fret, B at the 7th, G# at the 4th, F# at the 2nd."
-  ],
-  [
-   "bass",
-   "<b>Intro</b>: in at bar 6, in position on the A and D strings (figures), stop after beat 2 of bar 9. <b>Verse 1</b>: sit out 4 bars, in at bar 5."
-  ],
-  [
-   "bass",
-   "<b>Verse 2 and pre-chorus 2</b>: hold E for the first bar, then the G# and F# bars go up an octave (frets 16 and 14). Verse 2's last bar moves to B on the & of 2 (figure; UG keeps F#)."
-  ],
-  [
-   "bass",
-   "<b>Choruses 2 and 3</b>: some bars add the 5th and octave (figures). <b>Rap</b>: the hip-hop rhythm on the root, locked with the kick (figure); stop in bar 8, out in bar 15, pickup on open E at the end of bar 16."
+   "<b>Every bar written out</b> from Songsterr's (AI) bass. <b>The riff</b>: two 8ths on the root, a 16th pickup on the “a” of 2, two 8ths on 3, the root again on the &amp; of 4. Same rhythm on E, G and A all song, with small changes in the pickup note. B bars are straight 8ths. <b>Rest</b> for the 6 drum bars at the start."
   ],
   [
    "drums",
-   "<b>Every bar is written out</b>, straight from Songsterr's kit track. Verse: kick on every beat, accented snare on 1, 2 and 4 with ghost notes between. Chorus: kick on every beat, snare on every beat plus the a of 2 and the e of 3 (and the & and a of 4 every other bar), crash on bars 1 and 9."
-  ],
-  [
-   "drums",
-   "<b>Rap</b>: half-time hip-hop: kick on 1, the a of 1 and the & of 2, claps on 2 and 4 (bars 8 and 12 busier). Out in bar 15, a 16th snare roll in bar 16. Chorus 3 adds a clap on beat 4."
-  ],
-  [
-   "drums",
-   "<b>No hi-hat on the chart</b>: Songsterr's kit track has none. Its second drum track (off-beat 8ths in the verses, 16ths in the choruses) uses sound numbers 2 and 4, which aren't standard drum sounds, so it can't be drawn; it is probably a hi-hat or shaker loop (unverified)."
+   "<b>Every bar written out</b> from Songsterr's drum track, which is AI-generated (Jan 2026, unchecked). Intro: kick and hat groove alone (bar 5 is a 2/4 bar). Verse 1: open hat on 2 and 4 instead of a snare; the snare joins in verse 2. From pre-chorus 1: a rock backbeat with kicks on 1, the &amp; of 1, 3 and the &amp; of 3. <b>Stops</b>: one hit at the end of each pre-chorus (the 2nd is a 2/4 bar). Chorus 2's first 3 bars have no hi-hat in the transcription. The fill into the last chorus line and the last fill are written out."
   ]
  ]
 };
@@ -4687,7 +4171,8 @@ function tab(bars, capo, tun = TUNING) {
   const wide = e => e && !e.r && ((e.n || []).some(([, f]) => f >= 10) || e.tie || e.tieN);
   const dense = !bw && bars.some(ev => { const s = ev.filter(e => !e.r).sort((a, b) => a.p - b.p);
     return s.some((e, i) => e.d <= 0.5 || (i && e.p - s[i - 1].p <= 1.01 && (wide(e) || wide(s[i - 1])))); });
-  const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = dense ? 18 : 12, BW = bw || BAR * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
+  const has32 = !bw && bars.some(ev => ev.some(e => !e.r && e.d <= 0.5));   // 32nd runs need even more room per 16th
+  const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = has32 ? 26 : dense ? 18 : 12, BW = bw || BAR * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
   const X = (b, p) => HDR + b * BW + (bw ? 10 : 11) + p * SP, yl = s => s * LS, BOT = (NSTR - 1) * LS;
   const out = [], notes = [];
   for (let s = 0; s < NSTR; s++) out.push(`<line x1="0" x2="${W}" y1="${yl(s)}" y2="${yl(s)}" stroke="var(--muted)" stroke-width="1"/>`);
@@ -4798,7 +4283,7 @@ function bar(tok, view, playing, mk = { b: [], crash: false }) {
   // long names shrink; a split box is already smaller, so it only shrinks further when one of its chords is long ("Eb|Bb" stays)
   if (parts.length > 1 ? Math.max(...shown.map(p => p.length)) >= 5 : shown[0].length >= 5) cls.push("long");
   if (parts.length === 2 && shown.every(p => p.length <= 3)) cls.push("short");   // two short chords: room to be bigger
-  return `<div class="bar ${cls.join(" ")}"><span class="sp">${shown.map(p => `<span>${esc(p)}</span>`).join("")}</span>${walk ? '<span class="w">↑</span>' : ""}${q}${deco}</div>`;
+  return `<div class="bar ${cls.join(" ")}"><span class="sp">${shown.map(p => `<span>${p === "NC" ? "N.C." : esc(p)}</span>`).join("")}</span>${walk ? '<span class="w">↑</span>' : ""}${q}${deco}</div>`;
 }
 
 // One figure: staff notation, guitar tab (capo-aware, labels shown as shapes) or bass tab.
@@ -4809,8 +4294,8 @@ function figure(x) {
     if (n && n.clef === "slash" && isGtr(curView) && capo && n.bars) return score({ ...n, bars: n.bars.map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e)) });
     return score(n);
   }
-  if (x.tab) { const t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e));
-    return tab(t.bars ? { bw: t.bw, bars } : bars, capo, (SONG.tunings && SONG.tunings[curView]) || SONG.gtrTuning || TUNING); }   // gtrTuning: e.g. drop D [64,59,55,50,45,38]; tunings: { gtr2: [...] } per view
+  if (x.tab) { const g = isGtr(curView), t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c && g ? { ...e, c: shapeLabel(e.c) } : e));
+    return tab(t.bars ? { bw: t.bw, bars } : bars, g ? capo : 0, (SONG.tunings && SONG.tunings[curView]) || SONG.gtrTuning || TUNING); }   // other views (Band) show the no-capo fingering   // gtrTuning: e.g. drop D [64,59,55,50,45,38]; tunings: { gtr2: [...] } per view
   if (x.btab) return tab(SONG.bassTabs[x.btab], 0, SONG.bassTuning || BASS_TUNING);
   return "";
 }
@@ -5188,7 +4673,7 @@ function drumTile(s, i, bars) {
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
     <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
-    <div class="cue">${esc(s.cue)}</div>
+    <div class="cue">${esc(s.cue || "")}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
     <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
@@ -5210,7 +4695,7 @@ function drumTileLegacy(s, i, bars) {
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
     <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
-    <div class="cue">${esc(s.cue)}</div>
+    <div class="cue">${esc(s.cue || "")}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
     <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
@@ -5273,7 +4758,7 @@ function bassTile(s, i, bars, view = "bass") {
   const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
   return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
     <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
-    <div class="cue">${esc(s.cue)}</div>
+    <div class="cue">${esc(s.cue || "")}</div>
     ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
     <div class="ft"><span class="tag">${esc(s.tag[view] || (anyPlay ? "" : (gtr ? "Sit out · " : "Tacet · ") + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
   </div>`;
@@ -5300,6 +4785,8 @@ var render = function (view) {
       if (x.at) x.at.forEach(k => { const m = (marks[k] ??= { b: [], crash: false, rh: new Set() }); m.rh ??= new Set(); m.b.push(x._b); if (x._rh) m.rh.add(x._b); });
     });
     let total = 0, anyPlay = false, box = 0;
+    // a short row (2 bars) keeps the tile's usual box size instead of stretching: it uses the most common row length
+    const lens = s.blocks.flatMap(b => b.rows.map(r => r.split(" ").length)), rowMax = [...new Set(lens)].sort((a, b) => lens.filter(x => x === b).length - lens.filter(x => x === a).length || b - a)[0];
     const blocks = s.blocks.map(b0 => {
       // Auto-collapse: identical rows become one row with ×N (Brandon: save space), unless this view's player does
       // something different on one of the passes (different play/tacet, marker, crash or box override) — then stay unrolled.
@@ -5318,7 +4805,7 @@ var render = function (view) {
       const toks = b.rows.map(r => r.split(" ")), n = toks.flat().length, rep = b.rep || 1, start = m;
       m += n * rep; total += n * rep;
       let k = 0;
-      const rows = toks.map(t => `<div class="row" style="--n:${b.label ? 4 : t.length}">${t.map((tok, j) => {
+      const rows = toks.map(t => `<div class="row" style="--n:${b.label ? 4 : Math.max(t.length, rowMax)}">${t.map((tok, j) => {
         let on = false;
         for (let r = 0; r < rep; r++) on ||= view === "band" || SONG.plays[view][start + r * n + k] === "1";
         anyPlay ||= on; k++; box++;
@@ -5335,7 +4822,7 @@ var render = function (view) {
     const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
     return `<div class="tile t-${s.type}${view !== "band" && !anyPlay ? " out" : ""}" style="--s4:${s4[i]};--s2:${s2[i]}">
       <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(total)}</span></div>
-      <div class="cue">${esc(s.cue)}</div>
+      <div class="cue">${esc(s.cue || "")}</div>
       <div class="chart">${blocks.join("")}${extraHTML.length ? `<div class="figs">${extraHTML.join("")}</div>` : ""}</div>
       <div class="ft"><span class="tag">${esc(tag)}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
     </div>`;
