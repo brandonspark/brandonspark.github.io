@@ -1,0 +1,2892 @@
+<meta name="robots" content="noindex,nofollow"><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a><title>Burnin' Up Roadmap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&family=Noto+Music&family=Noto+Serif:wght@600&display=swap">
+<style>
+/* Layout: tablet-first stage chart (mild scrolling is fine), the whole song as tiles in reading order (1 box = 1 measure). An instrument switch filters one shared song model into Band / Keys / Guitar / Bass / Drums views. Dark only, for stage lighting. */
+:root {
+  --bg: #0c0d11; --tile: #16181f; --ink: #f4f5f8; --muted: #9ba1b0; --faint: #4a505e; --line: #353a46;
+  --c-intro: #8796ad; --c-verse: #5b8fe0; --c-chorus: #ff6a45; --c-bridge: #39b8a3; --c-solo: #9b74f0; --hit: #ff6a45; --sel: #f4f5f8; --fig: #ffd23f; --rh: #8796ad;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); }
+
+.stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-block: 8px;
+  padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
+
+.hdr { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; font-family: var(--display); line-height: 1; }
+.hdr h1 { margin: 0; font-size: clamp(24px, 3.2vw, 38px); font-weight: 800; text-transform: uppercase; }
+.hdr .facts { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: clamp(16px, 2vw, 24px); font-weight: 700; }
+.hdr .facts span { color: var(--muted); font-weight: 500; }
+.chk { position: relative; cursor: help; color: var(--hit); outline: none; }
+.chk.ok { color: var(--muted); }
+.chk .pop { display: none; position: absolute; z-index: 10; top: calc(100% + 8px); left: 0; width: min(440px, 86vw); padding: 12px 14px; background: var(--tile); border: 1px solid var(--faint); border-radius: 8px; box-shadow: 0 8px 24px rgb(0 0 0 / .5); font-family: var(--body, system-ui); font-size: 15px; font-weight: 400; line-height: 1.35; color: var(--ink); text-transform: none; }
+.chk:hover .pop, .chk:focus .pop, .chk:focus-within .pop { display: block; }
+.chk .pop p { margin: 0 0 8px; color: var(--muted); }
+.chk .pop .d { margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--faint); }
+.chk .pop .d .wh { display: block; font-family: var(--display); font-size: 17px; text-transform: uppercase; }
+.chk .pop .d .s { color: var(--muted); }
+.bar .q { position: absolute; top: .05em; right: .2em; font-size: .42em; color: var(--hit); font-weight: 800; }
+.hdr .extra { display: flex; align-items: center; gap: 8px; font-size: clamp(13px, 1.4vw, 16px); font-weight: 700; color: var(--muted); text-transform: uppercase; }
+.hdr .extra svg { width: min(calc(var(--w) * 1.45px), 56vw); height: auto; display: block; text-transform: none; }
+/* Tempo flash (Brandon): tap the bpm to flash the beat, so whoever counts the song in starts at the right speed.
+   The button shows the count (beat 1 orange) and a strip along the top of the screen flashes with it. */
+.tempo { font: inherit; color: var(--ink); background: transparent; border: 2px solid var(--line); border-radius: 8px; padding: 4px 10px 4px 8px;
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer; line-height: 1; transition: background-color 60ms; }
+.tempo span { color: var(--muted); font-weight: 500; }
+.tempo .dot { width: .72em; height: .72em; border-radius: 50%; background: var(--faint); flex: none; }
+.tempo .cnt { min-width: 1.1ch; text-align: center; font-size: .8em; color: var(--muted); }
+.tempo:focus-visible { outline: 2px solid var(--hit); }
+.tempo[aria-pressed="true"] { border-color: var(--ink); }
+.tempo[aria-pressed="true"] .cnt { color: var(--ink); font-size: 1em; }
+.tempo.on { background: color-mix(in srgb, var(--ink) 22%, transparent); }
+.tempo.on .dot { background: var(--ink); box-shadow: 0 0 14px var(--ink); }
+.tempo.one { background: color-mix(in srgb, var(--hit) 38%, transparent); }
+.tempo.one .dot { background: var(--hit); box-shadow: 0 0 16px var(--hit); }
+.tempo-strip { position: fixed; left: 0; right: 0; top: 0; height: 14px; z-index: 60; pointer-events: none; opacity: 0; background: var(--ink); }
+.tempo-strip.on { opacity: 1; }
+.tempo-strip.one { background: var(--hit); }
+.capo { display: inline-flex; align-items: center; gap: 8px; font-size: clamp(18px, 2.2vw, 26px); color: var(--ink); text-transform: none; }
+.capo b { min-width: 1.6em; text-align: center; font-size: 1.2em; }
+.tune { font-size: clamp(18px, 2.2vw, 26px); color: #111; background: var(--fig); border-radius: 6px; padding: 4px 10px; text-transform: uppercase; font-weight: 800; }
+.capo button { font: 800 1em/1 var(--display); width: 1.7em; height: 1.7em; border-radius: 6px; border: 2px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+.capo button:focus-visible { outline: 2px solid var(--hit); }
+.views { margin-left: auto; display: flex; border: 2px solid var(--line); border-radius: 6px; overflow: hidden; }
+.views button { font: 700 clamp(14px, 1.6vw, 18px)/1 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+  background: transparent; border: 0; padding: 8px 12px; cursor: pointer; }
+.views button + button { border-left: 2px solid var(--line); }
+.views button[aria-pressed="true"] { background: var(--sel); color: var(--bg); }
+.views button:focus-visible { outline: 2px solid var(--hit); outline-offset: -2px; }
+
+.board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; align-items: stretch; }
+.board > .tile { grid-column: span var(--s4); --u: calc(1cqw / var(--s4)); }
+@media (orientation: portrait) and (max-width: 600px) { .board { grid-template-columns: repeat(2, minmax(0, 1fr)); } .board > .tile { grid-column: span var(--s2); --u: calc(1cqw / var(--s2)); } }
+
+/* Tiles size by width: --u is 1% of a single column's width (a tile spanning n columns uses 1/n %), so every box and label is the same physical size. */
+.tile { container-type: inline-size; min-width: 0; background: var(--tile); border-radius: 6px; overflow: hidden;
+  border-top: 6px solid var(--c); display: grid; grid-template-rows: auto auto 1fr auto; }
+.t-intro { --c: var(--c-intro); } .t-verse { --c: var(--c-verse); } .t-chorus { --c: var(--c-chorus); }
+.t-bridge { --c: var(--c-bridge); } .t-solo { --c: var(--c-solo); }
+.tile.out { background: color-mix(in srgb, var(--tile) 70%, var(--bg)); }
+
+.th { display: flex; align-items: baseline; gap: calc(3 * var(--u)); padding: calc(3 * var(--u)) calc(4 * var(--u)) 0; font-family: var(--display); line-height: 1; }
+.num { font-size: calc(8 * var(--u)); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.nm { font-size: calc(11 * var(--u)); font-weight: 800; color: var(--c); text-transform: uppercase; white-space: nowrap; }
+.bars { margin-left: auto; font-size: calc(7 * var(--u)); font-weight: 600; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cue { padding: calc(1 * var(--u)) calc(4 * var(--u)) calc(2 * var(--u)); font-size: calc(6 * var(--u)); line-height: 1.1; font-style: italic; color: var(--muted); }
+
+.chart { display: grid; gap: calc(3 * var(--u)); padding: 0 calc(4 * var(--u)); align-content: safe center; min-width: 0; }
+.block { display: grid; grid-template-columns: 1fr calc(11 * var(--u)); gap: calc(2 * var(--u)); align-items: center; }
+.rows { display: grid; gap: calc(1.5 * var(--u)); min-width: 0; }
+.row { display: grid; grid-template-columns: repeat(var(--n), 1fr); border-left: 2px solid var(--ink); }
+.bar { border-right: 2px solid var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 calc(1 * var(--u)); position: relative; min-width: 0;
+  height: calc(17 * var(--u)); font-family: var(--display); font-size: calc(9.5 * var(--u)); font-weight: 700; line-height: 1; white-space: nowrap; }
+.bar .sp { display: flex; gap: calc(1 * var(--u)); justify-content: space-around; width: 100%; }
+.bar.long { font-size: calc(6 * var(--u)); }
+.bar.split .sp { font-size: .72em; }
+.bar.split.short .sp { font-size: .86em; }
+.bar.split .sp span + span { border-left: 1px dashed var(--faint); padding-left: calc(1 * var(--u)); }
+.bar.sim { color: var(--faint); font-weight: 600; }
+.bar.nc { color: var(--muted); font-size: calc(6.5 * var(--u)); }
+.bar.tacet { color: var(--faint); background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--faint) 30%, transparent) 5px 6px); }
+.bar .shape { font-size: .56em; font-weight: 600; color: var(--muted); margin-top: .15em; }
+.bar.tacet .shape { color: var(--faint); }
+.bar .w { position: absolute; bottom: .1em; right: .2em; font-size: .42em; color: var(--hit); font-weight: 800; }
+.rep { font-family: var(--display); font-weight: 800; font-size: calc(8 * var(--u)); color: var(--c); text-align: center; line-height: 1;
+  border-left: 2px solid var(--c); padding-left: calc(1 * var(--u)); align-self: stretch; display: grid; place-items: center; }
+.rep.none { border: 0; }
+.rep .lb { font-size: .55em; }
+/* Markers: a yellow numbered disc on a box means "play figure N here". The same disc sits next to the figure. */
+.figs { display: flex; flex-wrap: wrap; gap: calc(2.5 * var(--u)) calc(5 * var(--u)); align-items: center; min-width: 0; }
+.nota { display: flex; align-items: center; gap: calc(1.5 * var(--u)); min-width: 0; max-width: 100%; }
+/* Drum lines at 70% of the tile width (Brandon: see more lines at once); 4 bars per line keeps phrases aligned. */
+.chart.drums { gap: 0; padding-bottom: calc(.5 * var(--u)); }
+/* VexFlow lines: every line drawn at the same scale (a 4-bar line is ~1100 units wide = 70% of the tile), so the staff is one size everywhere. */
+.drow svg.vf { display: block; width: calc(70% * var(--w) / 1100); max-width: 100%; height: auto; color: var(--ink); --staff: #8a909e; margin: calc(.4 * var(--u)) 0; }
+.drow.legacy svg { display: block; width: calc(70% * var(--nb) / 4); height: auto; margin: calc(-.6 * var(--u)) 0; }
+/* Drum style note at the top of the Drums view, like the style marking on a printed chart ("Half-time ballad"). */
+.dstyle { font: 800 clamp(20px, 2.6vw, 30px)/1.05 var(--display); color: var(--ink); text-transform: none; letter-spacing: .01em; max-width: 14em; }
+.hdr .extra svg.dkey { width: min(calc(var(--w) * .8px), 94vw); color: var(--ink); --staff: #8a909e; }
+.dtacet { font-family: var(--display); font-weight: 700; font-size: calc(5 * var(--u)); color: var(--muted); text-transform: uppercase; padding: calc(2 * var(--u)) 0; }
+.tgroup { display: flex; gap: calc(1.2 * var(--u)); align-items: stretch; }
+.tgroup .rep { font-size: calc(10 * var(--u)); }
+.trest { font: 700 calc(8 * var(--u)) / 1.6 var(--display); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.trow { display: flex; align-items: center; gap: calc(1.2 * var(--u)); }
+.trow .rep { font-size: calc(10 * var(--u)); }
+.trow svg { display: block; width: calc(var(--w) * .5 * var(--u)); max-width: 100%; height: auto; margin: calc(.3 * var(--u)) 0; }
+.nota svg { display: block; flex: 0 1 auto; min-width: 0; width: calc(var(--w) * .4 * var(--u)); max-width: 100%; height: auto; }
+.nota svg[aria-label="guitar tab"] { width: calc(var(--w) * .32 * var(--u)); } /* tabs run ~20% smaller than staves: they are taller per bar */
+.bd { flex: none; display: inline-grid; place-items: center; min-width: 1.25em; height: 1.25em; padding: 0 .2em; border-radius: 99px; background: var(--fig); color: #111;
+  font: 800 calc(6.5 * var(--u))/1 var(--display); }
+.bar .bd { position: absolute; top: calc(.8 * var(--u)); left: calc(.8 * var(--u)); font-size: calc(4.6 * var(--u)); }
+.bar .bd + .bd { left: calc(7.5 * var(--u)); }
+.bar:has(> .bd) .sp { padding-top: calc(4.2 * var(--u)); }   /* the disc sits top-left; the chord name moves below it */
+.bar.mk { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--fig); }
+.bar.mk.mkr { box-shadow: inset 0 calc(-1.4 * var(--u)) 0 var(--rh); }
+.bd.rh { background: var(--rh); }
+.bar .cr { position: absolute; bottom: calc(1.6 * var(--u)); left: calc(1 * var(--u)); width: calc(5 * var(--u)); height: calc(5 * var(--u)); }
+
+.ft { display: flex; align-items: center; gap: calc(3 * var(--u)); padding: calc(2 * var(--u)) calc(4 * var(--u)) calc(3 * var(--u)); min-width: 0; }
+.tag { font-family: var(--display); font-weight: 800; font-size: calc(7 * var(--u)); text-transform: uppercase; line-height: 1.1; min-width: 0; text-wrap: balance; }
+.tile.out .tag { color: var(--muted); }
+.meter { margin-left: auto; display: flex; gap: calc(1.2 * var(--u)); align-items: flex-end; flex: none; }
+.meter i { display: block; width: calc(2.6 * var(--u)); background: var(--line); border-radius: 1px; }
+.meter i.on { background: var(--c); }
+
+.notes { max-width: 1000px; margin: 0 auto; padding-block: 32px 48px; display: grid; gap: 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.notes h2 { font-family: var(--display); font-weight: 800; font-size: 26px; text-transform: uppercase; margin: 0 0 8px; }
+.notes ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 16px; line-height: 1.45; max-width: 75ch; }
+.notes p { margin: 0; color: var(--muted); font-size: 14px; max-width: 75ch; }
+.notes a { color: inherit; }
+.notes b { font-family: var(--display); font-size: 18px; }
+</style>
+
+<div class="stage">
+  <div class="hdr">
+    <h1>Burnin' Up</h1>
+    <div class="facts"><div><span>Key</span> <span id="keyName" style="color:var(--ink);font-weight:700">Bm</span></div><div>114 <span>bpm</span></div><div>78 <span>bars</span></div><div class="chk" id="chk" tabindex="0"></div></div>
+    <div class="extra" id="hdrExtra"></div>
+    <div class="views" id="views" role="group" aria-label="Instrument"></div>
+  </div>
+  <div class="board" id="board"></div>
+</div>
+
+<div class="notes">
+  <section>
+    <h2 id="notesTitle">Rehearsal notes</h2>
+    <ul id="notesList"></ul>
+  </section>
+  <p>Bar-by-bar parts come from the full-band <a href="https://www.songsterr.com/a/wsa/jonas-brothers-burnin-up-tab-s39915" target="_blank" rel="noopener">Songsterr transcription</a> (bars 1–78 of 81 at 114 bpm; the last 3 are empty). The play/tacet shading for each view is computed from each instrument's track; the drums are every bar of its drum track.
+    Chord names come from the most-voted <a href="https://tabs.ultimate-guitar.com/tab/jonas-brothers/burnin-up-chords-693577" target="_blank" rel="noopener">Ultimate Guitar chords ver. 1</a> (4.87★, 318 votes), shown in concert pitch.</p>
+</div>
+
+<script src="../../vendor/vexflow-bravura-4.2.5.js"></script>
+<script>
+/* ============ SONG MODEL (single source of truth) ============ */
+const SONG = {
+ "key": "Bm",
+ "capo": 0,
+ "guitars": [
+  "gtr1",
+  "gtr2"
+ ],
+ "bassTuning": [
+  43,
+  38,
+  33,
+  26
+ ],
+ "views": [
+  [
+   "band",
+   "Band"
+  ],
+  [
+   "gtr1",
+   "Gtr 1"
+  ],
+  [
+   "gtr2",
+   "Gtr 2"
+  ],
+  [
+   "bass",
+   "Bass"
+  ],
+  [
+   "drums",
+   "Drums"
+  ]
+ ],
+ "plays": {
+  "gtr1": "011111111111111101111111111111111111111111110000011111111111111111111111111111",
+  "gtr2": "011111111111111101111111111111111111111111110000000001111111111111111111111111",
+  "bass": "011111111111111111111111111111111111111111110000000011111111111111111111111111",
+  "drums": "111111111111111111111111111111111111111111100111111111111111111111111111111111"
+ },
+ "notation": {
+  "G1S1": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 4
+     },
+     {
+      "p": 4,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 8,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 10,
+      "d": 2
+     },
+     {
+      "p": 12,
+      "d": 1,
+      "r": true
+     },
+     {
+      "p": 13,
+      "d": 2
+     },
+     {
+      "p": 15,
+      "d": 1,
+      "r": true
+     }
+    ]
+   ]
+  },
+  "G1S2": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 4
+     },
+     {
+      "p": 4,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 8,
+      "d": 8,
+      "r": true
+     }
+    ]
+   ]
+  },
+  "G1S3": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1
+     },
+     {
+      "p": 1,
+      "d": 1
+     },
+     {
+      "p": 2,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 3,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 4,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 5,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 9,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 10,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 11,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 12,
+      "d": 1
+     },
+     {
+      "p": 13,
+      "d": 1
+     },
+     {
+      "p": 14,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 15,
+      "d": 1,
+      "x": true
+     }
+    ]
+   ]
+  },
+  "G2S1": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1
+     },
+     {
+      "p": 1,
+      "d": 1
+     },
+     {
+      "p": 2,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 12,
+      "d": 1
+     },
+     {
+      "p": 13,
+      "d": 1
+     },
+     {
+      "p": 14,
+      "d": 2,
+      "r": true
+     }
+    ]
+   ]
+  },
+  "G1S4": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "c": "A"
+     },
+     {
+      "p": 1,
+      "d": 1
+     },
+     {
+      "p": 2,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 3,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 4,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 5,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 9,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 10,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 11,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 12,
+      "d": 1
+     },
+     {
+      "p": 13,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 14,
+      "d": 2,
+      "c": "G"
+     }
+    ]
+   ]
+  },
+  "G2S2": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "c": "A"
+     },
+     {
+      "p": 1,
+      "d": 1
+     },
+     {
+      "p": 2,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 10,
+      "d": 2
+     },
+     {
+      "p": 12,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 14,
+      "d": 2,
+      "c": "G"
+     }
+    ]
+   ]
+  },
+  "G2S3": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 8,
+      "r": true
+     }
+    ]
+   ]
+  },
+  "BS1": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1
+     },
+     {
+      "p": 1,
+      "d": 1
+     },
+     {
+      "p": 2,
+      "d": 1
+     },
+     {
+      "p": 3,
+      "d": 1,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 1
+     },
+     {
+      "p": 5,
+      "d": 1
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1,
+      "r": true
+     },
+     {
+      "p": 8,
+      "d": 1
+     },
+     {
+      "p": 9,
+      "d": 1
+     },
+     {
+      "p": 10,
+      "d": 1
+     },
+     {
+      "p": 11,
+      "d": 1,
+      "r": true
+     },
+     {
+      "p": 12,
+      "d": 4
+     }
+    ]
+   ]
+  },
+  "G1S5": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 4,
+      "c": "Bm"
+     },
+     {
+      "p": 4,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 8,
+      "d": 4,
+      "c": "A"
+     },
+     {
+      "p": 12,
+      "d": 4,
+      "r": true
+     }
+    ]
+   ]
+  },
+  "G1S6": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 16
+     }
+    ]
+   ]
+  },
+  "G1S7": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "c": "A"
+     },
+     {
+      "p": 1,
+      "d": 1
+     },
+     {
+      "p": 2,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 3,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 4,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 5,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 9,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 10,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 11,
+      "d": 1,
+      "x": true
+     },
+     {
+      "p": 12,
+      "d": 1
+     },
+     {
+      "p": 13,
+      "d": 1
+     },
+     {
+      "p": 14,
+      "d": 2,
+      "c": "G"
+     }
+    ]
+   ]
+  },
+  "G2S4": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "c": "A"
+     },
+     {
+      "p": 1,
+      "d": 1
+     },
+     {
+      "p": 2,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 12,
+      "d": 1
+     },
+     {
+      "p": 13,
+      "d": 1
+     },
+     {
+      "p": 14,
+      "d": 2,
+      "c": "G"
+     }
+    ]
+   ]
+  },
+  "B_PUSH": {
+   "clef": "slash",
+   "bars": [
+    [
+     {
+      "p": 0,
+      "d": 1,
+      "c": "A"
+     },
+     {
+      "p": 1,
+      "d": 1
+     },
+     {
+      "p": 2,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 6,
+      "d": 1
+     },
+     {
+      "p": 7,
+      "d": 1
+     },
+     {
+      "p": 8,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 10,
+      "d": 2
+     },
+     {
+      "p": 12,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 14,
+      "d": 2,
+      "c": "G",
+      "tie": true
+     }
+    ],
+    [
+     {
+      "p": 0,
+      "d": 2
+     },
+     {
+      "p": 2,
+      "d": 2,
+      "r": true
+     },
+     {
+      "p": 4,
+      "d": 4,
+      "r": true
+     },
+     {
+      "p": 8,
+      "d": 8,
+      "r": true
+     }
+    ]
+   ]
+  },
+  "B_HIT": {
+   "clef": "perc",
+   "grids": [
+    {
+     "SN": "............x...",
+     "T6": "............x..."
+    }
+   ]
+  }
+ },
+  drumBars: [[{"p":12.0,"n":"SN F1","dyn":"f"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"SN F1"},{"p":10.0,"n":"SN"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"SN"},{"p":13.0,"n":"SN"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":9.0,"n":"SN.g"},{"p":10.0,"n":"CR BD"},{"p":12.0,"n":"CR SN"},{"p":14.0,"n":"BD"}],[{"p":10.0,"n":"BD"},{"p":11.0,"n":"BD"},{"p":12.0,"n":"HO SN"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"HH SN"},{"p":7.0,"n":"HO"},{"p":8.0,"n":"HF"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"HO BD"},{"p":4.0,"n":"SN HF"},{"p":5.0,"n":"SN.g"},{"p":7.0,"n":"SN.g"},{"p":8.0,"n":"HH"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"BD"},{"p":1.0,"n":"BD"},{"p":2.0,"n":"SN"},{"p":4.0,"n":"SN"},{"p":6.0,"n":"SN.g"},{"p":8.0,"n":"SN"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"BD"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"SN"},{"p":13.0,"n":"SN.g"},{"p":14.0,"n":"R2"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HH BD"},{"p":12.0,"n":"SN R3"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HH"},{"p":3.0,"n":"HH"},{"p":4.0,"n":"HH SN"},{"p":5.0,"n":"HH"},{"p":6.0,"n":"HH"},{"p":7.0,"n":"HH SN.g"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"HH"},{"p":10.0,"n":"HH BD"},{"p":11.0,"n":"HH"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"HH BD"},{"p":14.0,"n":"HH"},{"p":15.0,"n":"HH"}],[{"p":0.0,"n":"SN"},{"p":1.0,"n":"SN"},{"p":2.0,"n":"BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"R2"},{"p":5.0,"n":"R2"},{"p":6.0,"n":"BD"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"R3"},{"p":9.0,"n":"R3"},{"p":10.0,"n":"BD"},{"p":11.0,"n":"BD"},{"p":12.0,"n":"CR SN F1"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"R2"},{"p":9.0,"n":"R2"},{"p":10.0,"n":"R3"},{"p":11.0,"n":"R3"},{"p":12.0,"n":"CR BD"},{"p":14.0,"n":"CR BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"BD"},{"p":1.0,"n":"BD"},{"p":2.0,"n":"SN"},{"p":4.0,"n":"SN"},{"p":5.0,"n":"SN"},{"p":6.0,"n":"R1"},{"p":7.0,"n":"R1 BD"},{"p":8.0,"n":"SN"},{"p":9.0,"n":"R1"},{"p":10.0,"n":"R1"},{"p":11.0,"n":"R1"},{"p":12.0,"n":"R2"},{"p":13.0,"n":"R2"},{"p":14.0,"n":"R3"},{"p":15.0,"n":"R3"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"HO SN"},{"p":6.0,"n":"HO.g"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"HO"},{"p":10.0,"n":"HO.g BD"},{"p":12.0,"n":"HO SN"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"HO.g"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HO.g"},{"p":4.0,"n":"HO SN"},{"p":5.0,"n":"SN.g"},{"p":6.0,"n":"HO.g"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"HO"},{"p":10.0,"n":"HO.g BD"},{"p":12.0,"n":"HO SN"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"HO.g"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HO"},{"p":4.0,"n":"HO.g SN"},{"p":6.0,"n":"HO BD"},{"p":8.0,"n":"CR BD"},{"p":10.0,"n":"HO"},{"p":12.0,"n":"HO SN"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"HO"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"HO"},{"p":4.0,"n":"HO SN"},{"p":6.0,"n":"HO"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"R2 R3"},{"p":9.0,"n":"R3 BD"},{"p":10.0,"n":"R3"},{"p":11.0,"n":"R3 BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"R3"},{"p":14.0,"n":"R3"},{"p":15.0,"n":"R3 BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"HO SN"},{"p":6.0,"n":"HO.g"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"HO"},{"p":10.0,"n":"HO.g BD"},{"p":12.0,"n":"HO SN"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"HO.g"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"HO BD"},{"p":2.0,"n":"HO"},{"p":4.0,"n":"HO SN"},{"p":6.0,"n":"HO"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"HO BD"},{"p":10.0,"n":"SN"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"SN"},{"p":13.0,"n":"SN"},{"p":14.0,"n":"CR BD"}],[],[],[{"p":0.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"BD"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":8.0,"n":"HH"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":8.0,"n":"HH"},{"p":9.0,"n":"BD"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"HH BD"},{"p":4.0,"n":"HH SN"},{"p":8.0,"n":"HH"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"HH SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"F1 BD"},{"p":2.0,"n":"F1"},{"p":4.0,"n":"SN F1"},{"p":6.0,"n":"F1"},{"p":7.0,"n":"R2"},{"p":8.0,"n":"F1"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"F1 BD"},{"p":12.0,"n":"SN F1"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"R2"},{"p":15.0,"n":"R3"}],[{"p":0.0,"n":"F1 BD"},{"p":2.0,"n":"F1"},{"p":4.0,"n":"SN F1"},{"p":6.0,"n":"F1"},{"p":7.0,"n":"R2"},{"p":8.0,"n":"F1"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"F1 BD"},{"p":12.0,"n":"SN F1"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"F1"},{"p":14.6667,"n":"F1"},{"p":15.3333,"n":"F1"}],[{"p":0.0,"n":"F1 BD"},{"p":2.0,"n":"F1"},{"p":4.0,"n":"SN F1"},{"p":6.0,"n":"F1"},{"p":7.0,"n":"R2"},{"p":8.0,"n":"F1"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"F1 BD"},{"p":12.0,"n":"SN F1"},{"p":13.0,"n":"BD"},{"p":14.0,"n":"CR F1"},{"p":15.0,"n":"R3"}],[{"p":0.0,"n":"CR F1 BD"},{"p":2.0,"n":"F1"},{"p":4.0,"n":"CR SN"},{"p":6.0,"n":"F1"},{"p":8.0,"n":"SN"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"SN"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"SN"},{"p":13.0,"n":"SN"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"SN"},{"p":14.0,"n":"R2"},{"p":15.0,"n":"R2"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"SN"},{"p":14.0,"n":"SN"},{"p":15.0,"n":"SN"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":3.0,"n":"BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":11.0,"n":"BD"},{"p":12.0,"n":"SN"},{"p":14.0,"n":"SN"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"CR BD"},{"p":4.0,"n":"CR SN BD"},{"p":6.0,"n":"CR BD"},{"p":8.0,"n":"CR SN BD"},{"p":10.0,"n":"CR SN BD"},{"p":12.0,"n":"SN BD"},{"p":12.5,"n":"SN"},{"p":13.0,"n":"SN"},{"p":13.5,"n":"SN"},{"p":14.0,"n":"SN BD"},{"p":14.5,"n":"SN"},{"p":15.0,"n":"SN"},{"p":15.5,"n":"SN"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"BD"},{"p":4.0,"n":"CR SN"},{"p":8.0,"n":"CR BD"},{"p":9.0,"n":"SN"},{"p":10.0,"n":"SN"},{"p":11.0,"n":"SN"},{"p":12.0,"n":"SN BD"},{"p":13.0,"n":"SN"},{"p":14.0,"n":"R2 BD"},{"p":15.0,"n":"R2"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"},{"p":15.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":4.0,"n":"CR SN"},{"p":7.0,"n":"SN"},{"p":8.0,"n":"CR"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":13.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"BD"},{"p":4.0,"n":"CR SN"},{"p":8.0,"n":"CR BD"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"CR SN"},{"p":14.0,"n":"BD"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"BD"},{"p":4.0,"n":"CR SN"},{"p":8.0,"n":"CR BD"},{"p":10.0,"n":"BD"},{"p":12.0,"n":"SN"},{"p":13.0,"n":"SN"},{"p":14.0,"n":"R2"},{"p":15.0,"n":"R2"}],[{"p":0.0,"n":"CR BD"},{"p":2.0,"n":"BD"},{"p":4.0,"n":"CR SN"},{"p":6.0,"n":"BD"},{"p":7.0,"n":"BD"},{"p":8.0,"n":"SN.f"},{"p":10.0,"n":"CR BD"},{"p":12.0,"n":"CR BD"},{"p":14.0,"n":"CR BD"}]],
+  bassBars: [[],[{"p":0,"d":4,"n":[[2,2]]},{"p":10,"d":2,"n":[[2,2]]},{"p":13,"d":2,"n":[[2,2]]}],[{"p":0,"d":4,"n":[[2,5]]},{"p":10,"d":2,"n":[[2,5]]},{"p":13,"d":2,"n":[[2,5]]}],[{"p":0,"d":4,"n":[[2,0]]},{"p":10,"d":2,"n":[[2,0]]},{"p":13,"d":2,"n":[[2,0]]}],[{"p":0,"d":4,"n":[[3,5]]},{"p":10,"d":2,"n":[[3,5]]},{"p":13,"d":2,"n":[[3,5]]}],[{"p":0,"d":4,"n":[[2,2]]},{"p":10,"d":2,"n":[[2,2]]},{"p":13,"d":2,"n":[[2,2]]}],[{"p":0,"d":4,"n":[[2,5]]},{"p":10,"d":2,"n":[[2,5]]},{"p":13,"d":2,"n":[[2,5]]}],[{"p":0,"d":4,"n":[[2,0]]},{"p":10,"d":2,"n":[[2,0]]},{"p":13,"d":2,"n":[[2,0]]}],[{"p":0,"d":4,"n":[[3,5]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,2]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":1,"n":[[2,4]]},{"p":15,"d":1,"n":[[2,5]]}],[{"p":0,"d":2,"n":[[3,0]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[2,9]],"x":true},{"p":4,"d":2,"n":[[2,0]]},{"p":6,"d":1,"n":[[2,9]],"x":true},{"p":7,"d":2,"n":[[2,0]]},{"p":9,"d":1,"n":[[2,0]],"x":true},{"p":10,"d":3,"n":[[2,0]]},{"p":14,"d":1,"n":[[2,5]]},{"p":15,"d":1,"n":[[2,7]]}],[{"p":0,"d":2,"n":[[3,5]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,5]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,5]]},{"p":9,"d":1,"n":[[3,9]],"x":true},{"p":10,"d":2,"n":[[3,5]]},{"p":12,"d":2,"n":[[2,0]]},{"p":14,"d":2,"n":[[2,1]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,2]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":1,"n":[[2,4]]},{"p":15,"d":1,"n":[[2,5]]}],[{"p":0,"d":2,"n":[[3,0]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[3,2]]},{"p":4,"d":2,"n":[[2,0]]},{"p":10,"d":2,"n":[[1,7]]},{"p":12,"d":2,"n":[[2,7]]},{"p":14,"d":2,"n":[[3,5]]}],[{"p":0,"d":2,"n":[[3,5]],"tie":true}],[{"p":0,"d":4,"n":[[2,2]]},{"p":10,"d":2,"n":[[2,2]]},{"p":13,"d":2,"n":[[2,2]]}],[{"p":0,"d":4,"n":[[2,5]]},{"p":10,"d":2,"n":[[2,5]]},{"p":13,"d":2,"n":[[2,5]]}],[{"p":0,"d":4,"n":[[2,0]]},{"p":10,"d":2,"n":[[2,0]]},{"p":13,"d":2,"n":[[2,0]]}],[{"p":0,"d":4,"n":[[3,5]]}],[{"p":0,"d":4,"n":[[2,2]]},{"p":10,"d":2,"n":[[2,2]]},{"p":13,"d":2,"n":[[2,2]]}],[{"p":0,"d":4,"n":[[2,5]]},{"p":10,"d":2,"n":[[2,5]]},{"p":13,"d":2,"n":[[2,5]]}],[{"p":0,"d":4,"n":[[2,0]]},{"p":10,"d":2,"n":[[2,0]]},{"p":13,"d":2,"n":[[2,0]]}],[{"p":0,"d":4,"n":[[3,5]]}],[{"p":0,"d":4,"n":[[2,2]]},{"p":10,"d":2,"n":[[2,2]]},{"p":13,"d":2,"n":[[2,4]]}],[{"p":0,"d":4,"n":[[2,5]]},{"p":10,"d":2,"n":[[2,5]]},{"p":13,"d":2,"n":[[2,7]]}],[{"p":0,"d":4,"n":[[2,0]]},{"p":10,"d":2,"n":[[2,0]]},{"p":13,"d":2,"n":[[2,0]]}],[{"p":0,"d":1,"n":[[2,0]]},{"p":1,"d":1,"n":[[1,0]]},{"p":2,"d":1,"n":[[1,2]]},{"p":4,"d":1,"n":[[1,0]]},{"p":5,"d":1,"n":[[1,2]]},{"p":6,"d":1,"n":[[1,4]]},{"p":8,"d":1,"n":[[1,2]]},{"p":9,"d":1,"n":[[1,4]]},{"p":10,"d":1,"n":[[0,2]]},{"p":12,"d":4,"n":[[0,4]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,2]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":1,"n":[[2,4]]},{"p":15,"d":1,"n":[[2,5]]}],[{"p":0,"d":2,"n":[[3,0]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[2,9]],"x":true},{"p":4,"d":2,"n":[[2,0]]},{"p":6,"d":1,"n":[[2,9]],"x":true},{"p":7,"d":2,"n":[[2,0]]},{"p":9,"d":1,"n":[[2,0]],"x":true},{"p":10,"d":3,"n":[[2,0]]},{"p":14,"d":1,"n":[[2,5]]},{"p":15,"d":1,"n":[[2,7]]}],[{"p":0,"d":2,"n":[[3,5]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,5]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,5]]},{"p":9,"d":1,"n":[[3,9]],"x":true},{"p":10,"d":2,"n":[[3,5]]},{"p":12,"d":2,"n":[[2,0]]},{"p":14,"d":2,"n":[[2,1]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,2]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":1,"n":[[2,4]]},{"p":15,"d":1,"n":[[2,5]]}],[{"p":0,"d":2,"n":[[3,0]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[3,2]]},{"p":4,"d":2,"n":[[2,0]]},{"p":10,"d":2,"n":[[1,7]]},{"p":12,"d":2,"n":[[2,7]]},{"p":14,"d":2,"n":[[3,5]]}],[{"p":2,"d":2,"n":[[3,7]]},{"p":4,"d":3,"n":[[3,9]]},{"p":7,"d":2,"n":[[2,7]]},{"p":9,"d":1,"n":[[2,7]]},{"p":10,"d":2,"n":[[2,5]]},{"p":12,"d":4,"n":[[2,2]]}],[{"p":0,"d":4,"n":[[3,5]]},{"p":10,"d":2,"n":[[2,5]]},{"p":12,"d":2,"n":[[1,5]]},{"p":14,"d":2,"n":[[2,5]]}],[{"p":0,"d":4,"n":[[2,0]]},{"p":10,"d":2,"n":[[2,7]]},{"p":12,"d":2,"n":[[1,7]]},{"p":14,"d":2,"n":[[2,7]]}],[{"p":0,"d":4,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,4]]},{"p":7,"d":1,"n":[[2,5]]},{"p":8,"d":4,"n":[[2,0]]},{"p":14,"d":1,"n":[[2,4]]},{"p":15,"d":1,"n":[[2,5]]}],[{"p":0,"d":4,"n":[[3,5]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,0]]}],[{"p":0,"d":4,"n":[[3,5]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,5]]}],[{"p":0,"d":4,"n":[[3,7]]},{"p":7,"d":1,"n":[[3,0]],"x":true},{"p":8,"d":2,"n":[[3,5]]},{"p":10,"d":2,"n":[[3,7]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":2,"n":[[2,3]]}],[{"p":0,"d":16,"n":[[2,3]],"tie":true}],[],[],[],[],[],[],[],[],[{"p":0,"d":1,"n":[[0,2]]},{"p":1,"d":1,"n":[[0,4]]},{"p":2,"d":1,"n":[[0,0]]},{"p":3,"d":1,"n":[[0,2]]},{"p":4,"d":2,"n":[[1,2]]},{"p":6,"d":1,"n":[[1,0]]},{"p":7,"d":1,"n":[[1,0]]},{"p":8,"d":1,"n":[[2,3]]},{"p":9,"d":1,"n":[[2,0]]},{"p":10,"d":2,"n":[[3,4]]},{"p":12,"d":1,"n":[[3,4]]},{"p":13,"d":3,"n":[[2,5]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,2]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":1,"n":[[2,4]]},{"p":15,"d":1,"n":[[2,5]]}],[{"p":0,"d":2,"n":[[3,0]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[2,9]],"x":true},{"p":4,"d":2,"n":[[2,0]]},{"p":6,"d":1,"n":[[2,9]],"x":true},{"p":7,"d":2,"n":[[2,0]]},{"p":9,"d":1,"n":[[2,0]],"x":true},{"p":10,"d":3,"n":[[2,0]]},{"p":14,"d":1,"n":[[2,5]]},{"p":15,"d":1,"n":[[2,7]]}],[{"p":0,"d":2,"n":[[3,5]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,5]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,5]]},{"p":9,"d":1,"n":[[3,9]],"x":true},{"p":10,"d":2,"n":[[3,5]]},{"p":12,"d":2,"n":[[2,0]]},{"p":14,"d":2,"n":[[2,1]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,0]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":2,"n":[[1,2]]}],[{"p":0,"d":2,"n":[[2,5]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[3,2]]},{"p":4,"d":2,"n":[[2,0]]},{"p":10,"d":2,"n":[[1,7]]},{"p":12,"d":2,"n":[[2,7]]},{"p":14,"d":2,"n":[[3,5]]}],[{"p":0,"d":2,"n":[[3,5]],"tie":true},{"p":2,"d":1,"n":[[2,0]],"x":true},{"p":3,"d":1,"n":[[2,0]],"x":true},{"p":4,"d":1,"n":[[2,0]],"x":true},{"p":5,"d":1,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]]},{"p":7,"d":1,"n":[[2,2]]},{"p":8,"d":2,"n":[[2,2]]},{"p":10,"d":2,"n":[[3,4]]},{"p":12,"d":2,"n":[[3,5]]},{"p":14,"d":2,"n":[[2,1]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,0]]},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,2]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":1,"n":[[2,4]]},{"p":15,"d":1,"n":[[2,5]]}],[{"p":0,"d":4,"n":[[2,5]]},{"p":9,"d":1,"n":[[3,0]],"x":true},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":4,"n":[[2,0]]},{"p":9,"d":1,"n":[[3,2]]},{"p":10,"d":2,"n":[[2,0]]},{"p":12,"d":2,"n":[[3,2]],"x":true},{"p":14,"d":2,"n":[[3,4]],"x":true}],[{"p":0,"d":2,"n":[[3,5]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,5]]},{"p":10,"d":2,"n":[[3,5]]},{"p":12,"d":2,"n":[[3,5]]},{"p":14,"d":2,"n":[[3,5]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,0]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":2,"n":[[1,2]]}],[{"p":0,"d":2,"n":[[2,5]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[3,2]]},{"p":4,"d":2,"n":[[2,0]]},{"p":10,"d":2,"n":[[1,7]]},{"p":12,"d":2,"n":[[2,7]]},{"p":14,"d":2,"n":[[3,5]]}],[{"p":8,"d":2,"n":[[1,4]]},{"p":10,"d":2,"n":[[2,5]]},{"p":12,"d":1,"n":[[2,5]]},{"p":13,"d":1,"n":[[2,7]]},{"p":14,"d":2,"n":[[1,7]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,2]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":1,"n":[[2,4]]},{"p":15,"d":1,"n":[[2,5]]}],[{"p":0,"d":2,"n":[[3,0]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[2,9]],"x":true},{"p":4,"d":2,"n":[[2,0]]},{"p":6,"d":1,"n":[[2,9]],"x":true},{"p":7,"d":2,"n":[[2,0]]},{"p":9,"d":1,"n":[[2,0]],"x":true},{"p":10,"d":3,"n":[[2,0]]},{"p":14,"d":1,"n":[[2,5]]},{"p":15,"d":1,"n":[[2,7]]}],[{"p":0,"d":2,"n":[[3,5]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,5]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,5]]},{"p":9,"d":1,"n":[[3,9]],"x":true},{"p":10,"d":2,"n":[[3,5]]},{"p":12,"d":2,"n":[[2,0]]},{"p":14,"d":2,"n":[[2,1]]}],[{"p":0,"d":2,"n":[[2,2]]},{"p":2,"d":2,"n":[[2,2]],"x":true},{"p":4,"d":2,"n":[[2,2]]},{"p":6,"d":1,"n":[[2,2]],"x":true},{"p":7,"d":2,"n":[[2,2]]},{"p":9,"d":1,"n":[[2,2]],"x":true},{"p":10,"d":2,"n":[[2,0]]},{"p":12,"d":2,"n":[[2,2]]},{"p":14,"d":2,"n":[[1,2]]}],[{"p":0,"d":2,"n":[[2,5]]},{"p":2,"d":2,"n":[[3,9]],"x":true},{"p":4,"d":2,"n":[[3,0]]},{"p":6,"d":1,"n":[[3,9]],"x":true},{"p":7,"d":2,"n":[[3,0]]},{"p":10,"d":2,"n":[[3,0]]},{"p":12,"d":2,"n":[[3,2]]},{"p":14,"d":2,"n":[[3,4]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[3,2]]},{"p":4,"d":2,"n":[[2,0]]},{"p":10,"d":2,"n":[[1,7]]},{"p":12,"d":2,"n":[[2,7]]},{"p":14,"d":2,"n":[[3,5]]}],[{"p":8,"d":2,"n":[[1,4]]},{"p":10,"d":2,"n":[[2,5]]},{"p":12,"d":1,"n":[[2,5]]},{"p":13,"d":1,"n":[[2,7]]},{"p":14,"d":2,"n":[[1,7]]}],[{"p":0,"d":2,"n":[[2,0]]},{"p":2,"d":2,"n":[[3,2]]},{"p":4,"d":2,"n":[[2,0]]},{"p":10,"d":2,"n":[[1,7]]},{"p":12,"d":2,"n":[[2,7]]},{"p":14,"d":2,"n":[[3,5]]}]],
+ "tabs": {
+  "G2T1": [
+   [
+    {
+     "p": 4,
+     "d": 2,
+     "n": [
+      [
+       1,
+       8
+      ]
+     ]
+    },
+    {
+     "p": 6,
+     "d": 1,
+     "n": [
+      [
+       1,
+       8
+      ]
+     ]
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       1,
+       8
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 2,
+     "n": [
+      [
+       1,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       1,
+       5
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 2,
+     "n": [
+      [
+       2,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 14,
+     "d": 2,
+     "n": [
+      [
+       1,
+       5
+      ]
+     ]
+    }
+   ]
+  ],
+  "G2T2": [
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       1,
+       5
+      ]
+     ],
+     "tie": true
+    },
+    {
+     "p": 2,
+     "d": 2,
+     "n": [
+      [
+       1,
+       7
+      ]
+     ]
+    }
+   ]
+  ],
+  "G2T3": [
+   [
+    {
+     "p": 0,
+     "d": 2,
+     "n": [
+      [
+       1,
+       10
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 2,
+     "n": [
+      [
+       1,
+       8
+      ]
+     ]
+    },
+    {
+     "p": 6,
+     "d": 1,
+     "n": [
+      [
+       1,
+       8
+      ]
+     ]
+    },
+    {
+     "p": 7,
+     "d": 1,
+     "n": [
+      [
+       1,
+       8
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 2,
+     "n": [
+      [
+       1,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 2,
+     "n": [
+      [
+       1,
+       5
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 2,
+     "n": [
+      [
+       2,
+       7
+      ]
+     ]
+    }
+   ]
+  ],
+  "G1T1": [
+   [
+    {
+     "p": 0,
+     "d": 1,
+     "n": [
+      [
+       4,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 1,
+     "d": 1,
+     "n": [
+      [
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "p": 2,
+     "d": 1,
+     "n": [
+      [
+       3,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 1,
+     "n": [
+      [
+       4,
+       5
+      ]
+     ]
+    },
+    {
+     "p": 5,
+     "d": 1,
+     "n": [
+      [
+       3,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 6,
+     "d": 1,
+     "n": [
+      [
+       3,
+       4
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 1,
+     "n": [
+      [
+       3,
+       4
+      ]
+     ]
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       2,
+       2
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 1,
+     "n": [
+      [
+       2,
+       3
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 4,
+     "n": [
+      [
+       2,
+       4
+      ]
+     ]
+    }
+   ]
+  ],
+  "G2T4": [
+   [
+    {
+     "p": 0,
+     "d": 1,
+     "n": [
+      [
+       3,
+       9
+      ]
+     ]
+    },
+    {
+     "p": 1,
+     "d": 1,
+     "n": [
+      [
+       2,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 2,
+     "d": 1,
+     "n": [
+      [
+       2,
+       9
+      ]
+     ]
+    },
+    {
+     "p": 4,
+     "d": 1,
+     "n": [
+      [
+       2,
+       7
+      ]
+     ]
+    },
+    {
+     "p": 5,
+     "d": 1,
+     "n": [
+      [
+       2,
+       9
+      ]
+     ]
+    },
+    {
+     "p": 6,
+     "d": 1,
+     "n": [
+      [
+       2,
+       11
+      ]
+     ]
+    },
+    {
+     "p": 8,
+     "d": 1,
+     "n": [
+      [
+       2,
+       9
+      ]
+     ]
+    },
+    {
+     "p": 9,
+     "d": 1,
+     "n": [
+      [
+       2,
+       11
+      ]
+     ]
+    },
+    {
+     "p": 10,
+     "d": 1,
+     "n": [
+      [
+       1,
+       10
+      ]
+     ]
+    },
+    {
+     "p": 12,
+     "d": 4,
+     "n": [
+      [
+       1,
+       12
+      ]
+     ]
+    }
+   ]
+  ]
+ },
+ "chordCheck": {
+  "ug": "UG Chords ver. 1 · 4.87★ · 318 votes",
+  "note": "Ver. 1 is the most-voted chart. Ver. 3 (4.90★, 41 votes) is rated a hair higher, but its bridge (G A / Bm D G / Bm A / C) doesn't match Songsterr; ver. 1's (G A / Bm A G / G A / C) matches bar for bar, as does every other section. UG uses no capo.",
+  "diffs": [
+   {
+    "where": "Ending (last bar)",
+    "ug": "{A}, then {G} (hold) to finish",
+    "ss": "a plain {A} bar from the guitars; the bass walks up to {G} and the drums crash on the & of 4, then the transcription stops. The chart lands everyone on {G} on that & of 4."
+   }
+  ]
+ },
+ "form": [
+  {
+   "nm": "Intro",
+   "type": "intro",
+   "e": 2,
+   "cue": "Drum hit on 4",
+   "blocks": [
+    {
+     "rows": [
+      "NC"
+     ]
+    }
+   ],
+   "extra": {
+    "band": [
+     {
+      "nota": "B_HIT",
+      "at": [
+       1
+      ]
+     }
+    ]
+   },
+   "tag": {
+    "band": "Drum hit, band on 1"
+   },
+   "show": {
+    "drums": {
+     "1": "Drums"
+    }
+   }
+  },
+  {
+   "nm": "Verse 1",
+   "type": "verse",
+   "e": 3,
+   "cue": "“I'm hot, you're cold…”",
+   "blocks": [
+    {
+     "rows": [
+      "Bm D A G",
+      "Bm D A G"
+     ]
+    }
+   ],
+   "extra": {
+    "band": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       8
+      ]
+     }
+    ],
+    "gtr1": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       8
+      ]
+     }
+    ],
+    "gtr2": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       8
+      ]
+     }
+    ]
+   },
+   "tag": {
+    "band": "Band stabs together"
+   }
+  },
+  {
+   "nm": "Chorus 1",
+   "type": "chorus",
+   "e": 4,
+   "cue": "“I'm slipping into the lava…”",
+   "blocks": [
+    {
+     "rows": [
+      "Bm D A G",
+      "Bm D A G"
+     ]
+    }
+   ],
+   "extra": {
+    "band": [
+     {
+      "nota": "B_PUSH",
+      "at": [
+       7,
+       8
+      ]
+     }
+    ],
+    "gtr1": [
+     {
+      "nota": "G1S4",
+      "at": [
+       7
+      ]
+     }
+    ],
+    "gtr2": [
+     {
+      "nota": "G2S2",
+      "at": [
+       7
+      ]
+     }
+    ]
+   },
+   "tag": {
+    "band": "Push G, stop"
+   },
+   "span": {
+    "band": 2,
+    "gtr1": 2,
+    "gtr2": 2
+   }
+  },
+  {
+   "nm": "Interlude",
+   "type": "intro",
+   "e": 3,
+   "cue": "“Come on, girl”",
+   "blocks": [
+    {
+     "rows": [
+      "Bm D A G"
+     ]
+    }
+   ],
+   "extra": {
+    "band": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4
+      ]
+     }
+    ],
+    "gtr1": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4
+      ]
+     }
+    ],
+    "gtr2": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4
+      ]
+     }
+    ]
+   },
+   "tag": {
+    "band": "Stabs"
+   }
+  },
+  {
+   "nm": "Verse 2",
+   "type": "verse",
+   "e": 3,
+   "cue": "“I fell (I fell), so fast…”",
+   "blocks": [
+    {
+     "rows": [
+      "Bm D A G",
+      "Bm D A Bm"
+     ]
+    }
+   ],
+   "extra": {
+    "band": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4
+      ]
+     },
+     {
+      "at": [
+       8
+      ],
+      "tab": "G1T1"
+     }
+    ],
+    "gtr1": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4
+      ]
+     },
+     {
+      "tab": "G1T1",
+      "at": [
+       8
+      ]
+     }
+    ],
+    "gtr2": [
+     {
+      "nota": "G2S3"
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4
+      ]
+     },
+     {
+      "tab": "G2T1",
+      "at": [
+       5
+      ]
+     },
+     {
+      "tab": "G2T2",
+      "at": [
+       6
+      ]
+     },
+     {
+      "tab": "G2T3",
+      "at": [
+       7
+      ]
+     },
+     {
+      "tab": "G2T4",
+      "at": [
+       8
+      ]
+     }
+    ]
+   },
+   "tag": {
+    "band": "Unison riff at the end",
+    "gtr2": "Clean fills"
+   },
+   "span": {
+    "gtr2": 2,
+    "band": 2,
+    "gtr1": 2
+   }
+  },
+  {
+   "nm": "Chorus 2",
+   "type": "chorus",
+   "e": 4,
+   "cue": "“I'm slipping into the lava…”",
+   "blocks": [
+    {
+     "rows": [
+      "Bm D A G",
+      "Bm D A G"
+     ]
+    }
+   ],
+   "extra": {},
+   "tag": {
+    "band": "Full band"
+   }
+  },
+  {
+   "nm": "Bridge",
+   "type": "bridge",
+   "e": 3,
+   "cue": "“Walk in the room…”",
+   "blocks": [
+    {
+     "rows": [
+      "G A Bm|A G",
+      "G A C NC"
+     ]
+    }
+   ],
+   "extra": {
+    "band": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S5",
+      "at": [
+       3
+      ]
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4,
+       6
+      ]
+     },
+     {
+      "nota": "G1S6",
+      "at": [
+       7
+      ]
+     }
+    ],
+    "gtr1": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S5",
+      "at": [
+       3
+      ]
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4,
+       6
+      ]
+     },
+     {
+      "nota": "G1S6",
+      "at": [
+       7
+      ]
+     }
+    ],
+    "gtr2": [
+     {
+      "nota": "G1S1"
+     },
+     {
+      "nota": "G1S5",
+      "at": [
+       3
+      ]
+     },
+     {
+      "nota": "G1S2",
+      "at": [
+       4,
+       6
+      ]
+     },
+     {
+      "nota": "G1S6",
+      "at": [
+       7
+      ]
+     }
+    ]
+   },
+   "tag": {
+    "band": "Hold C, 1 bar silence"
+   },
+   "span": {
+    "band": 2,
+    "gtr1": 2,
+    "gtr2": 2
+   }
+  },
+  {
+   "nm": "Chorus 3",
+   "type": "chorus",
+   "e": 2,
+   "cue": "“I'm slipping into the lava…”",
+   "blocks": [
+    {
+     "rows": [
+      "NC NC NC NC",
+      "Bm D A G"
+     ]
+    }
+   ],
+   "extra": {
+    "band": [
+     {
+      "nota": "G1S3"
+     }
+    ]
+   },
+   "tag": {
+    "band": "Drums + vox, then gtr"
+   },
+   "show": {
+    "drums": {
+     "1": "Drums",
+     "2": "Drums",
+     "3": "Drums",
+     "4": "Drums"
+    }
+   }
+  },
+  {
+   "nm": "Chorus 4",
+   "type": "chorus",
+   "e": 5,
+   "cue": "“I'm slipping into the lava…”",
+   "blocks": [
+    {
+     "rows": [
+      "Bm D A G",
+      "Bm D A G"
+     ]
+    }
+   ],
+   "extra": {},
+   "tag": {
+    "band": "Full band"
+   }
+  },
+  {
+   "nm": "Rap",
+   "type": "solo",
+   "e": 4,
+   "cue": "“Burning up in this place tonight…”",
+   "blocks": [
+    {
+     "rows": [
+      "Bm D A G",
+      "Bm D A G"
+     ]
+    }
+   ],
+   "extra": {},
+   "tag": {
+    "band": "Chorus groove"
+   }
+  },
+  {
+   "nm": "Chorus 5",
+   "type": "chorus",
+   "e": 5,
+   "cue": "“I'm slipping into the lava…”",
+   "blocks": [
+    {
+     "rows": [
+      "Bm D A G",
+      "Bm D A G"
+     ]
+    }
+   ],
+   "extra": {},
+   "tag": {
+    "band": "Full band"
+   }
+  },
+  {
+   "nm": "Ending",
+   "type": "intro",
+   "e": 5,
+   "cue": "“I'm burning up…”",
+   "blocks": [
+    {
+     "rows": [
+      "A?"
+     ]
+    }
+   ],
+   "extra": {
+    "band": [
+     {
+      "nota": "G2S4",
+      "at": [
+       1
+      ]
+     }
+    ],
+    "gtr1": [
+     {
+      "nota": "G1S7",
+      "at": [
+       1
+      ]
+     }
+    ],
+    "gtr2": [
+     {
+      "nota": "G2S4",
+      "at": [
+       1
+      ]
+     }
+    ]
+   },
+   "tag": {
+    "band": "Land on G?"
+   }
+  }
+ ],
+ "header": {
+  "band": {
+   "label": "Default · chorus comp",
+   "nota": "G2S1"
+  },
+  "gtr1": {
+   "capo": true,
+   "label": "Default · chorus 16ths",
+   "nota": "G1S3"
+  },
+  "gtr2": {
+   "capo": true,
+   "label": "Default · chorus accents",
+   "nota": "G2S1"
+  },
+  "bass": {
+   "tune": "Drop D",
+   "label": "",
+   "nota": "G2S1"
+  },
+  "drums": {
+   "style": "Funky pop-rock, syncopated kick",
+   "label": ""
+  }
+ },
+ "notes": [
+  [
+   "all",
+   "<b>How to read this</b>: a mark on a box means play that figure there (same mark next to the figure). Grey-blue marks are rhythm only, on the chord in the box; yellow ones have notes to learn. The figure at the top is the default for any bar with nothing marked; a figure without a mark inside a tile is that section's default. Orange ? = UG and Songsterr differ (see the header)."
+  ],
+  [
+   "band",
+   "<b>Same 4 chords all song</b> (Bm D A G, one bar each) except the bridge. Bar 1 is just a drum hit on beat 4; the band comes in on the next downbeat."
+  ],
+  [
+   "band",
+   "<b>Verses and interlude</b>: guitars, bass and kick stab together (1, the &amp; of 3, the e of 4). Marked bars are a single hit on 1. Verse 2 ends with a unison riff into chorus 2."
+  ],
+  [
+   "band",
+   "<b>Chorus 1 ends</b> by pushing G on the &amp; of 4 and stopping; only the bass holds it, then a drum pickup into the interlude (“Come on, girl”). The other choruses run straight on."
+  ],
+  [
+   "band",
+   "<b>Bridge</b>: stabs, hold C for a bar, then a full bar of silence. <b>Chorus 3</b> is a breakdown: drums only for 4 bars under the vocal, then the clean 16th guitar, bass back in on bar 8."
+  ],
+  [
+   "band",
+   "<b>Rap</b> (Big Rob) is 8 bars of the chorus groove, then the last chorus and one more A bar (“I'm burning up…”). <b>Ending ?</b>: UG ends on a held G; Songsterr stops after the A bar, with the bass and a crash pushing G on the &amp; of 4. The chart lands everyone on G there (marked); confirm it by ear."
+  ],
+  [
+   "band",
+   "<b>Left off</b>: the record's “ooh” backing vocal line in the choruses (Songsterr's Voice Oohs track) and the bongos and cowbell in chorus 3 bars 1–4. No keys on the record, so no Keys view."
+  ],
+  [
+   "gtr1",
+   c => `<b>Capo ${c || "off"}</b>: every chord and tab on this page is what you play with ${c ? "the capo on fret " + c : "no capo"} (UG and the record use none). Change it at the top.`
+  ],
+  [
+   "gtr1",
+   "<b>Gtr 1</b> = Songsterr's Kevin Jonas track (distorted power chords: verses, interlude, bridge) plus the clean guitar's 16th-note funk strum in every chorus (x = muted scratch). Chorus voicings on the top 3 strings (G–B–e): Bm 7-7-7, D 7-7-10, A 9-10-9, G 7-8-7."
+  ],
+  [
+   "gtr1",
+   "<b>Sit out</b> chorus 3 bars 1–4 (drums only) and the stop bar at the end of chorus 1. Brackets in tab = held, not picked again."
+  ],
+  [
+   "gtr2",
+   c => `<b>Capo ${c || "off"}</b>: every chord and tab on this page is what you play with ${c ? "the capo on fret " + c : "no capo"} (UG and the record use none). Change it at the top.`
+  ],
+  [
+   "gtr2",
+   "<b>Gtr 2</b> = Songsterr's Nick Jonas track (the same distorted stabs as Gtr 1 in verse 1, the interlude and bridge) plus the other clean guitar: the chorus accents (3-3-2) and the verse 2 fills, tabbed. In verse 2 the record has both; play the clean fills (Gtr 1 has the stabs)."
+  ],
+  [
+   "gtr2",
+   "<b>Sit out</b> all of chorus 3 (breakdown) and the stop bar at the end of chorus 1."
+  ],
+  [
+   "bass",
+   "<b>Drop D</b> (low string = D), like the record. Every bar is tabbed from Songsterr's bass track; identical lines collapse to ×N, and brackets = held, not picked again."
+  ],
+  [
+   "bass",
+   "<b>Verses</b> lock with the guitar stabs; <b>choruses</b> walk up into each next chord. Chorus 1 pushes G on the &amp; of 4 and holds it; the bridge pushes C on the &amp; of 4 and holds it a bar. Rest for bars 1–7 of chorus 3, then the run in bar 8."
+  ],
+  [
+   "drums",
+   "<b>Every bar is written out</b>, straight from Songsterr's drum track. Bar 1 is a single snare + floor tom hit on beat 4. Choruses ride the crash on quarters."
+  ],
+  [
+   "drums",
+   "<b>Chorus 3</b>: bars 1–4 are just kick, snare and quarter hats under the vocal (the record adds bongos and cowbell on separate percussion tracks, left off here); bars 5–8 move to the floor tom. The drums sit out the last 2 bars of the bridge (the held C, then a silent bar)."
+  ]
+ ]
+};
+
+/* ============ RENDERING ============ */
+SONG.form.forEach(s => { s.tag ??= {}; });   // a section with no tags is fine
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const INK = "var(--ink)";
+
+/* ---- Standard notation engine: 5-line staff, treble / bass / percussion / slash ---- */
+// Event: { p: start in 16ths, d: length in 16ths, n: ["B4", ...] pitches (written) | omitted for slash, r: true rest, c: label above, tie: true }
+const NS = "Noto Serif, Georgia, Times New Roman, serif", MF = "Noto Music, Bravura, Apple Symbols, serif";
+const G = (ch, x, y, size = 28, extra = "") => `<text x="${x}" y="${y}" font-family="${MF}" font-size="${size}" fill="var(--ink)"${extra}>${ch}</text>`;
+// Baseline offsets measured from Noto Music glyph bounds (rests are centered on the middle line at 500/1000 em).
+const CAL = { treble: 7, bass: 11.2, sharp: 3.4, flat: 1.6, natural: 3.4, whole: 7.3, half: 6.8, quarter: 14, eighth: 14, sixteenth: 14 };
+// Meter: bar length and beat-group length in 16ths. 4/4 = 16 / 4 (default); 6/8 = SONG.barLen 12, SONG.beatLen 6; 3/4 = 12 / 4.
+const BAR = SONG.barLen || 16, BEAT = SONG.beatLen || 4;
+// A figure in another meter than the song (a 4/4 bridge in a 6/8 song): give it meter: "4/4" (staff spec, or a tab as { meter, bars }).
+const meterOf = m => { if (!m) return [BAR, BEAT]; const [n, d] = String(m).split("/").map(Number); return [n * 16 / d, d === 8 && n % 3 === 0 ? 6 : 4]; };
+const nbars = n => n + (n === 1 ? " bar" : " bars");
+function score(spec) {
+  const [BAR, BEAT] = meterOf(spec.meter);   // the figure's own meter, if it has one
+  const S = 7, Y0 = 0, BW = BAR * 12 + 18, LET = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
+  const yOf = st => Y0 + 4 * S - st * S / 2;
+  const stepOf = pitch => {
+    const d = LET[pitch[0]] + 7 * parseInt(pitch.replace(/^[A-G][#b]?/, ""), 10);
+    return spec.clef === "bass" ? d - 18 : d - 30;
+  };
+  const DRUM = { HH: { st: 9, x: true }, CR: { st: 10, x: true }, RD: { st: 8, x: true }, SN: { st: 5 }, BD: { st: 1 },
+    T1: { st: 8 }, T2: { st: 7 }, T3: { st: 7 }, T4: { st: 6 }, T5: { st: 3 }, T6: { st: 3 } }; // T1 = highest tom … T6 = floor tom
+  const ks = spec.key || 0, nks = Math.abs(ks);   // key: +N sharps, -N flats
+  const SHARPS = spec.clef === "bass" ? [6, 3, 7, 4, 1, 5, 2] : [8, 5, 9, 6, 3, 7, 4];
+  const FLATS = spec.clef === "bass" ? [2, 5, 1, 4, 0, 3, -1] : [4, 7, 3, 6, 2, 5, 1];
+  const keyAcc = {}; (ks > 0 ? "FCGDAEB" : "BEADGCF").slice(0, nks).split("").forEach(l => keyAcc[l] = ks > 0 ? "#" : "b");
+  const HDR = (spec.clef === "perc" ? 16 : spec.clef === "slash" ? 4 : 25 + nks * 8.5 + 6) + ((spec.bars?.[0] || []).some(e => e.tin) ? 14 : 0);   // room for a tie coming in
+  const nb = spec.bars ? spec.bars.length : spec.grids.length, W = HDR + nb * BW + 4;
+  const X = (b, p) => HDR + b * BW + 11 + p * 12;
+  const out = [], top = [], labels = [];
+  let lo = yOf(8) - 2, hi = yOf(0) + 2;
+  const grow = y => { lo = Math.min(lo, y); hi = Math.max(hi, y); };
+
+  // Voices: percussion grids split into hands (stems up) and feet (stems down); everything else is one voice.
+  let voices;
+  if (spec.clef === "perc") {
+    // One voice, stems up: kick, snare, toms and cymbals share stems and beams, with rests only where nothing plays.
+    // This is how most pop/rock drum charts write grooves (the drummer found the old hands-up / kick-down split hard to read).
+    voices = [{ dir: -1, pieces: ["CR", "RD", "HH", "T1", "T2", "T3", "T4", "SN", "T5", "T6", "BD"] }].map(v => ({ dir: v.dir, bars: spec.grids.map(g => {
+      const on = []; for (let i = 0; i < BAR; i++) { const hits = v.pieces.filter(k => g[k] && g[k][i] !== "."); if (hits.length) on.push({ i, hits: hits.map(k => ({ k, open: g[k][i] === "o" })) }); }
+      if (!on.length) return null;
+      const ev = [];
+      for (let beat = 0; beat < BAR / BEAT; beat++) {
+        const inB = on.filter(o => Math.floor(o.i / BEAT) === beat), b0 = beat * BEAT;
+        if (!inB.length) { ev.push({ p: b0, d: BEAT, r: true }); continue; }
+        if (inB[0].i > b0) ev.push({ p: b0, d: inB[0].i - b0, r: true });
+        inB.forEach((o, j) => ev.push({ p: o.i, d: (j + 1 < inB.length ? inB[j + 1].i : b0 + BEAT) - o.i, drum: o.hits }));
+      }
+      // merge 4 quarter beats of identical single hits is not needed; keep beat-wise notation
+      return ev;
+    }) })).filter(v => v.bars.some(Boolean));
+  } else voices = [{ dir: 0, bars: spec.bars }];
+
+  // Staff lines, clef, key signature, barlines
+  for (let l = 0; l < 5; l++) out.push(`<line x1="0" x2="${W}" y1="${yOf(l * 2)}" y2="${yOf(l * 2)}" stroke="var(--muted)" stroke-width="1"/>`);
+  if (spec.clef === "treble") out.push(G("𝄞", 1, yOf(4) + CAL.treble));
+  if (spec.clef === "bass") out.push(G("𝄢", 1, yOf(4) + CAL.bass));
+  if (spec.clef === "perc") out.push(`<rect x="4" y="${yOf(6)}" width="3" height="${S * 2}" fill="var(--ink)"/><rect x="10" y="${yOf(6)}" width="3" height="${S * 2}" fill="var(--ink)"/>`);
+  for (let i = 0; i < nks; i++) { const st = ks > 0 ? SHARPS[i] : FLATS[i]; out.push(ks > 0 ? G("♯", 25 + i * 8.5, yOf(st) + CAL.sharp, 26) : G("♭", 25 + i * 8.5, yOf(st) + CAL.flat, 26)); grow(yOf(st) - 11); grow(yOf(st) + 9); }
+  if (spec.clef === "treble") { grow(yOf(8) - 9); grow(yOf(0) + 9); }   // the clef reaches above and below the staff
+  for (let b = 0; b <= nb; b++) { const x = HDR + b * BW; out.push(`<line x1="${x}" x2="${x}" y1="${yOf(8)}" y2="${yOf(0)}" stroke="var(--ink)" stroke-width="${b === nb ? 3 : 1.4}"/>`); }
+  // Inline drum rows: { sim: n } = same as the previous bar (one-bar repeat sign, with a running count above);
+  // { rest: true } = drums sit out this bar (whole rest).
+  (spec.grids || []).forEach((g, b) => {
+    const cx = HDR + b * BW + BW / 2;
+    if (g.sim) {
+      const y = yOf(4);
+      out.push(`<circle cx="${cx - 11}" cy="${y - 6}" r="3" fill="var(--ink)"/><circle cx="${cx + 11}" cy="${y + 6}" r="3" fill="var(--ink)"/>`
+        + `<polygon points="${cx - 13},${y + 9} ${cx + 7},${y - 11} ${cx + 13},${y - 9} ${cx - 7},${y + 11}" fill="var(--ink)"/>`);
+      out.push(`<text x="${cx}" y="${yOf(8) - 6}" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="13" fill="var(--muted)">${g.sim}</text>`); grow(yOf(8) - 22);
+    }
+    if (g.rest) out.push(G("𝄻", cx - 6, yOf(4) + CAL.whole));
+    if (g.sim2 === 2) {   // two-bar repeat sign centred on the barline between this bar and the previous one
+      const x = HDR + b * BW, y = yOf(4);
+      out.push(`<circle cx="${x - 16}" cy="${y - 6}" r="3" fill="var(--ink)"/><circle cx="${x + 16}" cy="${y + 6}" r="3" fill="var(--ink)"/>`
+        + [-5, 5].map(o => `<polygon points="${x + o - 12},${y + 9} ${x + o + 6},${y - 11} ${x + o + 11},${y - 9} ${x + o - 7},${y + 11}" fill="var(--ink)"/>`).join("")
+        + `<rect x="${x - 2}" y="${yOf(8)}" width="4" height="${yOf(0) - yOf(8)}" fill="var(--tile)"/>`);
+      out.push(`<text x="${x}" y="${yOf(8) - 6}" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="13" fill="var(--muted)">${g.label}</text>`); grow(yOf(8) - 22);
+    }
+  });
+
+  const rest = (x, d, dy = 0) => {
+    const y = yOf(4) + dy, dot = [3, 6, 12].includes(d) ? `<circle cx="${x + 9}" cy="${yOf(5) + dy}" r="1.6" fill="var(--ink)"/>` : "";
+    if (d >= 16) return G("𝄻", x - 5, y + CAL.whole);
+    if (d >= 8) return G("𝄼", x - 5, y + CAL.half) + dot;
+    if (d >= 4) return G("𝄽", x - 4, y + CAL.quarter) + dot;
+    if (d >= 2) return G("𝄾", x - 4, y + CAL.eighth) + dot;
+    return G("𝄿", x - 4, y + CAL.sixteenth);
+  };
+  voices.forEach(v => {
+    const placed = [];
+    // Accidentals: a written sharp/flat/natural that differs from the key signature (or from an earlier one in the same
+    // bar, for that letter and octave) gets its sign; it lasts until the barline. Pitches are spelled literally ("Bb3").
+    let accBar = -1, accState = {};
+    const accOf = (pn, b) => {
+      if (b !== accBar) { accBar = b; accState = {}; }
+      const m = pn.match(/^([A-G])([#b]?)(-?\d+)/); if (!m) return "";
+      const k = m[1] + m[3], cur = k in accState ? accState[k] : (keyAcc[m[1]] || "");
+      if (m[2] === cur) return "";
+      accState[k] = m[2]; return m[2] === "#" ? "♯" : m[2] === "b" ? "♭" : "♮";
+    };
+    v.bars.forEach((ev, b) => (ev || []).forEach(e => {
+      const x = X(b, e.p), D = e.dn ?? e.d; // D = notated length (dn overrides d, e.g. triplets)
+      if (e.c) labels.push({ x, c: e.c });
+      // Drum staff: the kick voice gets no rests, and hand rests sit in the upper half so they never collide (standard drum charting).
+      if (e.r) { out.push(rest(x, e.d, 0)); return; }
+      let heads;
+      if (e.drum) heads = e.drum.map(h => ({ st: DRUM[h.k].st, x: DRUM[h.k].x, open: h.open }));
+      else if (e.n && e.n.length) heads = e.n.map(pn => ({ st: stepOf(pn), acc: spec.clef === "slash" ? "" : accOf(pn, b) }));
+      else heads = [e.x ? { st: 4, x: true } : { st: 4, slash: true }];   // slash x = muted strum
+      const sts = heads.map(h => h.st);
+      const dir = v.dir || (heads[0].slash || spec.clef === "slash" ? -1 : sts.reduce((a, c) => a + c, 0) / sts.length >= 4 ? 1 : -1); // 1 = stem down, -1 = stem up
+      // Heads a step apart (a second, e.g. ride + hi-hat) can't share one side of the stem: the upper one moves across it.
+      [...heads].sort((a, b) => a.st - b.st).forEach((h, i, arr) => { if (i && h.st - arr[i - 1].st === 1 && !arr[i - 1].shift) h.shift = 8; });
+      heads.forEach(h => {
+        const y = yOf(h.st), x0 = x; { const x = x0 + (h.shift || 0); grow(y - 5); grow(y + 5);
+        for (let s = -2; s >= h.st; s -= 2) out.push(`<line x1="${x - 7}" x2="${x + 7}" y1="${yOf(s)}" y2="${yOf(s)}" stroke="var(--ink)" stroke-width="1.2"/>`);
+        for (let s = 10; s <= h.st; s += 2) out.push(`<line x1="${x - 7}" x2="${x + 7}" y1="${yOf(s)}" y2="${yOf(s)}" stroke="var(--ink)" stroke-width="1.2"/>`);
+        if (h.slash) out.push(D >= 8 ? `<polygon points="${x - 6},${y + 5} ${x + 1},${y - 5} ${x + 6},${y - 4} ${x - 1},${y + 6}" fill="none" stroke="var(--ink)" stroke-width="1.8"/>`
+                                     : `<line x1="${x - 4.5}" y1="${y + 5}" x2="${x + 4.5}" y2="${y - 5}" stroke="var(--ink)" stroke-width="4.6"/>`);
+        else if (h.x) out.push(`<path d="M${x - 3.6} ${y - 3.6} L${x + 3.6} ${y + 3.6} M${x - 3.6} ${y + 3.6} L${x + 3.6} ${y - 3.6}" stroke="${h.st === 10 ? "var(--hit)" : "var(--ink)"}" stroke-width="1.8"/>`);
+        else out.push(`<ellipse cx="${x}" cy="${y}" rx="4.3" ry="3" transform="rotate(-20 ${x} ${y})" fill="${D >= 8 ? "none" : "var(--ink)"}" stroke="var(--ink)" stroke-width="${D >= 8 ? 1.5 : 0}"/>`);
+        if ([3, 6, 12].includes(D)) out.push(`<circle cx="${x + 8}" cy="${y - (h.st % 2 === 0 ? S / 2 : 0)}" r="1.6" fill="var(--ink)"/>`);
+      } });
+      // accidental signs left of the heads; in a chord they step further left so they don't collide
+      heads.filter(h => h.acc).sort((a, b2) => b2.st - a.st).forEach((h, i) =>
+        out.push(G(h.acc, x - 14 - (i % 2) * 8, yOf(h.st) + (h.acc === "♭" ? CAL.flat : h.acc === "♮" ? CAL.natural : CAL.sharp), 24)));
+      {   // whole notes are placed too (no stem), so a tie can start from one
+        const sx = dir < 0 ? x + 4 : x - 4;
+        const yEdge = dir < 0 ? Math.min(...sts.map(yOf)) : Math.max(...sts.map(yOf));
+        const yFar = dir < 0 ? Math.max(...sts.map(yOf)) : Math.min(...sts.map(yOf));
+        placed.push({ x, sx, b, e, dir, sts, slash: !!heads[0].slash, open: heads.some(h => h.open), y0: yFar, tip: yEdge + dir * 24, whole: D >= 16 });
+      }
+    }));
+    // Beam groups: notes shorter than a quarter inside one beat
+    const groups = {};
+    const nd = n => n.e.dn ?? n.e.d;
+    placed.forEach(n => { if (nd(n) < 4) (groups[n.b + ":" + Math.floor(n.e.p / BEAT + 1e-6)] ??= []).push(n); });
+    const inGroup = new Set();
+    Object.values(groups).forEach(g => {
+      if (g.length < 2) return;
+      g.forEach(n => inGroup.add(n));
+      if (!v.dir && !g[0].slash) {
+        const all = g.flatMap(n => n.sts), gd = all.reduce((a, c) => a + c, 0) / all.length >= 4 ? 1 : -1;
+        g.forEach(n => {
+          const ys = n.sts.map(yOf), edge = gd < 0 ? Math.min(...ys) : Math.max(...ys);
+          n.dir = gd; n.sx = gd < 0 ? n.x + 4 : n.x - 4; n.y0 = gd < 0 ? Math.max(...ys) : Math.min(...ys); n.tip = edge + gd * 24;
+        });
+      }
+      const dir = g[0].dir, by = dir < 0 ? Math.min(...g.map(n => n.tip)) : Math.max(...g.map(n => n.tip));
+      g.forEach(n => n.tip = by);
+      out.push(`<rect x="${g[0].sx - .7}" y="${dir < 0 ? by : by - 3.6}" width="${g.at(-1).sx - g[0].sx + 1.4}" height="3.6" fill="var(--ink)"/>`);
+      const y2 = dir < 0 ? by + 6 : by - 9.6;
+      for (let i = 0; i < g.length; i++) {
+        if (nd(g[i]) !== 1 && nd(g[i]) !== 3) continue;
+        const nx = g[i + 1], pv = g[i - 1];
+        if (nd(g[i]) === 1 && nx && nd(nx) === 1) out.push(`<rect x="${g[i].sx - .7}" y="${y2}" width="${nx.sx - g[i].sx + 1.4}" height="3.6" fill="var(--ink)"/>`);
+        else if (nd(g[i]) === 1 && !(pv && nd(pv) === 1)) { const L = nx ? 6 : -6; out.push(`<rect x="${Math.min(g[i].sx, g[i].sx + L) - .7}" y="${y2}" width="${Math.abs(L) + 1.4}" height="3.6" fill="var(--ink)"/>`); }
+      }
+    });
+    placed.forEach(n => {
+      if (n.whole) return;
+      out.push(`<line x1="${n.sx}" x2="${n.sx}" y1="${n.y0}" y2="${n.tip}" stroke="var(--ink)" stroke-width="1.4"/>`);
+      grow(n.tip);
+      if (n.open) { const oy = n.tip - 7; out.push(`<circle cx="${n.sx}" cy="${oy}" r="2.8" fill="none" stroke="var(--ink)" stroke-width="1.4"/>`); grow(oy - 4); }
+      if (nd(n) < 4 && !inGroup.has(n)) {
+        const f = (o) => n.dir < 0 ? `<path d="M${n.sx} ${n.tip + o} q8 6 5 15" fill="none" stroke="var(--ink)" stroke-width="2"/>` : `<path d="M${n.sx} ${n.tip - o} q8 -6 5 -15" fill="none" stroke="var(--ink)" stroke-width="2"/>`;
+        out.push(f(0)); if (nd(n) === 1) out.push(f(6));
+      }
+    });
+    // Tuplet numbers above each run of tup notes (one number per group of e.tup notes)
+    for (let i = 0; i < placed.length;) {
+      if (!placed[i].e.tup) { i++; continue; }
+      let j = i; while (j + 1 < placed.length && placed[j + 1].e.tup && placed[j + 1].b === placed[i].b && j - i + 1 < placed[i].e.tup) j++;
+      const ty = Math.min(...placed.slice(i, j + 1).map(n => Math.min(n.tip, n.y0))) - 6;
+      out.push(`<text x="${(placed[i].sx + placed[j].sx) / 2}" y="${ty}" text-anchor="middle" font-family="${NS}" font-style="italic" font-weight="600" font-size="13" fill="var(--ink)">${placed[i].e.tup}</text>`);
+      grow(ty - 12); i = j + 1;
+    }
+    placed.forEach((n, i) => { if (n.e.tie && placed[i + 1]) {
+      const a = n.x + 3, z = placed[i + 1].x - 3, y = n.dir < 0 ? Math.max(n.y0, yOf(4)) + 7 : Math.min(n.y0, yOf(4)) - 7, c = n.dir < 0 ? 8 : -8;
+      out.push(`<path d="M${a} ${y} Q${(a + z) / 2} ${y + c} ${z} ${y}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`); grow(y + c);
+    }});
+    // tin: held over from the previous bar (a chord tied across the barline into a one-bar figure): a tie arc comes in from the barline
+    placed.forEach(n => { if (n.e.tin) {
+      const a = n.b ? HDR + n.b * BW - 6 : 2, z = n.x - 3, y = n.dir < 0 ? Math.max(n.y0, yOf(4)) + 7 : Math.min(n.y0, yOf(4)) - 7, c = n.dir < 0 ? 7 : -7;
+      out.push(`<path d="M${a} ${y} Q${(a + z) / 2} ${y + c} ${z} ${y}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`); grow(y + c);
+    }});
+  });
+  const ly = lo - 5;
+  labels.forEach(l => out.push(`<text x="${l.x - 4}" y="${ly}" font-family="${NS}" font-weight="600" font-size="14" fill="var(--ink)">${esc(l.c)}</text>`));
+  if (labels.length) lo = ly - 13;
+  return `<svg viewBox="0 ${lo - 2} ${W} ${hi - lo + 6}" style="--w:${W}" role="img" aria-label="notation">${out.join("")}</svg>`;
+}
+
+/* ---- Guitar tab with rhythm stems, transposed for a capo ---- */
+// Event: { p, d (16ths), n: [[string, fret], ...] with string 0 = high e and frets as played with no capo, c: label, pm: palm-muted }
+const TUNING = [64, 59, 55, 50, 45, 40], BASS_TUNING = [43, 38, 33, 28];
+const SHAPE_NAMES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
+const ROOT = { C: 0, "C#": 1, Db: 1, D: 2, "D#": 3, Eb: 3, E: 4, F: 5, "F#": 6, Gb: 6, G: 7, "G#": 8, Ab: 8, A: 9, "A#": 10, Bb: 10, B: 11 };
+// Concert chord name -> the shape you play with this capo
+// Shape names are spelled the way guitarists read them: G#m (not Abm), and a slash bass follows its chord's key
+// (Bm/G#, E/G#, but Cm/Bb, F/Eb).
+const SHARP_SPELL = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+function shapeFor(chord, capo) {
+  if (!capo) return chord;
+  const [main, ...bass] = chord.split("/");
+  const m = main.match(/^([A-G][#b]?)(.*)$/); if (!m) return chord;
+  const r = (ROOT[m[1]] - capo + 120) % 12, minor = /^m(?!aj)/.test(m[2]);
+  let root = SHAPE_NAMES[r];
+  if (minor && root === "Ab") root = "G#";
+  const sp = (minor ? ["E", "B", "F#", "C#", "G#", "A", "D"] : ["G", "D", "A", "E", "B", "F#", "C#"]).includes(root);   // sharp-side chord
+  return root + m[2] + bass.map(b => { const n = b.match(/^([A-G][#b]?)(.*)$/); if (!n) return "/" + b;
+    const k = (ROOT[n[1]] - capo + 120) % 12; return "/" + (sp ? SHARP_SPELL[k] : SHAPE_NAMES[k]) + n[2]; }).join("");
+}
+// Re-finger a note for the capo: keep the same string if possible, otherwise the nearest string that reaches it.
+function placeNote([s, f], capo, tun = TUNING, used) {   // used: strings already taken by other notes of the same chord
+  if (f >= capo && !(used && used.has(s))) return [s, f - capo];
+  const pitch = tun[s] + f;
+  const at = p => tun.map((t, i) => [i, p - t - capo]).filter(([i, r]) => r >= 0 && r <= 14 && !(used && used.has(i)))
+    .sort((a, b) => Math.abs(a[0] - s) - Math.abs(b[0] - s) || a[1] - b[1]);
+  // below the capo on every string (a low note under a high capo): play it an octave up rather than show a wrong fret
+  return at(pitch)[0] || at(pitch + 12)[0] || [s, Math.max(f - capo, 0)];
+}
+// A chord's notes re-fingered together, so two notes never land on one string.
+function placeChord(ns, capo, tun) {
+  const used = new Set(), out = [];
+  ns.map((n, k) => [n, k]).sort((a, b) => (a[0][1] >= capo) - (b[0][1] >= capo) || a[0][0] - b[0][0])   // notes that must move go first
+    .forEach(([n, k]) => { const p = placeNote(n, capo, tun, used); used.add(p[0]); out[k] = p; });
+  return out;
+}
+// A tab may be { bw, meter, bars } instead of bars: bw = bar width in units, for compact one-note-per-bar "lines"; meter = its own time signature ("4/4").
+// Note flags: x = muted/dead (shows x), ns = no rhythm stem, trem = tremolo, tup = tuplet, dn = notated length.
+function tab(bars, capo, tun = TUNING) {
+  const bw = bars.bw, [BAR, BEAT] = meterOf(bars.meter); if (!Array.isArray(bars)) bars = bars.bars;
+  // A bar may be { sim: n } = one-bar repeat sign (same as the bar before), n = running count shown above it.
+  const sims = bars.map(b => Array.isArray(b) ? 0 : b.sim || 0); bars = bars.map(b => Array.isArray(b) ? b : []);
+  // Fast runs of two-digit frets (16ths on 11, 14 …) would collide at 12 units per 16th, so such figures get wider spacing.
+  // dense rows get wider 16ths: two notes a 16th (or less) apart where either shows a two-digit fret or a held-note
+  // bracket, or any 32nd, would otherwise print as one number ("911")
+  const wide = e => e && !e.r && ((e.n || []).some(([, f]) => f >= 10) || e.tie || e.tieN);
+  const dense = !bw && bars.some(ev => { const s = ev.filter(e => !e.r).sort((a, b) => a.p - b.p);
+    return s.some((e, i) => e.d <= 0.5 || (i && (e.p - s[i - 1].p < 0.9 || (e.p - s[i - 1].p <= 1.01 && (wide(e) || wide(s[i - 1])))))); });   // < 0.9: 16th triplets
+  const has32 = !bw && bars.some(ev => ev.some(e => !e.r && e.d <= 0.5));   // 32nd runs need even more room per 16th
+  const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = has32 ? 26 : dense ? 18 : 12, BW = bw || BAR * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
+  const X = (b, p) => HDR + b * BW + (bw ? 10 : 11) + p * SP, yl = s => s * LS, BOT = (NSTR - 1) * LS;
+  const out = [], notes = [];
+  for (let s = 0; s < NSTR; s++) out.push(`<line x1="0" x2="${W}" y1="${yl(s)}" y2="${yl(s)}" stroke="var(--muted)" stroke-width="1"/>`);
+  ["T", "A", "B"].forEach((ch, i) => out.push(`<text x="4" y="${BOT / 2 + (i - 1) * (NSTR === 4 ? 9 : 11) + 3.5}" font-family="${NS}" font-weight="600" font-size="${NSTR === 4 ? 9.5 : 11}" fill="var(--muted)">${ch}</text>`));
+  for (let b = 0; b <= bars.length; b++) { const x = HDR + b * BW; out.push(`<line x1="${x}" x2="${x}" y1="0" y2="${BOT}" stroke="var(--ink)" stroke-width="${b === bars.length ? 3 : 1.4}"/>`); }
+  let pmDone = false, lo = -4;
+  sims.forEach((n, b) => { if (!n) return; const x = HDR + b * BW + BW / 2;
+    out.push(`<text x="${x}" y="${BOT / 2 + 9}" text-anchor="middle" font-family="${MF}" font-size="30" fill="var(--ink)">𝄎</text>`);
+    if (n > 1) { out.push(`<text x="${x}" y="-8" text-anchor="middle" font-family="${NS}" font-weight="600" font-size="12" fill="var(--muted)">${n}</text>`); lo = Math.min(lo, -22); } });
+  bars.forEach((ev, b) => ev.forEach(e => {
+    const x = X(b, e.p);
+    if (e.c) { out.push(`<text x="${x - 4}" y="-8" font-family="${NS}" font-weight="600" font-size="14" fill="var(--ink)">${esc(e.c)}</text>`); lo = Math.min(lo, -24); }   // min: never crop a "muted" label drawn above an earlier chord
+    if (e.pm && !pmDone) { out.push(`<text x="${x - 4}" y="${e.c ? -26 : -8}" font-family="${NS}" font-style="italic" font-size="11" fill="var(--muted)">muted</text>`); pmDone = true; lo = Math.min(lo, e.c ? -40 : -22); }
+    if (e.r) return;
+    placeChord(e.n, capo, tun).forEach(([s, f], k) => {
+      const mute = e.x || (e.xN && e.xN.includes(k));   // xN: muted strings inside a fretted chord
+      if (mute) s = e.n[k][0];
+      const tie = e.tie || (e.tieN && e.tieN.includes(k));   // tieN: indexes of the notes held over while the others are struck
+      // tie = held over from the previous note: shown in brackets, not re-struck. The brackets are small and tight so a
+      // held two-digit fret doesn't run into its neighbours in 16th runs.
+      const d = mute ? "x" : String(f), w = d.length * 7.2 + (tie && !mute ? 7 : 0) + 3;
+      const t = tie && !mute ? `<tspan font-size="9.5" font-weight="600">(</tspan>${d}<tspan font-size="9.5" font-weight="600">)</tspan>` : d;
+      out.push(`<rect x="${x - w / 2}" y="${yl(s) - 6}" width="${w}" height="12" fill="var(--tile)"/><text x="${x}" y="${yl(s) + 4.5}" text-anchor="middle" font-family="${NS}" font-weight="700" font-size="13" letter-spacing="${tie ? -0.6 : 0}" fill="var(--ink)">${t}</text>`);
+    });
+    if (!e.ns) notes.push({ x, b, e });
+  }));
+  // Rhythm stems under the tab. nd = notated length (dn overrides d, e.g. a quarter-note triplet has d 16/3 but is drawn as a quarter).
+  // trem: tremolo picking (3 slashes on the stem). tup: tuplet number drawn under its group.
+  const S0 = BOT + 5, S1 = BOT + 22, groups = {}, inG = new Set(), nd = n => n.e.dn ?? n.e.d;
+  let hiY = S1 + 6;
+  notes.forEach(n => { if (nd(n) < 4) (groups[n.b + ":" + Math.floor(n.e.p / BEAT + 1e-6)] ??= []).push(n); });
+  notes.forEach(n => {
+    const long = nd(n) >= 8 && !n.e.trem;
+    out.push(`<line x1="${n.x}" x2="${n.x}" y1="${S0}" y2="${long ? S0 + 10 : S1}" stroke="var(--ink)" stroke-width="1.4"/>`);
+    if ([3, 6, 12].includes(nd(n))) out.push(`<circle cx="${n.x + 5}" cy="${S1 - 2}" r="1.6" fill="var(--ink)"/>`);
+    if (n.e.trem) for (let k = 0; k < 3; k++) out.push(`<line x1="${n.x - 4}" x2="${n.x + 4}" y1="${S0 + 6 + k * 4 + 2}" y2="${S0 + 6 + k * 4 - 1}" stroke="var(--ink)" stroke-width="1.8"/>`);
+  });
+  Object.values(groups).forEach(g => {
+    if (g.length < 2) return; g.forEach(n => inG.add(n));
+    out.push(`<rect x="${g[0].x - .7}" y="${S1 - 3.4}" width="${g.at(-1).x - g[0].x + 1.4}" height="3.4" fill="var(--ink)"/>`);
+    for (let i = 0; i < g.length; i++) {
+      if (nd(g[i]) !== 1) continue;
+      const nx = g[i + 1], pv = g[i - 1];
+      if (nx && nd(nx) === 1) out.push(`<rect x="${g[i].x - .7}" y="${S1 - 9}" width="${nx.x - g[i].x + 1.4}" height="3.4" fill="var(--ink)"/>`);
+      else if (!(pv && nd(pv) === 1)) { const L = nx ? 6 : -6; out.push(`<rect x="${Math.min(g[i].x, g[i].x + L) - .7}" y="${S1 - 9}" width="${Math.abs(L) + 1.4}" height="3.4" fill="var(--ink)"/>`); }
+    }
+  });
+  notes.forEach(n => { if (nd(n) < 4 && !inG.has(n)) {
+    out.push(`<path d="M${n.x} ${S1} q7 -5 5 -14" fill="none" stroke="var(--ink)" stroke-width="2"/>`);
+    if (nd(n) === 1) out.push(`<path d="M${n.x} ${S1 - 6} q7 -5 5 -14" fill="none" stroke="var(--ink)" stroke-width="2"/>`);
+  }});
+  // Rests: every gap in a bar (no note sounding) gets standard rest glyphs in the stem row, split at beats,
+  // so you can see whether a gap is silence and where off-beat notes land.
+  const restY = (S0 + S1) / 2, RS = 22, RG = { 16: ["𝄻", CAL.whole], 8: ["𝄼", CAL.half], 4: ["𝄽", CAL.quarter], 2: ["𝄾", CAL.eighth], 1: ["𝄿", CAL.sixteenth] };
+  bars.forEach((ev, b) => {
+    if (sims[b]) return;
+    const busy = new Array(BAR).fill(false);
+    ev.forEach(e => { if (e.r) return; for (let k = Math.floor(e.p); k < Math.min(BAR, Math.ceil(e.p + e.d)); k++) busy[k] = true; });
+    if (ev.some(e => !Number.isInteger(e.p))) return;   // tuplet bars: leave as is
+    for (let t = 0; t < BAR;) {
+      if (busy[t]) { t++; continue; }
+      let end = t; while (end < BAR && !busy[end]) end++;
+      while (t < end) {
+        // 4/4: whole, half (on beat 1 or 3), quarter, 8th, 16th. Other meters: whole bar, a full beat group (6 = dotted quarter in 6/8), then smaller values that stay inside one beat group.
+        const r = BAR === 16 ? [16, 8, 4, 2, 1].find(r => t % r === 0 && t + r <= end && !(r === 8 && t % 8 !== 0))
+          : [BAR, BEAT, 4, 2, 1].find(r => t % r === 0 && t + r <= end && (r === BAR || Math.floor(t / BEAT) === Math.floor((t + r - 1) / BEAT)));
+        const [ch, cal] = r === BAR ? RG[16] : r === 6 ? RG[4] : r === 3 ? RG[2] : RG[r], x = X(b, t) + (r >= 8 ? 6 : 0);
+        out.push(`<text x="${x - 4}" y="${restY + (r >= 8 ? 5 : 0) + cal * RS / 28}" font-family="${MF}" font-size="${RS}" fill="var(--ink)">${ch}</text>`);
+        if (r === 6 || r === 3) out.push(`<circle cx="${x + 9}" cy="${restY - 2}" r="1.6" fill="var(--ink)"/>`);
+        t += r;
+      }
+    }
+  });
+  // Tuplet numbers: one per run of consecutive tup notes inside a bar
+  for (let i = 0; i < notes.length;) {
+    if (!notes[i].e.tup) { i++; continue; }
+    let j = i; while (j + 1 < notes.length && notes[j + 1].e.tup && notes[j + 1].b === notes[i].b && j - i + 1 < notes[i].e.tup) j++;
+    out.push(`<text x="${(notes[i].x + notes[j].x) / 2}" y="${S1 + 13}" text-anchor="middle" font-family="${NS}" font-style="italic" font-weight="600" font-size="12" fill="var(--ink)">${notes[i].e.tup}</text>`);
+    hiY = S1 + 17; i = j + 1;
+  }
+  return `<svg viewBox="0 ${lo - 2} ${W} ${hiY - lo + 2}" style="--w:${W}" role="img" aria-label="guitar tab">${out.join("")}</svg>`;
+}
+
+const STRINGS = ["high E", "B", "G", "D", "A", "low E"];
+// Views that read the page as a guitarist (capo control, chord shapes, "Sit out"). Default: the single "guitar" view.
+const isGtr = v => (SONG.guitars || ["guitar"]).includes(v);
+let curView = "band";
+const fretWords = (n, c) => { const [st, f] = placeNote(n, c); return `${STRINGS[st]} string, ${f === 0 ? "open" : "fret " + f}`; };
+// Capo: per song and per guitar view (SONG.capo = 4, or { gtr1: 1, gtr2: 0 } when the guitars differ). A player's change
+// is remembered for this song and view only (it used to be one setting for every song on the site).
+const CAPO_KEY = v => "roadmap-capo:" + (document.title || "") + ":" + v;
+const capoDefault = v => SONG.capo && typeof SONG.capo === "object" ? (SONG.capo[v] ?? 0) : (SONG.capo || 0);
+const capoFor = v => { try { const x = parseInt(localStorage.getItem(CAPO_KEY(v)), 10); if (x >= 0 && x <= 9) return x; } catch (e) {} return capoDefault(v); };
+let capo = capoDefault((SONG.guitars || ["guitar"])[0]);
+function bar(tok, view, playing, mk = { b: [], crash: false }) {
+  const cls = [], q = tok.endsWith("?") && view !== "drums" ? '<span class="q">?</span>' : "";
+  tok = tok.replace(/\?$/, "");
+  if (view !== "band" && !playing) cls.push("tacet");
+  if (mk.b.length) cls.push(mk.rh && mk.b.every(c => mk.rh.has(c)) ? "mk mkr" : "mk");
+  const deco = (mk.shown || mk.b).map(c => `<span class="bd${mk.rh && mk.rh.has(c) ? " rh" : ""}">${esc(c)}</span>`).join("")
+    + (mk.crash ? '<svg class="cr" viewBox="0 0 10 10" aria-label="crash"><path d="M1.5 1.5 8.5 8.5M1.5 8.5 8.5 1.5" stroke="var(--hit)" stroke-width="2.2" stroke-linecap="round"/></svg>' : "");
+  if (tok === "%") return `<div class="bar sim ${cls.join(" ")}">%${q}${deco}</div>`;
+  if (tok === "NC") return `<div class="bar nc ${cls.join(" ")}">N.C.${q}${deco}</div>`;
+  const walk = tok.endsWith("↑") && view === "band", t = tok.replace("↑", "");
+  const parts = t.split("|");
+  if (parts.length > 1) cls.push("split");
+  const shown = isGtr(view) ? parts.map(p => shapeFor(p, capo)) : parts;   // sizes go by what's displayed (capo shapes)
+  // long names shrink; a split box is already smaller, so it only shrinks further when one of its chords is long ("Eb|Bb" stays)
+  if (parts.length > 1 ? Math.max(...shown.map(p => p.length)) >= 5 : shown[0].length >= 5) cls.push("long");
+  if (parts.length === 2 && shown.every(p => p.length <= 3)) cls.push("short");   // two short chords: room to be bigger
+  return `<div class="bar ${cls.join(" ")}"><span class="sp">${shown.map(p => `<span>${p === "NC" ? "N.C." : esc(p)}</span>`).join("")}</span>${walk ? '<span class="w">↑</span>' : ""}${q}${deco}</div>`;
+}
+
+// One figure: staff notation, guitar tab (capo-aware, labels shown as shapes) or bass tab.
+const shapeLabel = c => c.split(" · ").map(x => shapeFor(x, capo)).join(" · ");
+function figure(x) {
+  if (x.nota) {   // in a guitar view, chord names over slash figures follow the capo (shapes), like the boxes
+    const n = SONG.notation[x.nota];
+    if (n && n.clef === "slash" && isGtr(curView) && capo && n.bars) return score({ ...n, bars: n.bars.map(bar => bar.map(e => e.c ? { ...e, c: shapeLabel(e.c) } : e)) });
+    return score(n);
+  }
+  if (x.tab) { const g = isGtr(curView), t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c && g ? { ...e, c: shapeLabel(e.c) } : e));
+    return tab(t.bars ? { bw: t.bw, meter: t.meter, bars } : bars, g ? capo : 0, (SONG.tunings && SONG.tunings[curView]) || SONG.gtrTuning || TUNING); }   // other views (Band) show the no-capo fingering   // gtrTuning: e.g. drop D [64,59,55,50,45,38]; tunings: { gtr2: [...] } per view
+  if (x.btab) return tab(SONG.bassTabs[x.btab], 0, SONG.bassTuning || BASS_TUNING);
+  return "";
+}
+
+// Column spans for the 4-column (tablet/laptop) and 2-column (phone) grids: a tile that doesn't fit widens the one before it to close the gap.
+function spans(view, C) {
+  const w = SONG.form.map(s => Math.min(C, typeof s.span === "object" ? s.span[view] ?? s.span.all ?? 1 : s.span || 1));
+  let col = 0;
+  w.forEach((n, i) => { if (col + n > C) { w[i - 1] += C - col; col = 0; } col = (col + n) % C; });
+  if (col) w[w.length - 1] += C - col;
+  return w;
+}
+
+// Drums view: no chord boxes or numbered markers. Every bar is engraved in playing order, 4 per line, so the drummer
+// reads left to right. Each bar's pattern = SONG.drumBars[bar] if given (exact events from drum_bars.py), else the marked
+// figure on that box, else the section's unmarked figure, else the header groove (crash marks are added to those).
+function drumBarPlan() {
+  const plan = []; let m = 0;
+  const pick = (spec, idx) => spec && spec.grids ? spec.grids[idx % spec.grids.length] : null;
+  SONG.form.forEach((s, si) => {
+    const ex = (s.extra && s.extra.drums) || [];
+    const crash = new Set(ex.filter(x => x.mark === "crash").flatMap(x => x.at || []));
+    const unmarked = ex.find(x => x.nota && !x.at && !x.mark);
+    let box = 0;
+    s.blocks.forEach(b => {
+      const toks = b.rows.flatMap(r => r.split(" ")), rep = b.rep || 1, b0 = box;
+      for (let r = 0; r < rep; r++) toks.forEach((_, k) => {
+        const bx = b0 + k + 1, mi = m++;
+        let g = SONG.drumBars && SONG.drumBars[mi];
+        if (!g) {
+          const fx = ex.find(x => x.nota && x.at && x.at.includes(bx));
+          if (fx) { let run = 0; while (fx.at.includes(bx - run - 1) && bx - run - 1 > b0) run++; g = pick(SONG.notation[fx.nota], run); }
+          else g = pick(unmarked && SONG.notation[unmarked.nota], k) || pick(SONG.notation[SONG.header.drums.nota], k);
+          if (g && crash.has(bx)) g = { ...g, CR: "x" + (g.CR || ".".repeat(BAR)).slice(1) };
+        }
+        const plays = SONG.plays.drums[mi] === "1";
+        plan.push({ si, m: mi, g: g || [], plays, rest: !plays || isEmptyBar(g), ts: (SONG.meters && SONG.meters[mi]) || "" });
+      });
+      box += toks.length;
+    });
+  });
+  return plan;
+}
+
+/* ---- Drum charts, engraved by VexFlow (open-source music engraving, vexflow.com) ---- */
+// Standard drum-set notation (PAS / Weinberg guide): hands (cymbals, snare, toms) in the upper voice with stems up,
+// feet (kick, hi-hat foot) in the lower voice with stems down. Each voice is spelled beat by beat: a note lasts until
+// the next hit or the end of its beat, gaps inside a beat get rests, and beats where the feet don't play stay blank
+// (invisible spacers keep the timing), as on published drum charts. Ghost notes in parentheses, accents, flams,
+// rolls, open hi-hats, triplets and dynamics come straight from the data. Bars come from SONG.drumBars (exact
+// events written by drum_bars.py) or from older 16-step grids ({ HH: "x.x.…", SN: …, BD: … }).
+let dBAR = BAR, dBEAT = BEAT;   // meter of the bar being engraved (SONG.meters can change it per bar)
+const DK = {   // piece -> [VexFlow key (percussion clef positions), label for the drum key]
+  CR: ["a/5/x2", "Crash"], SK: ["c/6/x3", "Sticks"], CB: ["b/5/t2", "Cowbell"], TB: ["b/5/x2", "Tambourine"], HH: ["g/5/x2", "Hi-hat"],
+  HO: ["g/5/x2", "Open hi-hat"], HX: ["g/5/x2", "Half-open"], RD: ["f/5/x2", "Ride"], RB: ["f/5/d2", "Ride bell"],
+  R1: ["e/5", "Tom 1"], R2: ["d/5", "Tom 2"], SN: ["c/5", "Snare"], RS: ["c/5", "Rimshot"], XS: ["c/5/x2", "Cross-stick"],
+  CL: ["c/5/x3", "Clap"], R3: ["b/4", "Tom 3"], F1: ["a/4", "Floor tom"], F2: ["g/4", "Low floor"], BD: ["f/4", "Kick"],
+  HF: ["d/4/x2", "Hi-hat foot"],
+  T1: ["e/5", "Tom 1"], T2: ["e/5", "Tom 1"], T3: ["d/5", "Tom 2"], T4: ["d/5", "Tom 2"], T5: ["a/4", "Floor tom"], T6: ["a/4", "Floor tom"],
+};
+const DRUM_BW = 260;   // nominal bar width; CSS scales every line by the same factor, so the staff is one size everywhere
+const FEET = new Set(["BD", "HF"]);
+const kstep = key => { const [l, o] = key.split("/"); return "cdefgab".indexOf(l) + 7 * +o; };
+// Normalize a bar to events [{ p, notes: [{k, g, a, A, f, d}], gr: [codes], r, dyn, cr }]
+function drumEvents(g) {
+  if (Array.isArray(g)) return g.map(e => ({ p: e.p, r: e.r, dyn: e.dyn, cr: e.cr, gr: e.gr ? e.gr.split(" ").filter(k => DK[k]) : [],
+    notes: e.n.split(" ").map(c => { const [k, ...f] = c.split("."); return { k, g: f.includes("g"), a: f.includes("a"), A: f.includes("A"), f: f.includes("f"), d: f.includes("d") }; }).filter(x => DK[x.k]) }))
+    .filter(e => e.notes.length);
+  const ev = [];
+  for (let i = 0; i < dBAR; i++) {
+    const notes = Object.keys(g).filter(k => DK[k] && typeof g[k] === "string" && g[k][i] && g[k][i] !== ".")
+      .map(k => ({ k: k === "HH" && g[k][i] === "o" ? "HO" : k }));
+    if (notes.length) ev.push({ p: i, notes, gr: [] });
+  }
+  return ev;
+}
+const isEmptyBar = g => !g || g.rest || (Array.isArray(g) ? !g.length : !Object.values(g).some(v => typeof v === "string" && /[^.]/.test(v)));
+const near = (a, b) => Math.abs(a - b) < 0.02;
+// Largest subdivision of the beat that fits every onset: plain grids first, then tuplets (3, 6, 12 in a quarter; 2, 4 in a dotted quarter).
+function beatUnit(rel) {
+  for (const k of dBEAT === 6 ? [1, 3, 6, 12, 24, 2, 4] : [1, 2, 4, 8, 16, 3, 6, 12]) {
+    const u = dBEAT / k;
+    if (rel.every(q => near(q / u, Math.round(q / u)))) return { u, k };
+  }
+  return { u: 0.25, k: dBEAT * 4 };
+}
+const isTup = k => dBEAT === 6 ? (k === 2 || k === 4) : k % 3 === 0;
+// Longest standard note value from position q (in the beat) that fits the span and sits where notation allows it.
+function pickVal(q, span) {
+  const ok = v => {
+    if (v > span + 0.01) return false;
+    if (v === 6) return near(q, 0);
+    if (v === 4) return near(q, 0) || (dBEAT === 6 && near(q, 2));
+    if (v === 3) return near(q, 0) || near(q, dBEAT === 6 ? 3 : 1);
+    const g = Math.min(v, 1); if (!near(q / g, Math.round(q / g))) return false;
+    // compound time keeps the 8th pulse visible: a note starting off an 8th may not run past the next 8th
+    if (dBEAT === 6 && !near(q / 2, Math.round(q / 2)) && q + v > Math.ceil(q / 2 - 0.01) * 2 + 0.01) return false;
+    return true;
+  };
+  return [6, 4, 3, 2, 1.5, 1, 0.75, 0.5, 0.25].find(ok) || 0.25;
+}
+// One voice of one bar -> segments { p, v (written length, 16ths), rest|ghost|e, beat, tup }; null if the voice never plays.
+function voiceSegs(evs, feet) {
+  const mine = evs.map(e => ({ ...e, notes: e.notes.filter(n => FEET.has(n.k) === feet) })).filter(e => e.notes.length);
+  if (!mine.length) return null;
+  const segs = [];
+  for (let bt = 0; bt < dBAR / dBEAT; bt++) {
+    const b0 = bt * dBEAT, inB = mine.filter(e => e.p > b0 - 0.02 && e.p < b0 + dBEAT - 0.02);
+    if (!inB.length) { segs.push({ p: b0, v: dBEAT, rest: !feet, ghost: feet, beat: bt, full: true }); continue; }
+    const rel = inB.map(e => Math.max(0, e.p - b0)), { u, k } = beatUnit(rel), tup = isTup(k) ? k : 0;
+    const base = tup ? 4 / 2 ** Math.floor(Math.log2(k)) : u;
+    const rests = (from, to) => {
+      for (let q = from; q < to - 0.01;) {
+        const r = tup ? u : (dBEAT === 6 ? [6, 4, 2, 1, 0.5, 0.25] : [4, 2, 1, 0.5, 0.25]).find(r => r <= to - q + 0.01 && (r === 4 && dBEAT === 6 ? near(q, 0) : near(q / r, Math.round(q / r)))) || to - q;
+        segs.push({ p: b0 + q, v: tup ? base : r, rest: true, beat: bt, tup }); q += r;
+      }
+    };
+    rests(0, rel[0]);
+    inB.forEach((e, j) => {
+      const q = rel[j], end = j + 1 < inB.length ? rel[j + 1] : dBEAT;
+      let v, used;
+      if (tup) { const m = [4, 3, 2, 1].find(m => m <= Math.round((end - q) / u)) || 1; v = base * m; used = u * m; }
+      else { v = pickVal(q, end - q); used = v; }
+      segs.push({ p: b0 + q, v, e, beat: bt, tup });
+      if (used < end - q - 0.01) rests(q + used, end);
+    });
+  }
+  // two empty beats on 1-2 or 3-4 read better as one half rest (4/4)
+  if (!feet && dBEAT === 4) for (let i = 0; i < segs.length - 1; i++)
+    if (segs[i].full && segs[i + 1].full && segs[i].beat % 2 === 0 && segs[i + 1].beat === segs[i].beat + 1) { segs[i] = { ...segs[i], v: 8, full: false }; segs.splice(i + 1, 1); }
+  return segs;
+}
+const DURS = [[16, "w"], [12, "hd"], [8, "h"], [6, "qd"], [4, "q"], [3, "8d"], [2, "8"], [1.5, "16d"], [1, "16"], [0.75, "32d"], [0.5, "32"], [0.25, "64"]];
+const durOf = v => DURS.reduce((b, d) => Math.abs(d[0] - v) < Math.abs(b[0] - v) ? d : b)[1];
+const VFok = () => typeof window !== "undefined" && window.Vex && window.Vex.Flow;
+function vfNote(V, s, feet) {
+  const dur = durOf(s.v);
+  if (s.ghost) return new V.GhostNote({ duration: dur });
+  const dir = feet ? V.Stem.DOWN : V.Stem.UP;
+  const dot = n => { if (dur.endsWith("d")) V.Dot.buildAndAttach([n], { all: true }); return n; };
+  if (s.whole) return new V.StaveNote({ keys: ["d/5"], duration: "wr", align_center: true });   // hands silent all bar
+  if (s.rest) return dot(new V.StaveNote({ keys: [feet ? "e/4" : s.v >= 4 ? "d/5" : "e/5"], duration: dur + "r", stem_direction: dir }));
+  const heads = [...new Map(s.e.notes.map(x => [DK[x.k][0], x])).entries()].sort((a, b) => kstep(a[0]) - kstep(b[0]));
+  const n = dot(new V.StaveNote({ keys: heads.map(h => h[0]), duration: dur, stem_direction: dir }));
+  heads.forEach(([, x], i) => { if (x.k === "CR") n.setKeyStyle(i, { fillStyle: "var(--hit, #ff6a45)", strokeStyle: "var(--hit, #ff6a45)" }); });
+  heads.forEach(([, x], i) => { if (x.g) { n.addModifier(new V.Parenthesis(V.Modifier.Position.LEFT), i); n.addModifier(new V.Parenthesis(V.Modifier.Position.RIGHT), i); } });
+  const xs = s.e.notes, pos = feet ? V.Modifier.Position.BELOW : V.Modifier.Position.ABOVE;
+  if (xs.some(x => x.k === "HO" || x.k === "HX")) n.addModifier(new V.Articulation("ah").setPosition(V.Modifier.Position.ABOVE), 0);
+  if (xs.some(x => x.A)) n.addModifier(new V.Articulation("a^").setPosition(pos), 0);
+  else if (xs.some(x => x.a || x.k === "RS")) n.addModifier(new V.Articulation("a>").setPosition(pos), 0);
+  if (!feet) {   // flams / drags on the drum itself, and grace notes on another drum
+    const gs = [];
+    heads.forEach(([key, x]) => { if (x.f) gs.push([key, 1]); if (x.d) gs.push([key, 2]); });
+    const other = [...new Set((s.e.gr || []).map(k => DK[k][0]))].sort((a, b) => kstep(a) - kstep(b));
+    if (other.length) gs.push([other, 1]);
+    if (gs.length) {
+      const gn = gs.flatMap(([key, c]) => Array.from({ length: c }, () => new V.GraceNote({ keys: [].concat(key), duration: c > 1 ? "16" : "8", slash: c === 1, stem_direction: 1 })));
+      const grp = new V.GraceNoteGroup(gn, false); if (gn.length > 1) grp.beamNotes();
+      n.addModifier(grp, 0);
+    }
+  }
+  if (s.e.r) n.addModifier(new V.Tremolo(s.e.r), 0);
+  // dynamics go under the staff, below the kick stems (drawn by vfDraw once the notes have their x)
+  if (s.e.dyn || s.e.cr) n._dyn = [s.e.dyn, s.e.cr];
+  return n;
+}
+// Build one bar's voices (no stave yet), so a line can give each bar the room it needs before drawing.
+function vfBar(V, g, ts) {
+  const [tn, td] = ts.split("/").map(Number);
+  dBAR = tn * 16 / td; dBEAT = td === 8 && tn % 3 === 0 ? 6 : 4;
+  const evs = drumEvents(g);
+  const hs = voiceSegs(evs, false), fs = voiceSegs(evs, true);
+  const H = hs || [{ p: 0, v: dBAR, rest: true, beat: 0, whole: true }], F = fs || [{ p: 0, v: dBAR, ghost: true, beat: 0 }];
+  if (!hs) F.forEach(s => { if (s.e) s.handsless = true; });
+  const voices = [], beams = [], tuplets = [];
+  [[H, false], [F, true]].forEach(([segs, feet]) => {
+    const notes = segs.map(s => vfNote(V, s, feet));
+    const byBeat = {};
+    segs.forEach((s, i) => { if (s.tup) (byBeat[s.beat] ??= []).push(i); });
+    Object.values(byBeat).forEach(ix => {
+      const k = segs[ix[0]].tup, occ = dBEAT === 6 ? (k === 2 ? 3 : 6) : { 3: 2, 6: 4, 12: 8 }[k] || k / 1.5;
+      tuplets.push(new V.Tuplet(ix.map(i => notes[i]), { num_notes: k, notes_occupied: occ, ratioed: false, bracketed: ix.some(i => segs[i].rest), location: feet ? V.Tuplet.LOCATION_BOTTOM : V.Tuplet.LOCATION_TOP }));
+    });
+    // beams: notes shorter than a beat, grouped by beat (rests inside a beat stay under the beam)
+    // (a quarter or longer breaks the group: in 6/8, quarter + 8th stays unbeamed)
+    const groups = []; let cur = null, cb = -1;
+    segs.forEach((s, i) => {
+      if (s.ghost || s.v >= 4 || s.beat !== cb) { cur = null; cb = s.beat; }
+      if (s.ghost || s.v >= 4) return;
+      if (!cur) groups.push(cur = []);
+      cur.push(i);
+    });
+    groups.forEach(ix => {
+      while (ix.length && segs[ix[0]].rest) ix.shift();
+      while (ix.length && segs[ix.at(-1)].rest) ix.pop();
+      if (ix.filter(i => !segs[i].rest).length >= 2) beams.push(new V.Beam(ix.map(i => notes[i])));
+    });
+    voices.push(new V.Voice({ num_beats: tn, beat_value: td }).setMode(V.Voice.Mode.SOFT).addTickables(notes));
+  });
+  const fmt = new V.Formatter(); fmt.joinVoices(voices);
+  const minW = fmt.preCalculateMinTotalWidth(voices);
+  return { voices, beams, tuplets, fmt, minW };
+}
+function vfDraw(ctx, st, b) {
+  b.fmt.format(b.voices, st.getNoteEndX() - st.getNoteStartX() - 8);
+  b.voices.forEach(v => v.draw(ctx, st));
+  b.beams.forEach(x => x.setContext(ctx).draw());
+  b.tuplets.forEach(x => x.setContext(ctx).draw());
+  // vertical extent: stems/beams from VexFlow's boxes, plus room for marks above (open hat, accents, tuplet numbers)
+  let lo = Infinity, hi = -Infinity;
+  b.voices.forEach(v => v.getTickables().forEach(n => {
+    if (!n.getBoundingBox || n instanceof window.Vex.Flow.GhostNote) return;
+    const bb = n.getBoundingBox(), up = n.getModifiers().some(m => m.getCategory() === "Articulation" || m.getCategory() === "GraceNoteGroup") ? 16 : 3;
+    lo = Math.min(lo, bb.getY() - up); hi = Math.max(hi, bb.getY() + bb.getH() + 3);
+  }));
+  // tuplet numbers (and brackets, over rests) sit beyond the stems: above for the hands, below for the feet
+  if (b.tuplets.some(t => t.location !== window.Vex.Flow.Tuplet.LOCATION_BOTTOM)) lo -= 26;
+  if (b.tuplets.some(t => t.location === window.Vex.Flow.Tuplet.LOCATION_BOTTOM)) hi += 26;
+  const y = st.getYForLine(4) + 46, done = new Set();
+  b.voices.forEach(v => v.getTickables().forEach(n => {
+    if (!n._dyn) return; const x = Math.round(n.getAbsoluteX()); if (done.has(x)) return; done.add(x);
+    const [d, c] = n._dyn;
+    if (d) svgText(ctx.svg.parentNode, d, x, y, 17, "italic", "start", "Times, serif", "bold");
+    if (c) svgText(ctx.svg.parentNode, c, x + (d ? 9 * d.length + 6 : 0), y, 15, "italic");
+  }));
+  if (done.size) hi = Math.max(hi, y + 6);
+  return [lo, hi];
+}
+// One line of up to 4 items: { g } bar, { sim: n } one-bar repeat (n = running count), { sim2: 1|2 } two-bar repeat,
+// { rest } whole-bar rest, { mrest: n } multi-bar rest. o: { ts: "4/4", barNo, end: "single"|"double"|"final" }.
+function drumLine(items, o) {
+  const V = window.Vex.Flow, div = document.createElement("div"), BW = DRUM_BW, Y = 14, HT = 190;
+  // a time signature opens the song and marks every change of meter (and the return to the old one)
+  let cur = o.ts0; const tsAt = items.map(it => { const t = it.ts || cur; const show = t !== cur; cur = t; return show ? t : ""; });
+  const tsW = t => { const p = new V.Stave(0, Y, 600); const x0 = p.getNoteStartX(); p.addTimeSignature(t); return p.getNoteStartX() - x0; };
+  const probe = new V.Stave(0, Y, 600).addClef("percussion");
+  const head = probe.getNoteStartX() - probe.getX() + 4 + (tsAt[0] ? tsW(tsAt[0]) : 0);
+  // Bars share the line like engraved music: each gets room in proportion to what it holds (a busy 16th bar
+  // wider than a repeat sign), never less than it needs; a line of n bars is n × BW wide unless the notes need more.
+  const built = items.map((it, i) => it.g ? vfBar(V, it.g, it.ts || o.ts0) : null);
+  const need = built.map((b, i) => (b ? Math.max(b.minW * 0.8 + 24, 140) : items[i].mrest ? 150 : 120) + (i && tsAt[i] ? tsW(tsAt[i]) : 0) + (items[i].repStart ? 14 : 0) + (items[i].repEnd ? 14 : 0));
+  const avail = items.length * BW, tot = need.reduce((a, b) => a + b, 0), k = Math.max(1, avail / tot);
+  const ws = need.map(n => n * k), W = Math.ceil(head + ws.reduce((a, b) => a + b, 0) + 2);
+  const r = new V.Renderer(div, V.Renderer.Backends.SVG); r.resize(W, HT); const ctx = r.getContext();
+  const text = (s, x, y, size, style, anchor) => svgText(div, s, x, y, size, style, anchor);
+  let x = 0, lo = Y + 40 - 26, hi = Y + 80 + 12;   // staff top 54 / bottom 94, room for bar numbers and counts above
+  items.forEach((it, i) => {
+    const w = ws[i] + (i ? 0 : head), st = new V.Stave(x, Y, w); x += w;
+    if (!i) st.addClef("percussion");
+    if (tsAt[i]) st.addTimeSignature(tsAt[i]);
+    const B = V.Barline.type, nextRep = i < items.length - 1 && items[i + 1].repStart;
+    st.setBegBarType(it.repStart ? B.REPEAT_BEGIN : B.NONE);
+    st.setEndBarType(it.repEnd ? B.REPEAT_END : nextRep ? B.NONE : i < items.length - 1 ? B.SINGLE : o.end === "final" ? B.END : o.end === "double" ? B.DOUBLE : B.SINGLE);
+    st.setContext(ctx).draw();
+    const top = st.getYForLine(0), mid = st.getYForLine(2), x0 = st.getNoteStartX(), x1 = st.getNoteEndX(), cx = (x0 + x1) / 2;
+    if (!i && o.barNo) text(String(o.barNo), 2, top - 9, 13, "italic");
+    const drawn = (() => {   // returns the top of what this bar drew
+      if (it.mrest) { new V.MultiMeasureRest(it.mrest, { show_number: true }).setStave(st).setContext(ctx).draw(); return top - 20; }
+      if (it.rest) {
+        const rn = new V.StaveNote({ keys: ["d/5"], duration: "wr", align_center: true });
+        const v = new V.Voice({ num_beats: 1, beat_value: 1 }).setMode(V.Voice.Mode.SOFT).addTickables([rn]);
+        new V.Formatter().joinVoices([v]).format([v], x1 - x0); v.draw(ctx, st); return top;
+      }
+      if (it.sim) { new V.Glyph("repeat1Bar", 40).render(ctx, cx - 12, mid); if (it.sim > 1) text(String(it.sim), cx, top - 8, 13, "", "middle"); return top; }
+      if (it.sim2 === 2) { new V.Glyph("repeat2Bars", 40).render(ctx, st.getX() - 17, mid); text("2", st.getX(), top - 8, 13, "", "middle"); return top; }
+      if (it.sim2 === 1) return top;
+      const [a, b] = vfDraw(ctx, st, built[i]); lo = Math.min(lo, a); hi = Math.max(hi, b); return a;
+    })();
+    // ×N over the closing repeat barline, clear of whatever the bar holds (notes, a repeat sign, a rest)
+    if (it.repEnd) { const y = Math.min(top - 8, drawn - 3); svgText(div, "×" + it.repEnd, st.getX() + st.getWidth() - 1, y, 27, "", "end", "Barlow Condensed, Arial Narrow, sans-serif", "700"); lo = Math.min(lo, y - 22); }
+  });
+  return vfSVG(div, W, HT, "vf", "drum notation", Math.floor(lo), Math.ceil(hi));
+}
+// Text straight into the SVG (centred with text-anchor, so nothing needs measuring).
+function svgText(div, str, x, y, size, style, anchor = "start", family = "Times, serif", weight) {
+  const svg = div.querySelector("svg"), t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  t.setAttribute("x", x); t.setAttribute("y", y); t.setAttribute("font-size", size); t.setAttribute("font-family", family);
+  t.setAttribute("text-anchor", anchor); t.setAttribute("fill", "currentColor"); if (style) t.setAttribute("font-style", style); if (weight) t.setAttribute("font-weight", weight);
+  t.textContent = str; svg.appendChild(t);
+}
+// Finished SVG: scales with CSS (viewBox, --w = width in units), ink colours from the page theme (currentColor).
+function vfSVG(div, W, HT, cls, label, y0 = 0, y1 = HT) {
+  const svg = div.querySelector("svg");
+  svg.setAttribute("viewBox", `0 ${y0} ${W} ${y1 - y0}`); svg.removeAttribute("width"); svg.removeAttribute("height");
+  svg.setAttribute("class", cls); svg.setAttribute("style", `--w:${W}`); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", label);
+  return div.innerHTML.replace(/(fill|stroke)="(black|#000|#000000|#444)"/g, '$1="currentColor"').replace(/(fill|stroke)="#999999"/g, '$1="var(--staff, #7d8494)"');
+}
+// Drum key for the Drums view: every piece this song uses, at its staff position, named underneath (as on a printed chart).
+function drumKey() {
+  const used = new Set();
+  const add = g => {
+    if (Array.isArray(g)) g.forEach(e => e.n.split(" ").forEach(c => used.add(c.split(".")[0])));
+    else if (g) Object.keys(g).forEach(k => { if (!DK[k] || typeof g[k] !== "string") return;
+      if (k === "HH") { if (/x/.test(g[k])) used.add("HH"); if (/o/.test(g[k])) used.add("HO"); } else if (/[^.]/.test(g[k])) used.add(k); });
+  };
+  (SONG.drumBars || []).forEach(add);
+  Object.values(SONG.notation || {}).forEach(n => n.clef === "perc" && n.grids.forEach(add));
+  const order = ["SK", "CR", "CB", "TB", "HH", "HO", "HX", "RD", "RB", "R1", "T1", "T2", "R2", "T3", "T4", "SN", "RS", "XS", "CL", "R3", "F1", "T5", "T6", "F2", "BD", "HF"];
+  const seen = new Set(), list = order.filter(k => used.has(k) && !seen.has(DK[k][1]) && seen.add(DK[k][1]));
+  if (!list.length || !VFok()) return "";
+  const V = window.Vex.Flow, div = document.createElement("div"), step = 84, W = 56 + list.length * step, HT = 136;
+  const r = new V.Renderer(div, V.Renderer.Backends.SVG); r.resize(W, HT); const ctx = r.getContext();
+  const st = new V.Stave(0, 0, W).addClef("percussion"); st.setBegBarType(V.Barline.type.NONE); st.setEndBarType(V.Barline.type.NONE); st.setContext(ctx).draw();
+  const notes = list.map(k => {
+    const n = new V.StaveNote({ keys: [DK[k][0]], duration: "q", stem_direction: FEET.has(k) ? -1 : 1 });
+    if (k === "CR") n.setKeyStyle(0, { fillStyle: "var(--hit, #ff6a45)", strokeStyle: "var(--hit, #ff6a45)" });
+    if (k === "HO" || k === "HX") n.addModifier(new V.Articulation("ah").setPosition(V.Modifier.Position.ABOVE), 0);
+    if (k === "RS") n.addModifier(new V.Articulation("a>").setPosition(V.Modifier.Position.ABOVE), 0);
+    return n;
+  });
+  const v = new V.Voice({ num_beats: list.length, beat_value: 4 }).setMode(V.Voice.Mode.SOFT).addTickables(notes);
+  new V.Formatter().joinVoices([v]).format([v], W - st.getNoteStartX() - 16); v.draw(ctx, st);
+  const ly = st.getYForLine(4) + 50;
+  notes.forEach((n, i) => svgText(div, DK[list[i]][1], n.getAbsoluteX() + 6, ly, 15, "", "middle", "Barlow, Arial, sans-serif", "600"));
+  return vfSVG(div, W, HT, "vf dkey", "drum key");
+}
+// Fallback when VexFlow can't load (offline without the vendored copy): quantize to the old 16-step grid.
+function toGrid(g) {
+  if (!Array.isArray(g)) return g;
+  const out = {};
+  g.forEach(e => e.n.split(" ").forEach(c => {
+    const k0 = c.split(".")[0], k = { HO: "HH", HX: "HH", XS: "SN", RS: "SN", CL: "SN", RB: "RD", CB: "CR", TB: "CR", R1: "T1", R2: "T3", R3: "T4", F1: "T5", F2: "T6", HF: null }[k0] ?? k0;
+    if (!k) return; const s = Math.floor(e.p + 1e-6); if (s >= BAR) return;
+    const row = (out[k] ??= ".".repeat(BAR).split("")); row[s] = k0 === "HO" ? "o" : "x";
+  }));
+  Object.keys(out).forEach(k => out[k] = out[k].join(""));
+  return out;
+}
+
+// One tile per section, engraved like a printed drum part: runs of rests become multi-bar rests, a bar identical to
+// the one before becomes a one-bar repeat sign (with a running count), a repeating 2-bar groove a two-bar repeat sign.
+// Bar numbers start each line; the time signature opens the song; a double bar ends each section, a final bar the song.
+let drumTS = "";   // meter in force at the end of the last drawn line ("" = show the time signature on the next line)
+function drumTile(s, i, bars) {
+  if (!VFok()) return drumTileLegacy(s, i, bars);
+  const PER = 4, rows = [], last = i === SONG.form.length - 1, items = [];
+  for (let k = 0; k < bars.length;) {
+    const b = bars[k];
+    if (b.rest) { let n = 1; while (k + n < bars.length && bars[k + n].rest && bars[k + n].ts === b.ts) n++; items.push(n > 1 ? { mrest: n, m: b.m, ts: b.ts } : { rest: true, m: b.m, ts: b.ts }); k += n; continue; }
+    // bars are "the same" when their notes are (a dynamic marking on the first one carries on, as on paper)
+    items.push({ g: b.g, m: b.m, ts: b.ts, key: b.ts + JSON.stringify(Array.isArray(b.g) ? b.g.map(({ dyn, cr, ...e }) => e) : b.g) }); k++;
+  }
+  // Repeats (Brandon: save space): a groove played 4+ times in a row, or a 2- or 4-bar phrase played 2+ times, is written
+  // once between repeat barlines with ×N; 2-3 identical bars in a row use one-bar repeat signs with a running count.
+  const out = [], same = (a, b) => a && b && a.key && a.key === b.key;
+  const reps = (k, p) => {   // how many times the p bars from k repeat back to back
+    if (!items.slice(k, k + p).every(x => x.key) || k + p > items.length) return 0;
+    let r = 1; while (k + (r + 1) * p <= items.length && items.slice(k, k + p).every((x, j) => same(items[k + r * p + j], x))) r++;
+    return r;
+  };
+  const simRun = (unit, from) => unit.map((x, j) => {   // inside a phrase, a bar equal to the one before is a repeat sign
+    let n = 1; while (j - n >= 0 && same(unit[j - n], x)) n++;
+    return n > 1 ? { sim: n, ts: x.ts, m: x.m } : { ...x };
+  });
+  for (let k = 0; k < items.length;) {
+    const it = items[k];
+    let n1 = 1; while (same(items[k + n1], it)) n1++;
+    const r2 = n1 === 1 ? reps(k, 2) : 0, r4 = n1 < 4 && r2 < 2 ? reps(k, 4) : 0;
+    if (n1 >= 4) { out.push({ ...it, repStart: 1, repEnd: n1 }); k += n1; }
+    else if (r2 >= 2) { out.push({ ...it, repStart: 1, pair: 2 }, { ...items[k + 1], repEnd: r2 }); k += 2 * r2; }
+    else if (r4 >= 2) { const u = simRun(items.slice(k, k + 4)); u[0].repStart = 1; u[0].pair = 4; u[3].repEnd = r4; out.push(...u); k += 4 * r4; }
+    else { out.push(it); for (let j = 1; j < n1; j++) out.push({ sim: j + 1, ts: it.ts, m: it.m + j }); k += n1; }
+  }
+  const songTS = BEAT === 6 ? `${BAR / 2}/8` : `${BAR / 4}/4`;
+  out.forEach(it => it.ts = it.ts || songTS);
+  const lines = [];
+  out.forEach(it => { const l = lines.at(-1); if (!l || l.length === PER || (it.pair && l.length > PER - it.pair)) lines.push([it]); else l.push(it); });
+  drumTS = "";   // every section opens with its time signature (Brandon: drum charts should show it; a drummer may jump to any section)
+  if (bars.some(b => !b.rest)) lines.forEach((chunk, li) => {   // a tacet section draws nothing
+    const o = { barNo: chunk[0].m + 1, ts0: drumTS, end: li === lines.length - 1 ? (last ? "final" : "double") : "single" };
+    drumTS = chunk.at(-1).ts;
+    rows.push(`<div class="drow">${drumLine(chunk, o)}</div>`);
+  });
+  const anyPlay = bars.some(b => !b.rest);
+  const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
+  return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
+    <div class="cue">${esc(s.cue || "")}</div>
+    ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
+    <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+  </div>`;
+}
+// Without VexFlow (offline with no local copy): the older built-in staff, on a 16-step grid.
+function drumTileLegacy(s, i, bars) {
+  const PER = 4, rows = [], grids = bars.map(b => b.rest ? { rest: true } : toGrid(b.g));
+  const keys = grids.map(g => JSON.stringify(g)), gs = [];
+  let run = 1;
+  keys.forEach((key, k) => {
+    if (k > 0 && key === keys[k - 1] && !grids[k].rest) { gs.push({ sim: ++run }); return; }
+    run = 1; gs.push(grids[k]);
+  });
+  for (let k = 0; k < gs.length; k += PER) {
+    const chunk = gs.slice(k, k + PER);
+    rows.push(`<div class="drow legacy" style="--nb:${chunk.length}">${score({ clef: "perc", grids: chunk })}</div>`);
+  }
+  const anyPlay = bars.some(b => !b.rest);
+  const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
+  return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
+    <div class="cue">${esc(s.cue || "")}</div>
+    ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
+    <div class="ft"><span class="tag">${esc(s.tag.drums || (anyPlay ? s.tag.band || "" : "Tacet · " + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+  </div>`;
+}
+
+// Bass inline view (SONG.bassBars = one tab bar per chart bar, e.g. straight from Songsterr or a video transcript):
+// used when the part changes nearly every bar, so markers would be a puzzle. Every bar is tabbed in playing order,
+// 4 per line, with the chord written over the bar where it changes. A bar identical to the one before = repeat sign.
+// Any view can be inline: SONG.inlineBars = { gtr2: [...] } (guitar tab, re-fingered for the capo); SONG.bassBars = the bass view.
+const inlineBars = v => (SONG.inlineBars && SONG.inlineBars[v]) || (v === "bass" && SONG.bassBars) || null;
+function bassBarPlan(view = "bass") {
+  const plan = []; let m = 0; const IB = inlineBars(view);
+  SONG.form.forEach((s, si) => {
+    let last = "", box0 = 0;
+    s.blocks.forEach(b => {
+      const toks = b.rows.flatMap(r => r.split(" ")), rep = b.rep || 1;
+      for (let r = 0; r < rep; r++) toks.forEach((tok, k) => {
+        const mi = m++, box = box0 + k + 1, t = (s.show?.[view]?.[box] || tok).replace(/[?↑]/g, "");
+        const ev = (IB[mi] || []).map(e => ({ ...e })), parts = t === "%" ? [] : t.split("|");
+        parts.forEach((c, j) => {
+          if (c === last) return;
+          if (c === "NC") { last = c; const p = j * BAR / parts.length; if (!ev.some(e => e.p === p && e.c)) ev.push({ p, d: 0, r: true, c: "N.C." }); return; }   // name the stop, so a line starting there doesn't carry the old chord
+          last = c; if (isGtr(view)) c = shapeFor(c, capo);
+          const p = Math.round(j * BAR / parts.length), e = ev.find(e => e.p === p);   // on a whole 16th (a 3-way split would land between)
+          if (e) e.c = c; else ev.push({ p, d: 0, r: true, c });
+        });
+        plan.push({ si, ev: ev.sort((a, b) => a.p - b.p), plays: SONG.plays[view][mi] === "1" && ev.some(e => !e.r) });
+      });
+      box0 += toks.length;
+    });
+  });
+  return plan;
+}
+function bassTile(s, i, bars, view = "bass") {
+  const PER = 4, rows = [], gtr = isGtr(view), tun = (SONG.tunings && SONG.tunings[view]) || (gtr ? SONG.gtrTuning || TUNING : SONG.bassTuning || BASS_TUNING), out = [];
+  let run = 1, cur = "";
+  bars.forEach((b, k) => {
+    // every printed line names the chord it starts on, even if the change happened in an earlier (folded) bar
+    const labs = b.ev.filter(e => e.c); if (labs.length) cur = labs.at(-1).c;   // a split bar (C|Dm) leaves its LAST chord in force
+    else if (k % PER === 0 && cur) b = { ...b, ev: [{ p: 0, d: 0, r: true, c: cur }, ...b.ev] };
+    const same = k > 0 && k % PER !== 0 && b.plays && !b.ev.some(e => e.c) && JSON.stringify(b.ev) === JSON.stringify(bars[k - 1].ev);
+    run = same ? run + 1 : 1; out.push(same ? { sim: run } : b.ev);
+  });
+  // Identical consecutive lines collapse to one line with ×N (Brandon: prefer ×N for repeats)
+  const lines = [];
+  for (let k = 0; k < out.length; k += PER) {
+    const chunk = out.slice(k, k + PER), key = JSON.stringify(chunk), prev = lines.at(-1);
+    const rest = chunk.every(b => Array.isArray(b) && b.every(e => e.r));   // nothing played: fold into a "Rest · N bars" line
+    if (rest && prev && prev.rest) prev.bars += chunk.length;
+    else if (rest) lines.push({ rest, bars: chunk.length, key: "rest" });
+    else if (prev && prev.key === key && chunk.length === PER) prev.n++; else lines.push({ key, chunk, n: 1 });
+  }
+  // A repeating group of lines (e.g. an F line then a Dm line, twice) collapses to one group with ×N, like chord rows
+  const K = [...Array(lines.length).keys()].map(k => k + 1).find(k => k < lines.length && lines.length % k === 0 && k > 1
+    && lines.every((l, i) => !l.rest && l.n === 1 && l.chunk.length === PER && l.key === lines[i % k].key));
+  const line = l => l.rest ? `<div class="trest">Rest · ${nbars(l.bars)}</div>` : `<div class="trow">${tab(l.chunk, gtr ? capo : 0, tun)}${l.n > 1 ? `<span class="rep">×${l.n}</span>` : ""}</div>`;
+  if (K) rows.push(`<div class="block tgroup"><div class="rows">${lines.slice(0, K).map(line).join("")}</div><div class="rep">×${lines.length / K}</div></div>`);
+  else lines.forEach(l => rows.push(line(l)));
+  const anyPlay = bars.some(b => b.plays);
+  const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
+  return `<div class="tile t-${s.type}${anyPlay ? "" : " out"}" style="--s4:4;--s2:2">
+    <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(bars.length)}</span></div>
+    <div class="cue">${esc(s.cue || "")}</div>
+    ${anyPlay ? `<div class="chart drums">${rows.join("")}</div>` : ""}
+    <div class="ft"><span class="tag">${esc(s.tag[view] || (anyPlay ? "" : (gtr ? "Sit out · " : "Tacet · ") + nbars(bars.length)))}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+  </div>`;
+}
+
+var render = function (view) {
+  curView = view;
+  if (isGtr(view)) capo = capoFor(view);
+  let m = 0; // running measure index (0-based)
+  const s4 = spans(view, 4), s2 = spans(view, 2);
+  const dplan = view === "drums" ? drumBarPlan() : null, bplan = inlineBars(view) ? bassBarPlan(view) : null;
+  drumTS = "";
+  const tiles = SONG.form.map((s, i) => {
+    if (dplan) return drumTile(s, i, dplan.filter(b => b.si === i));
+    if (bplan) return bassTile(s, i, bplan.filter(b => b.si === i), view);
+    const extras = ((s.extra && s.extra[view]) || []).filter(x => !x.hide);
+    // Number the figures that have markers, and collect each box's markers
+    let auto = 0; const marks = {};
+    extras.forEach(x => {
+      if (x.mark) { (x.at || []).forEach(k => (marks[k] ??= { b: [], crash: false }).crash = true); return; }
+      x._b = x.b || (x.at ? String(++auto) : "");
+      // rhythm-only figure (slash notation) = muted marker; anything with notes to learn (tab, pitched staff, drum fill) = yellow
+      x._rh = !!(x.nota && SONG.notation[x.nota] && SONG.notation[x.nota].clef === "slash");
+      if (x.at) x.at.forEach(k => { const m = (marks[k] ??= { b: [], crash: false, rh: new Set() }); m.rh ??= new Set(); m.b.push(x._b); if (x._rh) m.rh.add(x._b); });
+    });
+    let total = 0, anyPlay = false, box = 0;
+    // a short row (2 bars) keeps the tile's usual box size instead of stretching: it uses the most common row length
+    const lens = s.blocks.flatMap(b => b.rows.map(r => r.split(" ").length)), rowMax = [...new Set(lens)].sort((a, b) => lens.filter(x => x === b).length - lens.filter(x => x === a).length || b - a)[0];
+    const blocks = s.blocks.map(b0 => {
+      // Auto-collapse: identical rows become one row with ×N (Brandon: save space), unless this view's player does
+      // something different on one of the passes (different play/tacet, marker, crash or box override) — then stay unrolled.
+      let b = b0, skip = 0;
+      // period K: the rows are P copies of their first K rows (e.g. a 2-row, 8-bar loop written out twice)
+      const K = b0.rep || b0.label ? 0 : [...Array(b0.rows.length).keys()].map(k => k + 1).find(k => k < b0.rows.length && b0.rows.length % k === 0 && b0.rows.every((r, i) => r === b0.rows[i % k]));
+      if (K) {
+        const n1 = b0.rows.slice(0, K).join(" ").split(" ").length, P = b0.rows.length / K, ok = [...Array(P).keys()].every(r => [...Array(n1).keys()].every(k => {
+          const a = box + k + 1, c = box + r * n1 + k + 1, ma = m + k, mc = m + r * n1 + k;
+          const pl = view === "band" || SONG.plays[view][ma] === SONG.plays[view][mc];
+          const mk = JSON.stringify(marks[a] ? [marks[a].b, marks[a].crash] : null) === JSON.stringify(marks[c] ? [marks[c].b, marks[c].crash] : null);
+          return pl && mk && (s.show?.[view]?.[a] || "") === (s.show?.[view]?.[c] || "");
+        }));
+        if (ok) { b = { rows: b0.rows.slice(0, K), rep: P }; skip = n1 * (P - 1); }
+      }
+      const toks = b.rows.map(r => r.split(" ")), n = toks.flat().length, rep = b.rep || 1, start = m;
+      m += n * rep; total += n * rep;
+      let k = 0;
+      const rows = toks.map(t => `<div class="row" style="--n:${b.label ? 4 : Math.max(t.length, rowMax)}">${t.map((tok, j) => {
+        let on = false;
+        for (let r = 0; r < rep; r++) on ||= view === "band" || SONG.plays[view][start + r * n + k] === "1";
+        anyPlay ||= on; k++; box++;
+        // A run of boxes with the same marker shows the disc once (on the first box of the run in this row); the underline continues.
+        const mk = marks[box], pv = j > 0 ? marks[box - 1] : null;
+        return bar(s.show?.[view]?.[box] || tok, view, on, mk && { ...mk, shown: mk.b.filter(c => !(pv && pv.b.includes(c))) });
+      }).join("")}</div>`).join("");
+      box += skip;
+      const repHTML = b.rep ? "×" + b.rep : b.label ? `<span class="lb">${esc(b.label)}</span>` : "";
+      return `<div class="block"><div class="rows">${rows}</div><div class="rep${repHTML ? "" : " none"}">${repHTML}</div></div>`;
+    });
+    const extraHTML = extras.filter(x => !x.mark).map(x => `<div class="nota">${x._b ? `<span class="bd${x._rh ? " rh" : ""}">${esc(x._b)}</span>` : ""}${figure(x)}</div>`);
+    const tag = s.tag[view] || (view === "band" || anyPlay ? (view === "band" ? s.tag.band || "" : "") : isGtr(view) ? "Sit out" : "Tacet");
+    const meter = [1,2,3,4,5].map(n => `<i class="${n <= s.e ? "on" : ""}" style="height:calc(${2 + n * 1.4} * var(--u))"></i>`).join("");
+    return `<div class="tile t-${s.type}${view !== "band" && !anyPlay ? " out" : ""}" style="--s4:${s4[i]};--s2:${s2[i]}">
+      <div class="th"><span class="num">${i + 1}</span><span class="nm">${esc(s.nm)}</span><span class="bars">${nbars(total)}</span></div>
+      <div class="cue">${esc(s.cue || "")}</div>
+      <div class="chart">${blocks.join("")}${extraHTML.length ? `<div class="figs">${extraHTML.join("")}</div>` : ""}</div>
+      <div class="ft"><span class="tag">${esc(tag)}</span><span class="meter" aria-label="energy ${s.e} of 5">${meter}</span></div>
+    </div>`;
+  });
+  document.getElementById("board").innerHTML = tiles.join("");
+
+
+
+  document.getElementById("keyName").textContent = isGtr(view) ? shapeFor(SONG.key, capo) + (capo ? " shapes" : "") : SONG.key;
+  const cc = SONG.chordCheck, nm = t => esc(t).replace(/\{([^}]+)\}/g, (_, c) => `<b>${esc(isGtr(view) ? shapeFor(c, capo) : c)}</b>`);
+  const chk = document.getElementById("chk");
+  chk.classList.toggle("ok", !cc.diffs.length);
+  chk.innerHTML = (cc.diffs.length ? `⚠ ${cc.diffs.length} chord ${cc.diffs.length > 1 ? "differences" : "difference"}` : "✓ Chords match UG")
+    + `<div class="pop"><p>Chords are checked against the top-rated Ultimate Guitar chart (${esc(cc.ug)}). The chart uses UG's chords. Marked with <span style="color:var(--hit);font-weight:800">?</span> on the bars.</p>`
+    + (cc.note ? `<p>${nm(cc.note)}</p>` : "") + cc.diffs.map(d => `<div class="d"><div class="wh">${nm(d.where)}</div><div>UG: ${nm(d.ug)}</div><div class="s">${esc(d.src || cc.src || "Songsterr")}: ${nm(d.ss)}</div></div>`).join("") + `</div>`;
+  const h = SONG.header[view];
+  document.getElementById("hdrExtra").innerHTML = (h.capo ? `<span class="capo">Capo <button type="button" id="capoDown" aria-label="Capo down">−</button><b>${capo || "off"}</b><button type="button" id="capoUp" aria-label="Capo up">+</button></span>` : "")
+    + (h.tune ? `<span class="tune">${esc(h.tune)}</span>` : "") + (h.badge ? `<span class="tune">${esc(h.badge)}</span>` : "") + (view === "drums" ? (h.style ? `<span class="dstyle">${esc(h.style)}</span>` : "") + drumKey() : inlineBars(view) ? "" : `${esc(h.label)} ${figure(h)}`);
+  document.querySelectorAll("#views button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === view)));
+  const label = SONG.views.find(v => v[0] === view)[1];
+  document.getElementById("notesTitle").textContent = view === "band" ? "Rehearsal notes" : `${label} notes`;
+  document.getElementById("notesList").innerHTML = SONG.notes.filter(([v]) => v === view || v === "all").map(([, t]) => `<li>${typeof t === "function" ? t(capo) : t}</li>`).join("");
+};
+
+document.getElementById("views").innerHTML = SONG.views.map(([v, l]) => `<button type="button" id="view-${v}" data-v="${v}" aria-pressed="false">${l}</button>`).join("");
+document.getElementById("views").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  try { localStorage.setItem("roadmap-view", b.dataset.v); } catch (err) {}
+  history.replaceState(null, "", "#" + b.dataset.v);
+  render(b.dataset.v);
+});
+document.getElementById("hdrExtra").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  capo = Math.max(0, Math.min(9, capo + (b.id === "capoUp" ? 1 : -1)));
+  try { localStorage.setItem(CAPO_KEY(curView), String(capo)); } catch (err) {}
+  render(curView);
+});
+let start = location.hash.slice(1);
+if (!SONG.views.some(v => v[0] === start)) { try { start = localStorage.getItem("roadmap-view") || "band"; } catch (err) { start = "band"; } }
+if (!SONG.views.some(v => v[0] === start)) start = "band";
+render(start);
+
+// Never truncate: let cues and tags wrap to 2 lines, then shrink until they fit.
+function fitText() {
+  document.querySelectorAll(".tag, .cue").forEach(el => {
+    el.style.fontSize = "";
+    let fs = parseFloat(getComputedStyle(el).fontSize), n = 0;
+    while (el.scrollHeight > fs * 1.1 * 2 + 2 && n++ < 25) { fs *= 0.93; el.style.fontSize = fs + "px"; }
+  });
+}
+const _render = render;
+render = v => { _render(v); fitText(); };
+fitText();
+document.fonts?.ready.then(fitText);
+let _rz; addEventListener("resize", () => { clearTimeout(_rz); _rz = setTimeout(fitText, 120); });
+
+// Tempo flash (Brandon): the bpm in the header is a button. Tap it and the beat flashes (count 1-2-3-4, beat 1 orange) on
+// the button and along the top of the screen until tapped again; 6/8 flashes the two dotted-quarter beats. Timing comes
+// from the clock (performance.now), so it never drifts.
+(function tempoFlash() {
+  const div = [...document.querySelectorAll(".facts > div")].find(d => /^\s*[\d.]+\s*bpm\s*$/.test(d.textContent));
+  if (!div) return;
+  const bpm0 = parseFloat(div.textContent), per = Math.max(1, Math.round(BAR / BEAT));
+  // SONG.tempos (optional) = [[75, "Intro"], [196, "March"], …] for songs that change tempo: each tap moves to the next
+  // tempo, and a tap after the last one stops. Otherwise the header bpm is the only tempo.
+  const list = (SONG.tempos && SONG.tempos.length ? SONG.tempos : [[bpm0]]).map(t => Array.isArray(t) ? { bpm: +t[0], label: t[1] || "" } : { bpm: +t, label: "" })
+    .filter(t => t.bpm >= 30 && t.bpm <= 300);
+  if (!list.length) return;
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.className = "tempo"; btn.setAttribute("aria-pressed", "false");
+  btn.title = list.length > 1 ? "Flash the tempo (tap again for the next section's tempo)" : "Flash the tempo";
+  btn.setAttribute("aria-label", `Flash the tempo: ${list[0].bpm} beats per minute`);
+  const rest = div.innerHTML;
+  btn.innerHTML = `<i class="dot"></i><b class="cnt">▶</b><span class="tv">${rest}</span>`;
+  div.replaceWith(btn);
+  const strip = document.createElement("div"); strip.className = "tempo-strip"; document.body.appendChild(strip);
+  const cnt = btn.querySelector(".cnt"), tv = btn.querySelector(".tv");
+  let t0 = 0, raf = 0, shown = "", idx = -1, ms = 60000 / list[0].bpm;
+  const show = (on, one) => { const k = on + "" + one; if (k === shown) return; shown = k;
+    btn.classList.toggle("on", on && !one); btn.classList.toggle("one", on && one); strip.classList.toggle("on", on); strip.classList.toggle("one", on && one); };
+  const tick = now => {
+    const t = now - t0, b = Math.floor(t / ms), on = t - b * ms < Math.min(140, ms * .3);
+    cnt.textContent = String(b % per + 1); show(on, b % per === 0);
+    raf = requestAnimationFrame(tick);
+  };
+  btn.addEventListener("click", () => {
+    idx = idx + 1 < list.length ? idx + 1 : -1;
+    const run = idx >= 0;
+    btn.setAttribute("aria-pressed", String(run)); cancelAnimationFrame(raf); show(false, false);
+    if (run) {
+      const t = list[idx]; ms = 60000 / t.bpm;
+      tv.innerHTML = list.length > 1 ? `${t.bpm} <span>bpm${t.label ? " · " + esc(t.label) : ""}</span>` : rest;
+      t0 = performance.now(); raf = requestAnimationFrame(tick);
+    } else { cnt.textContent = "▶"; tv.innerHTML = rest; }
+  });
+})();
+
+async function keepAwake() { try { await navigator.wakeLock?.request("screen"); } catch (e) {} }
+keepAwake();
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") keepAwake(); });
+</script>

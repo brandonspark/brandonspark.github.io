@@ -1,0 +1,116 @@
+/* SML exercise widget, themed via the site's terminimal color variables. */
+.sml-exercises h2 { margin-bottom: 0.3rem; }
+.sml-exercises-blurb { font-size: 0.9rem; color: var(--accent-alpha-70); }
+
+.sml-exercise {
+  border: 1px solid var(--accent-alpha-20);
+  padding: 1rem;
+  margin: 1.2rem 0;
+}
+.sml-exercise h3 { margin: 0 0 0.4rem; color: var(--accent); }
+.sml-playground .sml-editor.sml-monaco { height: 24rem; }
+.sml-playground textarea { min-height: 20rem; }
+.sml-exercise .sml-editor {
+  font-family: Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--color);
+  border: 1px solid var(--accent-alpha-20);
+}
+.sml-exercise .sml-editor:focus-within { outline: 1px solid var(--accent); }
+/* the site styles code elements (purple, background); not inside the editor */
+.sml-exercise .sml-highlight code { color: inherit; background: none; }
+
+/* millet diagnostics under the IDE editor: clear of the editor box, and
+   without the theme's absolutely-positioned li arrows (they collide) */
+.sml-exercise .sml-problems { margin: 0.5rem 0 0; }
+.sml-exercise .sml-problems li { padding-left: 0; margin: 0.15rem 0; }
+.sml-exercise .sml-problems li::before { content: none; }
+.sml-exercise .sml-problems code {
+  border: none; background: rgba(0, 0, 0, 0.3); color: inherit;
+  margin: 0; padding: 0 0.25em; font-size: 0.95em;
+}
+
+.sml-solution-view {
+  font-family: Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px dashed var(--accent-alpha-70);
+  padding: 0.5rem;
+  white-space: pre;
+  overflow-x: auto;
+}
+.sml-exercise .sml-solution-view code {
+  color: inherit; background: none; border: none; margin: 0; padding: 0;
+  font-size: inherit;
+}
+
+/* Fallback token colors (built-in tokenizer) — only used if the page's
+   highlight.js + sml grammar is unavailable; normally syntax_colors.css
+   styles the .hljs-* classes instead. */
+.sml-kw { color: var(--accent); }
+.sml-con { color: #e5c07b; }
+.sml-str { color: #6bd968; }
+.sml-com { color: var(--accent-alpha-70); font-style: italic; }
+.sml-num { color: #d19a66; }
+.sml-tyvar { color: #56b6c2; font-style: italic; }
+
+.sml-controls { display: flex; gap: 0.8rem; align-items: center; margin: 0.5rem 0; flex-wrap: wrap; }
+.sml-controls button {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.2rem 1rem;
+  font: inherit;
+  cursor: pointer;
+}
+.sml-controls button:hover:not(:disabled) { background: var(--accent-alpha-20); }
+.sml-controls button:disabled { opacity: 0.4; cursor: default; }
+
+.sml-results { list-style: none; padding: 0; margin: 0.4rem 0; }
+.sml-results li { padding-left: 0; }
+.sml-exercises .sml-results li::before { content: none; }
+.sml-pass { color: #6bd968; }
+.sml-fail { color: #ff6b6b; }
+.sml-not-run { color: var(--accent-alpha-70); }
+
+.sml-output {
+  background: rgba(0, 0, 0, 0.3);
+  font-family: Hack, DejaVu Sans Mono, Monaco, Consolas, Ubuntu Mono, monospace;
+  padding: 0.5rem;
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+.sml-status { color: var(--accent-alpha-70); font-size: 0.9rem; }
+
+/* Conceptual multiple-choice questions */
+.sml-choices { list-style: none; padding: 0; margin: 0.6rem 0; }
+.sml-choices li { margin: 0; padding-left: 0; }
+/* the site theme decorates li with an absolutely-positioned arrow — not here */
+.sml-exercises .sml-choices li::before { content: none; }
+.sml-choices button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0.4rem 0;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--color);
+  border: 1px solid var(--accent-alpha-20);
+  padding: 0.4rem 0.8rem;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.sml-choices button:hover:not(:disabled) { border-color: var(--accent); }
+.sml-choices li.sml-fail button { border-color: #ff6b6b; color: #ff6b6b; }
+.sml-choices li.sml-pass button { border-color: #6bd968; color: #6bd968; }
+.sml-explain {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.7rem;
+  margin: 0.6rem 0;
+  color: var(--color);
+}

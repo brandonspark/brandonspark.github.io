@@ -1,0 +1,62 @@
+/* This is an adaptation of the dark.min.css theme, from
+   https://github.com/highlightjs/cdn-release/blob/main/build/styles/dark.min.css
+
+   I edited it slightly to have colors I liked better, though.
+ */
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code
+
+.hljs{padding:3px 5px}
+.hljs{color:#abb2bf;background:#282c34}
+
+.hljs-comment,
+.hljs-quote{color:#5c6370;font-style:italic}
+
+.hljs-doctag,
+.hljs-formula,
+.hljs-keyword{color:#9178dd}
+
+.hljs-deletion,
+.hljs-name,
+.hljs-section,
+.hljs-selector-tag,
+.hljs-subst{color:#e06c75}
+
+.hljs-literal{color:#56b6c2}
+
+.hljs-addition,
+.hljs-meta
+.hljs-string,
+.hljs-regexp,
+.hljs-string{color:#db6969}
+
+/* Type variables, in SML */
+.hljs-attribute{color:#f2e464}
+
+.hljs-attr,
+.hljs-number,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-pseudo,
+.hljs-template-variable,
+.hljs-variable{color:#d19a66}
+
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-symbol,
+.hljs-title{color:#61aeee}
+
+/* Specifically for names that come after `fun` in SML */
+.hljs-title.function_{color:#3ed4cf}
+
+.hljs-built_in,
+.hljs-class
+
+.hljs-type,
+.hljs-title,
+.hljs-title.class_{color:#88e67b}
+
+.hljs-emphasis{font-style:italic}
+.hljs-strong{font-weight:700}
+.hljs-link{text-decoration:underline}
