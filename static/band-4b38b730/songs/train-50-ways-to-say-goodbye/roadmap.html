@@ -1,5 +1,4 @@
-<!doctype html>
-<html lang="en"><head><meta name="robots" content="noindex,nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a><title>50 Ways to Say Goodbye Roadmap</title>
+<meta name="robots" content="noindex,nofollow"><a id="sb-back" href="../../index.html" style="display:inline-block;margin:8px max(10px,env(safe-area-inset-left)) 0;font:700 14px/1 Barlow Condensed,Arial Narrow,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#9ba1b0;border:2px solid #353a46;padding:6px 10px;border-radius:6px;text-decoration:none">← SongBook</a><title>50 Ways to Say Goodbye Roadmap</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1317,6 +1316,7 @@ const SONG = {
 };
 
 /* ============ RENDERING ============ */
+SONG.form.forEach(s => { s.tag ??= {}; });   // a section with no tags is fine
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const INK = "var(--ink)";
 
@@ -1328,8 +1328,11 @@ const G = (ch, x, y, size = 28, extra = "") => `<text x="${x}" y="${y}" font-fam
 const CAL = { treble: 7, bass: 11.2, sharp: 3.4, flat: 1.6, natural: 3.4, whole: 7.3, half: 6.8, quarter: 14, eighth: 14, sixteenth: 14 };
 // Meter: bar length and beat-group length in 16ths. 4/4 = 16 / 4 (default); 6/8 = SONG.barLen 12, SONG.beatLen 6; 3/4 = 12 / 4.
 const BAR = SONG.barLen || 16, BEAT = SONG.beatLen || 4;
+// A figure in another meter than the song (a 4/4 bridge in a 6/8 song): give it meter: "4/4" (staff spec, or a tab as { meter, bars }).
+const meterOf = m => { if (!m) return [BAR, BEAT]; const [n, d] = String(m).split("/").map(Number); return [n * 16 / d, d === 8 && n % 3 === 0 ? 6 : 4]; };
 const nbars = n => n + (n === 1 ? " bar" : " bars");
 function score(spec) {
+  const [BAR, BEAT] = meterOf(spec.meter);   // the figure's own meter, if it has one
   const S = 7, Y0 = 0, BW = BAR * 12 + 18, LET = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
   const yOf = st => Y0 + 4 * S - st * S / 2;
   const stepOf = pitch => {
@@ -1342,7 +1345,7 @@ function score(spec) {
   const SHARPS = spec.clef === "bass" ? [6, 3, 7, 4, 1, 5, 2] : [8, 5, 9, 6, 3, 7, 4];
   const FLATS = spec.clef === "bass" ? [2, 5, 1, 4, 0, 3, -1] : [4, 7, 3, 6, 2, 5, 1];
   const keyAcc = {}; (ks > 0 ? "FCGDAEB" : "BEADGCF").slice(0, nks).split("").forEach(l => keyAcc[l] = ks > 0 ? "#" : "b");
-  const HDR = spec.clef === "perc" ? 16 : spec.clef === "slash" ? 4 : 25 + nks * 8.5 + 6;
+  const HDR = (spec.clef === "perc" ? 16 : spec.clef === "slash" ? 4 : 25 + nks * 8.5 + 6) + ((spec.bars?.[0] || []).some(e => e.tin) ? 14 : 0);   // room for a tie coming in
   const nb = spec.bars ? spec.bars.length : spec.grids.length, W = HDR + nb * BW + 4;
   const X = (b, p) => HDR + b * BW + 11 + p * 12;
   const out = [], top = [], labels = [];
@@ -1498,6 +1501,11 @@ function score(spec) {
       const a = n.x + 3, z = placed[i + 1].x - 3, y = n.dir < 0 ? Math.max(n.y0, yOf(4)) + 7 : Math.min(n.y0, yOf(4)) - 7, c = n.dir < 0 ? 8 : -8;
       out.push(`<path d="M${a} ${y} Q${(a + z) / 2} ${y + c} ${z} ${y}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`); grow(y + c);
     }});
+    // tin: held over from the previous bar (a chord tied across the barline into a one-bar figure): a tie arc comes in from the barline
+    placed.forEach(n => { if (n.e.tin) {
+      const a = n.b ? HDR + n.b * BW - 6 : 2, z = n.x - 3, y = n.dir < 0 ? Math.max(n.y0, yOf(4)) + 7 : Math.min(n.y0, yOf(4)) - 7, c = n.dir < 0 ? 7 : -7;
+      out.push(`<path d="M${a} ${y} Q${(a + z) / 2} ${y + c} ${z} ${y}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`); grow(y + c);
+    }});
   });
   const ly = lo - 5;
   labels.forEach(l => out.push(`<text x="${l.x - 4}" y="${ly}" font-family="${NS}" font-weight="600" font-size="14" fill="var(--ink)">${esc(l.c)}</text>`));
@@ -1541,10 +1549,10 @@ function placeChord(ns, capo, tun) {
     .forEach(([n, k]) => { const p = placeNote(n, capo, tun, used); used.add(p[0]); out[k] = p; });
   return out;
 }
-// A tab may be { bw, bars } instead of bars: bw = bar width in units, for compact one-note-per-bar "lines".
+// A tab may be { bw, meter, bars } instead of bars: bw = bar width in units, for compact one-note-per-bar "lines"; meter = its own time signature ("4/4").
 // Note flags: x = muted/dead (shows x), ns = no rhythm stem, trem = tremolo, tup = tuplet, dn = notated length.
 function tab(bars, capo, tun = TUNING) {
-  const bw = bars.bw; if (!Array.isArray(bars)) bars = bars.bars;
+  const bw = bars.bw, [BAR, BEAT] = meterOf(bars.meter); if (!Array.isArray(bars)) bars = bars.bars;
   // A bar may be { sim: n } = one-bar repeat sign (same as the bar before), n = running count shown above it.
   const sims = bars.map(b => Array.isArray(b) ? 0 : b.sim || 0); bars = bars.map(b => Array.isArray(b) ? b : []);
   // Fast runs of two-digit frets (16ths on 11, 14 …) would collide at 12 units per 16th, so such figures get wider spacing.
@@ -1552,7 +1560,7 @@ function tab(bars, capo, tun = TUNING) {
   // bracket, or any 32nd, would otherwise print as one number ("911")
   const wide = e => e && !e.r && ((e.n || []).some(([, f]) => f >= 10) || e.tie || e.tieN);
   const dense = !bw && bars.some(ev => { const s = ev.filter(e => !e.r).sort((a, b) => a.p - b.p);
-    return s.some((e, i) => e.d <= 0.5 || (i && e.p - s[i - 1].p <= 1.01 && (wide(e) || wide(s[i - 1])))); });
+    return s.some((e, i) => e.d <= 0.5 || (i && (e.p - s[i - 1].p < 0.9 || (e.p - s[i - 1].p <= 1.01 && (wide(e) || wide(s[i - 1])))))); });   // < 0.9: 16th triplets
   const has32 = !bw && bars.some(ev => ev.some(e => !e.r && e.d <= 0.5));   // 32nd runs need even more room per 16th
   const NSTR = tun.length, LS = NSTR === 4 ? 10 : 8, SP16 = has32 ? 26 : dense ? 18 : 12, BW = bw || BAR * SP16 + 18, HDR = 18, W = HDR + bars.length * BW + 4, SP = bw ? (BW - 16) / 16 : SP16;
   const X = (b, p) => HDR + b * BW + (bw ? 10 : 11) + p * SP, yl = s => s * LS, BOT = (NSTR - 1) * LS;
@@ -1677,7 +1685,7 @@ function figure(x) {
     return score(n);
   }
   if (x.tab) { const g = isGtr(curView), t = SONG.tabs[x.tab], bars = (t.bars || t).map(bar => bar.map(e => e.c && g ? { ...e, c: shapeLabel(e.c) } : e));
-    return tab(t.bars ? { bw: t.bw, bars } : bars, g ? capo : 0, (SONG.tunings && SONG.tunings[curView]) || SONG.gtrTuning || TUNING); }   // other views (Band) show the no-capo fingering   // gtrTuning: e.g. drop D [64,59,55,50,45,38]; tunings: { gtr2: [...] } per view
+    return tab(t.bars ? { bw: t.bw, meter: t.meter, bars } : bars, g ? capo : 0, (SONG.tunings && SONG.tunings[curView]) || SONG.gtrTuning || TUNING); }   // other views (Band) show the no-capo fingering   // gtrTuning: e.g. drop D [64,59,55,50,45,38]; tunings: { gtr2: [...] } per view
   if (x.btab) return tab(SONG.bassTabs[x.btab], 0, SONG.bassTuning || BASS_TUNING);
   return "";
 }
@@ -2219,7 +2227,7 @@ var render = function (view) {
   chk.classList.toggle("ok", !cc.diffs.length);
   chk.innerHTML = (cc.diffs.length ? `⚠ ${cc.diffs.length} chord ${cc.diffs.length > 1 ? "differences" : "difference"}` : "✓ Chords match UG")
     + `<div class="pop"><p>Chords are checked against the top-rated Ultimate Guitar chart (${esc(cc.ug)}). The chart uses UG's chords. Marked with <span style="color:var(--hit);font-weight:800">?</span> on the bars.</p>`
-    + (cc.note ? `<p>${nm(cc.note)}</p>` : "") + cc.diffs.map(d => `<div class="d"><div class="wh">${nm(d.where)}</div><div>UG: ${nm(d.ug)}</div><div class="s">Songsterr: ${nm(d.ss)}</div></div>`).join("") + `</div>`;
+    + (cc.note ? `<p>${nm(cc.note)}</p>` : "") + cc.diffs.map(d => `<div class="d"><div class="wh">${nm(d.where)}</div><div>UG: ${nm(d.ug)}</div><div class="s">${esc(d.src || cc.src || "Songsterr")}: ${nm(d.ss)}</div></div>`).join("") + `</div>`;
   const h = SONG.header[view];
   document.getElementById("hdrExtra").innerHTML = (h.capo ? `<span class="capo">Capo <button type="button" id="capoDown" aria-label="Capo down">−</button><b>${capo || "off"}</b><button type="button" id="capoUp" aria-label="Capo up">+</button></span>` : "")
     + (h.tune ? `<span class="tune">${esc(h.tune)}</span>` : "") + (h.badge ? `<span class="tune">${esc(h.badge)}</span>` : "") + (view === "drums" ? (h.style ? `<span class="dstyle">${esc(h.style)}</span>` : "") + drumKey() : inlineBars(view) ? "" : `${esc(h.label)} ${figure(h)}`);
@@ -2306,5 +2314,3 @@ async function keepAwake() { try { await navigator.wakeLock?.request("screen"); 
 keepAwake();
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") keepAwake(); });
 </script>
-
-</body></html>
