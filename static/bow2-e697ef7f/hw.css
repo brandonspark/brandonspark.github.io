@@ -31,7 +31,9 @@ h1 { margin: 4px 0 10px; font-size: 34px; line-height: 1.1; letter-spacing: -.01
   border-bottom: 1px solid var(--line); font-size: 15px; font-weight: 600; }
 .progress .bar { flex: 1; height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
 .progress .bar span { display: block; height: 100%; width: 0; background: var(--good); transition: width .2s; }
-.progress .jump { color: var(--accent); text-decoration: none; white-space: nowrap; }
+.progress .hw-save { color: var(--muted); white-space: nowrap; font-weight: 500; }
+.hw-save.ok { color: var(--good); font-weight: 600; }
+.hw-save.err { color: #c0392b; font-weight: 600; }
 
 h2.section { margin: 26px 0 10px; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .song { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px 6px; margin: 0 0 12px; }

@@ -53,7 +53,7 @@
     var submitted = people.filter(function (x) { return x.sub; }).length;
     var allItems = people.reduce(function (a, x) { return a + x.total; }, 0);
     var allDone = people.reduce(function (a, x) { return a + x.done; }, 0);
-    summary.textContent = submitted + " of " + people.length + " performers have submitted · " +
+    summary.textContent = submitted + " of " + people.length + " performers have started · " +
       allDone + " of " + allItems + " items ticked overall";
 
     main.textContent = "";
@@ -93,7 +93,7 @@
       el("span", {}, [el("i", { cls: "c-full" }), "everything ticked"]),
       el("span", {}, [el("i", { cls: "c-part" }), "some ticked"]),
       el("span", {}, [el("i", { cls: "c-none" }), "nothing ticked"]),
-      el("span", {}, [el("i", { cls: "c-wait" }), "hasn't submitted"]),
+      el("span", {}, [el("i", { cls: "c-wait" }), "hasn't started"]),
       el("span", { text: "★ = featured moment only · hover a cell to see what's missing" })]));
 
     // Cards: who to chase, worst first.
@@ -114,8 +114,8 @@
       });
       var pillCls = !x.sub ? "c-none" : x.done === x.total ? "c-full" : "c-part";
       return el("div", { cls: "pcard" }, [
-        el("h3", {}, [x.p.name, el("span", { cls: "pill " + pillCls, text: x.sub ? x.done + " / " + x.total : "not submitted" })]),
-        el("p", { cls: "meta", text: x.sub ? "Last submitted " + fmt(x.sub.ts) + (x.n > 1 ? " (" + x.n + " submissions)" : "") : "Nothing yet" }),
+        el("h3", {}, [x.p.name, el("span", { cls: "pill " + pillCls, text: x.sub ? x.done + " / " + x.total : "not started" })]),
+        el("p", { cls: "meta", text: x.sub ? "Last saved " + fmt(x.sub.ts) : "Hasn't opened their page or ticked anything yet" }),
         x.sub && x.sub.note ? el("blockquote", { text: x.sub.note }) : null,
         x.sub && x.missing.length ? el("div", {}, [el("b", { text: "Not ticked:" }),
           el("ul", {}, x.missing.map(function (t) { return el("li", { text: t }); }))]) : null,
