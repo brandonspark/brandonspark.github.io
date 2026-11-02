@@ -22,7 +22,7 @@ h1 { margin: 4px 0 10px; font-size: 34px; line-height: 1.1; letter-spacing: -.01
 .lede { margin: 0 0 8px; font-size: 18px; }
 .squad { margin: 0 0 8px; color: var(--muted); }
 .howto { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin: 14px 0 4px; }
-.howto p { margin: 0 0 6px; }
+.howto p { margin: 0; }
 .fine { color: var(--muted); font-size: 14px; }
 .howto .fine { margin: 0; }
 
