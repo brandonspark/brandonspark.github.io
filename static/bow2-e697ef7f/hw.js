@@ -55,7 +55,7 @@
     else if (state.dirty && failed) { text = "Not saved yet, retrying…"; cls = "err"; }
     else if (state.dirty) { text = "Saving…"; }
     else if (state.savedAt) { text = "✓ Saved"; cls = "ok"; }
-    else { text = "Ticks save automatically"; }
+    else { text = ""; }
     saveEls.forEach(function (el) {
       el.textContent = el.dataset.long && state.savedAt && !state.dirty ? "✓ All saved, last change " + fmt(state.savedAt) : text;
       el.className = "hw-save" + (cls ? " " + cls : "");
