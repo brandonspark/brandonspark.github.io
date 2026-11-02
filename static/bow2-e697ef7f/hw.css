@@ -1,4 +1,5 @@
 :root {
+  --bar: #6b3fa0; --bar-track: #e9e1f3;
   --bg: #f6f4ef; --card: #ffffff; --ink: #1d1b22; --muted: #615c6b; --line: #e2ddd3;
   --accent: #6b3fa0; --accent-ink: #ffffff; --good: #2f7d4a; --good-bg: #e3f3e8;
   --prim: #93c47d; --ens: #b7e1cd; --harm: #cccccc; --dance: #d9d2e9; --note: #fde9b8;
@@ -8,6 +9,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #131217; --card: #1e1c24; --ink: #f2f0f6; --muted: #a7a1b3; --line: #34303d;
+    --bar: #9f76dc; --bar-track: #3a3147;
     --accent: #b48ce6; --accent-ink: #17141c; --good: #6fcf8f; --good-bg: #1c3325;
   }
 }
@@ -99,3 +101,22 @@ table.grid { border-collapse: collapse; font-size: 13px; }
 .pcard .link input { flex: 1; min-width: 0; font: 13px ui-monospace, monospace; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
 .pcard .link button { padding: 6px 10px; font-size: 13px; }
 .pill { font-size: 13px; padding: 1px 8px; border-radius: 99px; font-weight: 700; white-space: nowrap; }
+
+/* landing-page scoreboard: ranked bars, one hue, value at the right */
+.sb-hero { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin: 14px 0 6px; }
+.sb-hero-num { font-size: 56px; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+.sb-hero-sub { color: var(--muted); font-size: 15px; }
+ol.sb { list-style: none; margin: 10px 0 60px; padding: 0; }
+.sb li { margin: 0 0 8px; }
+.sb a { display: grid; grid-template-columns: 34px 1fr auto; grid-template-areas: "rank name pct" ". track track" ". meta meta";
+  column-gap: 10px; row-gap: 5px; align-items: center; padding: 12px 14px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 12px; color: var(--ink); text-decoration: none; }
+.sb a:hover, .sb a:focus-visible { border-color: var(--accent); }
+.sb-rank { grid-area: rank; font-size: 20px; font-weight: 800; text-align: center; color: var(--muted); }
+.sb-name { grid-area: name; font-size: 19px; font-weight: 700; }
+.sb-pct { grid-area: pct; font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.sb-track { grid-area: track; height: 12px; border-radius: 0 4px 4px 0; background: var(--bar-track); overflow: hidden; }
+.sb-fill { display: block; height: 100%; width: 0; background: var(--bar); border-radius: 0 4px 4px 0; transition: width .4s; }
+.sb-meta { grid-area: meta; font-size: 14px; color: var(--muted); }
+.sb li.done .sb-meta { color: var(--good); font-weight: 600; }
+.sb li.idle .sb-name, .sb li.idle .sb-pct { color: var(--muted); }
