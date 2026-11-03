@@ -50,10 +50,19 @@
     heroSub.textContent = "of the cast's homework is done · " + started + " of " + people.length + " have started";
   }
 
+  // Show the last scores this device saw right away; the live ones replace them a moment later.
+  var CACHE = "bow2hw:scores";
+  try {
+    var cached = JSON.parse(localStorage.getItem(CACHE) || "null");
+    if (cached && cached.rows) render(cached.rows);
+  } catch (e) {}
+
   function load() {
     if (!cfg.endpoint) return;
     fetch(cfg.endpoint + "?scores=1").then(function (r) { return r.json(); }).then(function (res) {
-      if (res && res.ok) render(res.rows || []);
+      if (!res || !res.ok) return;
+      render(res.rows || []);
+      try { localStorage.setItem(CACHE, JSON.stringify({ rows: res.rows || [], at: Date.now() })); } catch (e) {}
     }).catch(function () {});
   }
   load();
